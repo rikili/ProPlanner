@@ -36,4 +36,13 @@ This is an outing arrangement application that focuses on seamlessly scheduling 
   - Recommendation options (eg. nearby restaurants, bars, etc.)
   - Static display to get an understanding of surrounding location
 
+### Prototype Screenshots
 
+Enter Plan ID Page:
+![](./resources/prototypes/EnterPlanPage.png)
+
+User Selection Page:
+![](./resources/prototypes/SelectUserPage.png)
+
+Home Page:
+![](./resources/prototypes/HomePage.png)
