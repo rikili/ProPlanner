@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import LandingPage from './routes/LandingPage';
 import ErrorPage from './routes/ErrorPage';
 import store from './store';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 const router = createBrowserRouter([
   {
