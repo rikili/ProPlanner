@@ -10,12 +10,12 @@ import ErrorPage from './routes/ErrorPage';
 import store from './store';
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LandingPage />,
-    errorElement: <ErrorPage />,
-    children: [], // TODO: Add routes for supported pages here
-  },
+	{
+		path: '/',
+		element: <LandingPage />,
+		errorElement: <ErrorPage />,
+		children: [], // TODO: Add routes for supported pages here
+	},
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
