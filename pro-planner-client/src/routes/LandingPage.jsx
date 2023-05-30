@@ -4,40 +4,83 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-// import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-// import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import { FiInfo } from 'react-icons/fi';
+import './LandingPage.css';
 
 const LandingPage = () => {
-	// const renderTooltip = text => <Tooltip id="button-tooltip">{text}</Tooltip>;
+	const renderTooltip = text => <Tooltip id="button-tooltip">{text}</Tooltip>;
 	return (
-		<div class="text-center">
+		<div class="text-center card">
 			<Container>
 				<Row className="vh-100 d-flex justify-content-center align-items-center">
 					<Col md={8} lg={6} xs={12}>
-						<div className="border border-3 border-info"></div>
+						<div className="border border-3 border-primary"></div>
 						<Card className="shadow">
 							<Card.Body>
-								<div className="mb-3 mt-md-4">
+								<div className="mt-md-4">
 									<h2 className="fw-bold text-uppercase ">ProPlanner</h2>
-									<p className=" mb-5">
-										Choose the Type of Plan you'd like to Create
-									</p>
+									<p>Choose the Type of Plan you'd like to Create</p>
 									<div className="mb-3">
 										<Row>
-											<Button variant="info" size="lg" className="mb-2">
+											{/* <OverlayTrigger
+												placement="top"
+												overlay={renderTooltip('Tooltip for Trip')}
+											>
+											</OverlayTrigger> */}
+											<Button
+												variant="primary"
+												size="lg"
+												className="mb-2 createplan-btn"
+											>
 												Trip
+												<OverlayTrigger
+													placement="top"
+													overlay={renderTooltip('Tooltip for Trip')}
+												>
+													<span className="i-icon">
+														<FiInfo />
+													</span>
+												</OverlayTrigger>
 											</Button>
 										</Row>
 										<Row>
-											<Button variant="info" size="lg">
+											{/* <OverlayTrigger
+												placement="top"
+												overlay={renderTooltip('Tooltip for Outing')}
+											>
+											</OverlayTrigger> */}
+											<Button
+												variant="primary"
+												size="lg"
+												className="createplan-btn"
+											>
 												Outing
+												<OverlayTrigger
+													placement="top"
+													overlay={renderTooltip('Tooltip for Outing')}
+												>
+													<span className="i-icon">
+														<FiInfo />
+													</span>
+												</OverlayTrigger>
 											</Button>
 										</Row>
 										<div className="mt-3">
-											<p className="mb-0  text-center">
+											<p className="text-center">
 												Joining a Plan? Enter the URL or Code.
-												<Form>
+												<Form className="join-form">
 													<Form.Control placeholder="Plan URL/Code" />
+													<div className="join-btn">
+														<Button
+															variant="primary"
+															type="submit"
+															className="mt-2"
+														>
+															Join
+														</Button>
+													</div>
 												</Form>
 											</p>
 										</div>
@@ -47,43 +90,6 @@ const LandingPage = () => {
 						</Card>
 					</Col>
 				</Row>
-				{/* <Card>
-					<Card.Body>
-						<Card.Title>Choose type of plan to create</Card.Title>
-						<div className="d-grid gap-2">
-							<OverlayTrigger placement="top" overlay={renderTooltip('Outing')}>
-								<Button variant="primary" size="lg">
-									Outing
-
-								</Button>
-							</OverlayTrigger>
-							<OverlayTrigger
-								placement="top"
-								overlay={renderTooltip('Tooltip for Trip')}
-							>
-								<Button variant="secondary" size="lg">
-									Trip
-								</Button>
-							</OverlayTrigger>
-						</div>
-					</Card.Body>
-				</Card>
-				<Card>
-					<Card.Body>
-						<Card.Title>Join a Plan</Card.Title>
-						<Form>
-							<Form.Group className="mb-3" controlId="formBasicEmail">
-								<Form.Control
-									type="email"
-									placeholder="Enter a Plan URL or ID to join"
-								/>
-							</Form.Group>
-							<Button variant="primary" type="submit">
-								Submit
-							</Button>
-						</Form>
-					</Card.Body>
-				</Card> */}
 			</Container>
 		</div>
 	);
