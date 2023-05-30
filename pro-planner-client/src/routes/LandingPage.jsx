@@ -8,7 +8,6 @@ const LandingPage = () => {
     const renderTooltip = (text) => (
         <Tooltip id="button-tooltip">{text}</Tooltip>
     );
-
     return (
         <div>
             <Card>
