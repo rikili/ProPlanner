@@ -27,7 +27,7 @@ const LandingPage = () => {
 				return <Trip />;
 			case 'Outing':
 				return <Outing />;
-			case 'ExistingPlane':
+			case 'ExistingPlan':
 				return <ExistingPlan />;
 			default:
 				return (
