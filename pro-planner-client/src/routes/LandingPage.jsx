@@ -11,14 +11,32 @@ import Col from 'react-bootstrap/Col';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FiInfo } from 'react-icons/fi';
-
-import './LandingPageCard.css';
+import './LandingPage.css';
 
 const LandingPage = () => {
 	const [activeComponent, setActiveComponent] = useState(null);
+	const [inputValue, setInputValue] = useState('');
 
 	const handleButtonClick = componentName => {
 		setActiveComponent(componentName);
+	};
+
+	const handleInput = e => {
+		setInputValue(e.target.value);
+	};
+
+	//This function is to check if the user inputs URL or Code correctly.
+	//TODO: Implement isValidCode and isValidURL functions based on the logic we expect to have.
+	const isValidInput = () => {
+		return inputValue.length > 0;
+	};
+
+	const isValidCode = value => {
+		return true;
+	};
+
+	const isValidURL = value => {
+		return true;
 	};
 
 	const renderComponent = () => {
@@ -28,7 +46,13 @@ const LandingPage = () => {
 			case 'Outing':
 				return <Outing />;
 			case 'ExistingPlan':
-				return <ExistingPlan />;
+				if (!isValidInput(inputValue)) {
+					alert(
+						'Enter a URL or Code please! Otherwise, choose to create a plan from scratch.'
+					);
+				} else {
+					return <ExistingPlan />;
+				}
 			default:
 				return (
 					<Container>
@@ -38,8 +62,12 @@ const LandingPage = () => {
 								<Card className="shadow">
 									<Card.Body>
 										<div className="mt-md-4">
-											<h2 className="fw-bold text-uppercase ">ProPlanner</h2>
-											<p>Choose the Type of Plan you'd like to Create</p>
+											<h2 className="fw-bold text-uppercase d-flex justify-content-center align-items-center">
+												ProPlanner
+											</h2>
+											<p className="d-flex justify-content-center align-items-center">
+												Choose the Type of Plan you'd like to Create
+											</p>
 											<div className="mb-3">
 												<Row>
 													<Button
@@ -81,7 +109,11 @@ const LandingPage = () => {
 													<p className="text-center">
 														Joining a Plan? Enter the URL or Code.
 														<Form className="join-form">
-															<Form.Control placeholder="Plan URL/Code" />
+															<Form.Control
+																placeholder="Enter URL/Code"
+																value={inputValue}
+																onChange={handleInput}
+															/>
 															<div className="join-btn">
 																<Button
 																	variant="primary"
