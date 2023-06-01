@@ -5,11 +5,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import LandingPage from './routes/LandingPage';
 import ErrorPage from './routes/ErrorPage';
+import UserSelectionPage from "./routes/UserSelectionPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LandingPage />,
+    element: <UserSelectionPage />,
     errorElement: <ErrorPage />,
     children: [], // TODO: Add routes for supported pages here
   },
