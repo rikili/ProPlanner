@@ -1,7 +1,9 @@
+import PlanCreator from "../components/PlanCreator";
+
 const LandingPage = () => {
-    return <p>
-        Landing Page!
-    </p>
+    return <div>
+        <PlanCreator />
+    </div>
 };
 
 export default LandingPage;
