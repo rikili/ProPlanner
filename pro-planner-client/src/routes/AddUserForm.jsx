@@ -1,17 +1,11 @@
 import React from 'react';
 import {useState} from "react";
+import {Button, Form, } from "react-bootstrap";
 
-function AddUserForm( {handleAdd} ) {
+function AddUserForm({handleAdd}) {
     const [userName, setUserName] = useState('')
-    const [btnDisabled, setBtnDisabled] = useState(true)
 
-    // update userName(state)
     const handleUserNameChange = (e) => {
-        if (userName === '' && userName.trim().length === 0) {
-            setBtnDisabled(true)
-        } else {
-            setBtnDisabled(false)
-        }
         setUserName(e.target.value)
     }
 
@@ -31,7 +25,7 @@ function AddUserForm( {handleAdd} ) {
 
     return (
         <div>
-            <form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
                 <p>
                     Not There? Create a new User
                 </p>
@@ -42,11 +36,11 @@ function AddUserForm( {handleAdd} ) {
                            value={userName}/>
                 </div>
                 <div>
-                    <button type='submit'>
+                    <Button className='mt-3' type='submit'>
                         Submit
-                    </button>
+                    </Button>
                 </div>
-            </form>
+            </Form>
         </div>
     );
 }

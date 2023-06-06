@@ -1,7 +1,7 @@
-// user id to be added once backend and DB are set up.
-// other properties to be added if needed.
 const userData = [
     {
+        // user id from Mongo DB
+        // planParamSlice
         userName: 'User A',
     },
     {

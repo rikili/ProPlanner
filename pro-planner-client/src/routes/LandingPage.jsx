@@ -1,6 +1,8 @@
+import UserSelectionPage from "./UserSelectionPage";
+
 const LandingPage = () => {
     return <p>
-        Landing Page!
+        <UserSelectionPage/>
     </p>
 };
 

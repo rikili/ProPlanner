@@ -5,12 +5,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import LandingPage from './routes/LandingPage';
 import ErrorPage from './routes/ErrorPage';
-import UserSelectionPage from "./routes/UserSelectionPage";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <UserSelectionPage />,
+    element: <LandingPage />,
     errorElement: <ErrorPage />,
     children: [], // TODO: Add routes for supported pages here
   },

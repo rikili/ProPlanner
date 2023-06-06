@@ -1,32 +1,44 @@
 import React from 'react';
-import User from "./User";
-import PropTypes from "prop-types";
+import {Button, Form} from "react-bootstrap";
 
-function UserList({userList}) {
+function UserList({userList, selectedUser, setSelectedUser}) {
     if (!userList || userList.length === 0) {
         return <p>No User Yet</p>
     }
 
+    const handleUserSelect = (user) => {
+        setSelectedUser(user);
+    };
+
     return (
         <div>
             <p>Which one is you?</p>
-            {userList.map((user) => (
-                <User user={user}/>
-            ))}
-            <button onClick={() => console.log("navigate to creation page")}>
-                Continue
-            </button>
+            <Form>
+                {userList.map((user) => (
+                    <div key={user.userName}>
+                        <Form.Check
+                            type="radio"
+                            id={user.userName}
+                            label={user.userName}
+                            checked={selectedUser === user}
+                            onChange={() => handleUserSelect(user)}
+                        />
+                    </div>
+                ))}
+                <Button
+                    onClick={() => {
+                        if (selectedUser) {
+                            console.log("Navigate to creation page");
+                        } else {
+                            console.log("Please select a user");
+                        }
+                    }}
+                >
+                    Continue
+                </Button>
+            </Form>
         </div>
     );
-}
-
-// type check and type warning prevention in console
-UserList.propTypes = {
-    userList: PropTypes.arrayOf(
-        PropTypes.shape({
-            userName: PropTypes.string.isRequired
-        })
-    )
 }
 
 export default UserList;
