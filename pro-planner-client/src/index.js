@@ -1,30 +1,56 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import LandingPage from './routes/LandingPage';
 import ErrorPage from './routes/ErrorPage';
+import Trip from './routes/Trip';
+import Outing from './routes/Outing';
+import ExistingPlan from './routes/ExistingPlan';
 import store from './store';
 
-const router = createBrowserRouter([
-	{
-		path: '/',
-		element: <LandingPage />,
-		errorElement: <ErrorPage />,
-		children: [], // TODO: Add routes for supported pages here
-	},
-]);
+// const router = createBrowserRouter([
+// 	{
+// 		path: '/',
+// 		element: <LandingPage />,
+// 		errorElement: <ErrorPage />,
+// 		children: [
+// 			// {
+// 			// 	path: 'create-trip',
+// 			// 	element: <Trip />,
+// 			// 	errorElement: <ErrorPage />,
+// 			// },
+// 			// {
+// 			// 	path: '/create-outing',
+// 			// 	element: <Outing />,
+// 			// 	errorElement: <ErrorPage />,
+// 			// },
+// 			// {
+// 			// 	path: '/join-existing-plan-URLHERE',
+// 			// 	element: <ExistingPlan />,
+// 			// 	errorElement: <ErrorPage />,
+// 			// },
+// 		], // TODO: Add routes for supported pages here
+// 	},
+// ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+	<React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/" element={<LandingPage />} />
+          <Route exact path="/Trip" element={<Trip />} />
+          <Route exact path="/Outing" element={<Outing />} />
+          <Route exact path="/ExistingPlan" element={<ExistingPlan />} />
+        </Routes>
+      </BrowserRouter>
     </Provider>
-  </React.StrictMode>
+	</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
