@@ -12,10 +12,12 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { FiInfo } from 'react-icons/fi';
 import './LandingPage.css';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
 	const [activeComponent, setActiveComponent] = useState(null);
 	const [inputValue, setInputValue] = useState('');
+	const navigate = useNavigate();
 
 	const handleButtonClick = componentName => {
 		setActiveComponent(componentName);
@@ -70,11 +72,10 @@ const LandingPage = () => {
 											</p>
 											<div className="mb-3">
 												<Row>
-													<Button
+													<button
 														variant="primary"
 														size="lg"
 														className="mb-2 createplan-btn"
-														onClick={() => handleButtonClick('Trip')}
 													>
 														Trip
 														<OverlayTrigger
@@ -85,14 +86,13 @@ const LandingPage = () => {
 																<FiInfo />
 															</span>
 														</OverlayTrigger>
-													</Button>
+													</button>
 												</Row>
 												<Row>
-													<Button
+													<button
 														variant="primary"
 														size="lg"
 														className="createplan-btn"
-														onClick={() => handleButtonClick('Outing')}
 													>
 														Outing
 														<OverlayTrigger
@@ -103,10 +103,10 @@ const LandingPage = () => {
 																<FiInfo />
 															</span>
 														</OverlayTrigger>
-													</Button>
+													</button>
 												</Row>
 												<div className="mt-3">
-													<p className="text-center">
+													<div className="text-center">
 														Joining a Plan? Enter the URL or Code.
 														<Form className="join-form">
 															<Form.Control
@@ -119,15 +119,12 @@ const LandingPage = () => {
 																	variant="primary"
 																	type="submit"
 																	className="mt-2"
-																	onClick={() =>
-																		handleButtonClick('ExistingPlan')
-																	}
 																>
 																	Join
 																</Button>
 															</div>
 														</Form>
-													</p>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -142,7 +139,87 @@ const LandingPage = () => {
 
 	const renderTooltip = text => <Tooltip id="button-tooltip">{text}</Tooltip>;
 
-	return <div>{renderComponent()}</div>;
+	return (
+		<Container>
+			<Row className="vh-100 d-flex justify-content-center align-items-center">
+				<Col md={8} lg={6} xs={12}>
+					<div className="border border-3 border-primary"></div>
+					<Card className="shadow">
+						<Card.Body>
+							<div className="mt-md-4">
+								<h2 className="fw-bold text-uppercase d-flex justify-content-center align-items-center">
+									ProPlanner
+								</h2>
+								<p className="d-flex justify-content-center align-items-center">
+									Choose the Type of Plan you'd like to Create
+								</p>
+								<div className="mb-3">
+									<Row>
+										<Button
+											variant="primary"
+											size="lg"
+											className="mb-2 createplan-btn"
+											onClick={() => navigate('/Trip')}
+										>
+											Trip
+											<OverlayTrigger
+												placement="top"
+												overlay={renderTooltip('Tooltip for Trip')}
+											>
+												<span className="i-icon">
+													<FiInfo />
+												</span>
+											</OverlayTrigger>
+										</Button>
+									</Row>
+									<Row>
+										<Button
+											variant="primary"
+											size="lg"
+											className="createplan-btn"
+											onClick={() => navigate('/Outing')}
+										>
+											Outing
+											<OverlayTrigger
+												placement="top"
+												overlay={renderTooltip('Tooltip for Outing')}
+											>
+												<span className="i-icon">
+													<FiInfo />
+												</span>
+											</OverlayTrigger>
+										</Button>
+									</Row>
+									<div className="mt-3">
+										<div className="text-center">
+											Joining a Plan? Enter the URL or Code.
+											<Form className="join-form">
+												<Form.Control
+													placeholder="Enter URL/Code"
+													value={inputValue}
+													onChange={handleInput}
+												/>
+												<div className="join-btn">
+													<Button
+														variant="primary"
+														type="submit"
+														className="mt-2"
+														onClick={() => navigate('/ExistingPlan')}
+													>
+														Join
+													</Button>
+												</div>
+											</Form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</Card.Body>
+					</Card>
+				</Col>
+			</Row>
+		</Container>
+	);
 };
 
 export default LandingPage;
