@@ -26,15 +26,17 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
 
         const timeResults = isOuting ? timeForm.current.retrieveData() : null;
         if (isOuting && !timeResults.isAllDay) {
-            const startDateTime = new Date(`${detailResults.dateRange[0]}, ${timeResults.timeRange[0]}`);
-            const endTime = new Date(`${detailResults.dateRange[0]}, ${timeResults.timeRange[1]}`);
-            const endDate = new Date(`${detailResults.dateRange[1]}, ${timeResults.timeRange[1]}`);
+            const startDateTime = new Date(`${detailResults.dateRange[0]}, ${timeResults.timeRange[0]}`).toISOString();
+            const endTime = new Date(`${detailResults.dateRange[0]}, ${timeResults.timeRange[1]}`).toISOString();
+            const endDate = new Date(`${detailResults.dateRange[1]}, ${timeResults.timeRange[1]}`).toISOString();
+
+            console.log(timeResults.timeRange[1]);
 
             formResult.isAllDay = false;
             formResult.dateTimeRange =  [[startDateTime, endTime], endDate];
         } else {
-            const startDateTime = new Date(`${detailResults.dateRange[0]}, 00:00:00`);
-            const endDate = new Date(`${detailResults.dateRange[1]}, 23:59:59`);
+            const startDateTime = new Date(`${detailResults.dateRange[0]}, 00:00:00`).toISOString();
+            const endDate = new Date(`${detailResults.dateRange[1]}, 23:59:59`).toISOString();
             formResult.dateTimeRange = [startDateTime, endDate];
         }
         
