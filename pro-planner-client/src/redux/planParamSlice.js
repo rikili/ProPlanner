@@ -1,24 +1,37 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const PLAN_TYPE = {
+    OUTING: 'outing',
+    TRIP: 'trip',
+}
+
+const isValidOutingFormat = (dateTime) => {
+    return (dateTime 
+        && dateTime[0]
+        && dateTime[1]
+        && dateTime[0][0]
+        && dateTime[0][1]
+    );
+}
+
 export const planParamSlice = createSlice({
     name: 'parameters',
     initialState: {
         name: null,
-        planType: 'Trip',
+        planType: PLAN_TYPE.TRIP,
         availableDays: [],
-        dateRange: [],
+        dateTimeRange: [],
         isAllDay: false,
-        timeRange: [],
         location: null
     },
     reducers: {
         // payload should be a string of either 'Trip' or 'Outing'
         changePlanType(state, action) {
             switch(action.payload) {
-                case 'Trip':
+                case PLAN_TYPE.TRIP:
                     state.planType = action.payload;
                     break;
-                case 'Outing':
+                case PLAN_TYPE.OUTING:
                     state.planType = action.payload;
                     break;
                 default:
@@ -31,8 +44,8 @@ export const planParamSlice = createSlice({
             const input = action.payload;
             if (!(input.name
                 && input.availableDays.length 
-                && input.dateRange.length 
-                && (input.isAllDay || (input.dateRange?.length && input.dateRange[0] && input.dateRange[1])) 
+                && input.dateTimeRange.length 
+                && (input.isAllDay || isValidOutingFormat(input.dateTimeRange)) 
                 && input.location)) {
                     console.error("Incomplete payload sent to state for updating plan.");
                     return;
@@ -41,8 +54,7 @@ export const planParamSlice = createSlice({
             state.availableDays = input.availableDays;
             state.isAllDay = input.isAllDay;
             state.location = input.location;
-            state.dateRange = input.dateRange;
-            state.timeRange = state.planType === "Outing" ? input.timeRange : state.timeRange;
+            state.dateTimeRange = input.dateTimeRange;
         }
     },
 });
