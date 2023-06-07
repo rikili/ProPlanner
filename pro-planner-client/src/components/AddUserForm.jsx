@@ -8,7 +8,7 @@ const AddUserForm = () => {
     const [userName, setUserName] = useState('')
     const dispatch = useDispatch();
 
-    const handleUserNameChange = (e) => {
+    const handleAddUser = (e) => {
         setUserName(e.target.value)
     }
 
@@ -33,7 +33,7 @@ const AddUserForm = () => {
                     Not There? Create a new User
                 </p>
                 <div>
-                    <input onChange={handleUserNameChange}
+                    <input onChange={handleAddUser}
                            type='text'
                            placeholder='Name of new user'
                            value={userName}/>
