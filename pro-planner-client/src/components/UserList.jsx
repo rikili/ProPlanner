@@ -1,13 +1,28 @@
 import React from 'react';
 import {Button, Form} from "react-bootstrap";
+import {useSelector, useDispatch} from 'react-redux';
+import {selectUser, navigateToCreationPage} from '../redux/userSlice';
 
-function UserList({userList, selectedUser, setSelectedUser}) {
+const UserList = () => {
+    const userList = useSelector((state) => state.user.userList);
+    const selectedUser = useSelector((state) => state.user.selectedUser);
+    const dispatch = useDispatch();
+
+
     if (!userList || userList.length === 0) {
         return <p>No User Yet</p>
     }
 
     const handleUserSelect = (user) => {
-        setSelectedUser(user);
+        dispatch(selectUser(user));
+    };
+
+    const handleContinueClick = () => {
+        if (selectedUser) {
+            dispatch(navigateToCreationPage());
+        } else {
+            console.log('Please select a user');
+        }
     };
 
     return (
@@ -25,15 +40,7 @@ function UserList({userList, selectedUser, setSelectedUser}) {
                         />
                     </div>
                 ))}
-                <Button
-                    onClick={() => {
-                        if (selectedUser) {
-                            console.log("Navigate to creation page");
-                        } else {
-                            console.log("Please select a user");
-                        }
-                    }}
-                >
+                <Button onClick={handleContinueClick}>
                     Continue
                 </Button>
             </Form>

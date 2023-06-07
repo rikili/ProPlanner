@@ -1,9 +1,12 @@
 import React from 'react';
 import {useState} from "react";
-import {Button, Form, } from "react-bootstrap";
+import {Button, Form,} from "react-bootstrap";
+import {addUser} from "../redux/userSlice";
+import {useDispatch} from 'react-redux';
 
-function AddUserForm({handleAdd}) {
+const AddUserForm = () => {
     const [userName, setUserName] = useState('')
+    const dispatch = useDispatch();
 
     const handleUserNameChange = (e) => {
         setUserName(e.target.value)
@@ -16,7 +19,7 @@ function AddUserForm({handleAdd}) {
                 userName
             }
 
-            handleAdd(newUser)
+            dispatch(addUser(newUser))
 
             setUserName('')
         }

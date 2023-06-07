@@ -1,4 +1,4 @@
-const userData = [
+const initialUserData = [
     {
         // user id from Mongo DB
         // planParamSlice
@@ -9,4 +9,4 @@ const userData = [
     }
 ]
 
-export default userData
+export default initialUserData
