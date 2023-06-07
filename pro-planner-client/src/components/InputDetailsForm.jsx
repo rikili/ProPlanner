@@ -26,7 +26,6 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
     useImperativeHandle(ref, () => {
         return {
             retrieveData: () => {
-                console.log(formRef.current.formPlanStartDate.value);
                 return {
                     name: formRef.current.formPlanName.value,
                     location: formRef.current.formPlanLoc.value,
