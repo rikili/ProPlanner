@@ -2,10 +2,10 @@ import NavigationBar from "../components/NavigationBar";
 import { Outlet } from "react-router";
 
 const HomePage = () => {
-	return <div>
+	return <>
 		<NavigationBar />
         <Outlet />
-	</div>;
+	</>;
 };
 
 export default HomePage;

@@ -25,6 +25,7 @@ const LandingPage = () => {
     };
 
     const handleJoin = (event) => {
+        event.preventDefault();
         //TODO: get ID if URL
         navigate(`/${inputValue}`);
     }

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import InputDetailsForm from '../components/InputDetailsForm';
 import TimeRangeForm from '../components/TimeRangeForm';
@@ -18,6 +18,7 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
     const timeForm = useRef(null);
     const isOuting = useSelector(state => state.planParameters.planType) === PLAN_TYPE.OUTING;
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleFormSubmission = () => {
         const detailResults = detailForm.current.retrieveData();
@@ -35,8 +36,6 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
             const endTime = new Date(`${detailResults.dateRange[0]}, ${timeResults.timeRange[1]}`).toISOString();
             const endDate = new Date(`${detailResults.dateRange[1]}, ${timeResults.timeRange[1]}`).toISOString();
 
-            console.log(timeResults.timeRange[1]);
-
             formResult.isAllDay = false;
             formResult.dateTimeRange =  [[startDateTime, endTime], endDate];
         } else {
@@ -46,17 +45,16 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
         }
         
         dispatch(updatePlan(formResult));
+        navigate(`view/${tripId}`); // TODO: ID should be generated on confirm -- get from backend
     }
 
     return <div className="w-50 mx-auto mt-5">
         <InputDetailsForm ref={detailForm} title={title} />
         {isOuting && <TimeRangeForm ref={timeForm} />}
         <div className="text-center m-3">
-            <Link to={`view/${tripId}`}>
-                <Button className="w-50" variant="success" size="md" onClick={handleFormSubmission}>
-                    <b>Submit</b>
-                </Button>
-            </Link>
+            <Button className="w-50" variant="success" size="md" onClick={handleFormSubmission}>
+                <b>Submit</b>
+            </Button>
         </div>
     </div>
 }
