@@ -1,14 +1,19 @@
 import { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
-import InputDetailsForm from './InputDetailsForm';
-import TimeRangeForm from './TimeRangeForm';
+import InputDetailsForm from '../components/InputDetailsForm';
+import TimeRangeForm from '../components/TimeRangeForm';
 import { updatePlan, PLAN_TYPE } from '../redux/planParamSlice';
 
 const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => { 
     //TODO: currently title is customizable, may want to consider removing
     //      if creator isn't re-used (ie. if we use this comp for editing)
+
+    // const { tripId } = useParams(); //Access for tripId
+    const tripId = 123;
+
     const detailForm = useRef(null);
     const timeForm = useRef(null);
     const isOuting = useSelector(state => state.planParameters.planType) === PLAN_TYPE.OUTING;
@@ -47,9 +52,11 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
         <InputDetailsForm ref={detailForm} title={title} />
         {isOuting && <TimeRangeForm ref={timeForm} />}
         <div className="text-center m-3">
-            <Button className="w-50" variant="success" size="md" onClick={handleFormSubmission}>
-                <b>Submit</b>
-            </Button>
+            <Link to={`view/${tripId}`}>
+                <Button className="w-50" variant="success" size="md" onClick={handleFormSubmission}>
+                    <b>Submit</b>
+                </Button>
+            </Link>
         </div>
     </div>
 }
