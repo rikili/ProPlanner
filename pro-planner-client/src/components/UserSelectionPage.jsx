@@ -17,6 +17,8 @@ const UserSelectionPage = () => {
             <Container className='d-flex vh-100 justify-content-center align-items-center'>
                 <Card className='mt-3 p-3'>
                     <UserList/>
+                </Card>
+                <Card className='mt-3 p-3'>
                     <AddUserForm handleAdd={handleAddUser}/>
                 </Card>
             </Container>

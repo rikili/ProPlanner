@@ -15,11 +15,8 @@ const AddUserForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         if (userName !== '' && userName.trim().length > 0) {
-            const newUser = {
-                userName
-            }
 
-            dispatch(addUser(newUser))
+            dispatch(addUser(userName))
 
             setUserName('')
         }

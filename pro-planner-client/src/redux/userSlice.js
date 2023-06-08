@@ -1,14 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-    userList: [
-        {
-            userName: 'User A',
-        },
-        {
-            userName: 'User B',
-        },
-    ],
+    userList: ['User A', 'User B'],
     selectedUser: null,
 };
 
@@ -22,12 +15,9 @@ const userSlice = createSlice({
         selectUser: (state, action) => {
             state.selectedUser = action.payload;
         },
-        navigateToCreationPage: (state) => {
-            // Handle navigation to the creation page
-        },
     },
 });
 
-export const {addUser, selectUser, navigateToCreationPage} = userSlice.actions;
+export const {addUser, selectUser} = userSlice.actions;
 
 export default userSlice.reducer;
