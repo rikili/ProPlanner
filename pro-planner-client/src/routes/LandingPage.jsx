@@ -1,7 +1,9 @@
+import TripCalendar from '../components/TripCalendar';
+
 const LandingPage = () => {
-    return <p>
-        Landing Page!
-    </p>
+    return <div>
+        <TripCalendar />
+    </div>
 };
 
 export default LandingPage;
