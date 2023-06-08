@@ -9,6 +9,7 @@ import {
 	endOfMonth,
 	addMonths,
 	subMonths,
+	getMonth,
 } from 'date-fns';
 
 // const formMonthMap = (inputDate) => {
@@ -91,7 +92,12 @@ const TripCalendar = () => {
 					>
 						{'<'}
 					</button>
-					<p> {currYear + ' ' + MONTHS[currMonth]}</p>
+					<p>
+						{' '}
+						{startDayOfMonth.getFullYear() +
+							' ' +
+							MONTHS[startDayOfMonth.getMonth()]}
+					</p>
 					<button
 						onClick={() => handleChangetMonth(true)}
 						style={{ background: 'inherit', border: 'none' }}
