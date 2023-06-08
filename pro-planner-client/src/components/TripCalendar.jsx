@@ -1,4 +1,9 @@
 import './TripCalendar.css'
+import Cell from './Cell.js'
+import { useState, useEffect } from 'react'
+import { format, compareAsc, getDay, startOfMonth, endOfMonth, addMonths, subMonths } from 'date-fns/fp'
+
+
 
 // const formMonthMap = (inputDate) => {
 //     const firstDay = new Date(inputDate);
@@ -16,17 +21,58 @@ import './TripCalendar.css'
 //     }
 //     return monthArr;
 // }
+const MONTHS = {
+    0: 'January',
+    1: 'February',
+    2: 'March',
+    3: 'April',
+    4: 'May',
+    5: 'June',
+    6: 'July',
+    7: 'August',
+    8: 'September',
+    9: 'October',
+    10: 'November',
+    11: 'December',
+}
 
 const TripCalendar = () => {
+    // temp variables
     const monthArray = [[1,2,3,4, 5, 6, 7],[5,6,7,8,9,10,11],[5,6,7,8,9,10,11],[5,6,7,8,9,10,11],[5,6,7,8,9,10,11],[5,6,7,8,9,10,11]];
+    const startDate = new Date(2021, 5, 15)
+    const endDate = new Date(2024, 6, 20)
+
+   
+   
+    const [startDayOfMonth, setStartDayOfMonth] = useState(startOfMonth(startDate));
+
+    const [currYear, setCurrYear] = useState(startDate.getFullYear());
+    const [currMonth, setCurrMonth] = useState(Number.parseInt(startDate.getMonth()));
+
+
+    // Handle pressing next month -> changes the state of currMonth, and if December is our currState, then changes the state of currYear
+    const handleChangetMonth = (isNext) => {
+        if (isNext && startDayOfMonth) {
+            setStartDayOfMonth(addMonths(startDayOfMonth, 1));
+            console.log(startDayOfMonth)
+        } else {
+            setStartDayOfMonth(subMonths(startDayOfMonth, 1));
+            console.log(startDayOfMonth)
+        }
+    }
+
+        useEffect(() => {
+        console.log(startDayOfMonth);
+    }, [startDayOfMonth]);
+
 
     return <div>
         Trip Calendar!
         <div className="calendar-grid">
             <header class="calendar-toolbar">
-                <button onClick={() => console.log("left")}>{'<'}</button>
-                <p>January 2023</p>
-                <button onClick={() => console.log("right")}>{'>'}</button>
+                <button onClick={() => handleChangetMonth(false)} style={ {background: 'inherit', border: 'none'} }>{'<'}</button>
+                <p> {currYear + " " + MONTHS[currMonth]}</p>
+                <button onClick={() => handleChangetMonth(true)} style={ {background: 'inherit', border: 'none'}}>{'>'}</button>
             </header>
             <main>
                 <ul className='weekday-labels'>
@@ -42,8 +88,8 @@ const TripCalendar = () => {
                     return <div className="week-container">
                         {weekArr.map((day) => {
                             return <div className="day-container">
-                                <div className="half-day">a</div>
-                                <div className="half-day">b</div>
+                                <Cell className="half-day" type="AM" date={ startDate } />
+                                <Cell className="half-day" type="PM"  date={ startDate }/>
                             </div>
                         })}
                     </div>
