@@ -15,6 +15,9 @@ const UserSelectionPage = () => {
     return (
         <>
             <Container className='d-flex vh-100 justify-content-center align-items-center flex-column'>
+                <h2 className='fw-bold'>
+                    ProPlanner
+                </h2>
                 <div className='d-flex gap-4'>
                     <Card className='mt-4 p-4' style={{width: '500px', height: '500px'}}>
                         <UserList/>
