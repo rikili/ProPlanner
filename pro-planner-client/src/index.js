@@ -1,54 +1,57 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
+import PlanCreator from './routes/PlanCreator';
 import LandingPage from './routes/LandingPage';
+import SchedulePage from './routes/SchedulePage';
+import VotePage from './routes/VotePage';
+import CostPage from './routes/CostPage';
 import ErrorPage from './routes/ErrorPage';
-import Trip from './routes/Trip';
-import Outing from './routes/Outing';
-import ExistingPlan from './routes/ExistingPlan';
 import store from './store';
+import HomePage from './routes/HomePage';
 
-// const router = createBrowserRouter([
-// 	{
-// 		path: '/',
-// 		element: <LandingPage />,
-// 		errorElement: <ErrorPage />,
-// 		children: [
-// 			// {
-// 			// 	path: 'create-trip',
-// 			// 	element: <Trip />,
-// 			// 	errorElement: <ErrorPage />,
-// 			// },
-// 			// {
-// 			// 	path: '/create-outing',
-// 			// 	element: <Outing />,
-// 			// 	errorElement: <ErrorPage />,
-// 			// },
-// 			// {
-// 			// 	path: '/join-existing-plan-URLHERE',
-// 			// 	element: <ExistingPlan />,
-// 			// 	errorElement: <ErrorPage />,
-// 			// },
-// 		], // TODO: Add routes for supported pages here
-// 	},
-// ]);
+const router = createBrowserRouter([
+	{
+		path: '/',
+		element: <LandingPage />,
+		errorElement: <ErrorPage />,
+	},
+  {
+    path: 'create',
+    element: <PlanCreator />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/:tripId/',
+    loader: ({ params }) => params.tripId, // TODO: can be made to cause an API call to fetch ID, passing it for now
+    element: <HomePage />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '',
+        element: <SchedulePage />
+      },
+      {
+        path: 'vote',
+        element: <VotePage />
+      },
+      {
+        path: 'cost',
+        element: <CostPage />
+      },
+    ]
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route exact path="/" element={<LandingPage />} />
-          <Route exact path="/Trip" element={<Trip />} />
-          <Route exact path="/Outing" element={<Outing />} />
-          <Route exact path="/ExistingPlan" element={<ExistingPlan />} />
-        </Routes>
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </Provider>
 	</React.StrictMode>
 );
