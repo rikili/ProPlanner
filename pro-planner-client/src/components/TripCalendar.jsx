@@ -11,6 +11,7 @@ import {
 	subMonths,
 	getMonth,
 } from 'date-fns';
+import { BsFillCaretRightFill, BsFillCaretLeftFill } from 'react-icons/bs';
 
 // const formMonthMap = (inputDate) => {
 //     const firstDay = new Date(inputDate);
@@ -53,17 +54,15 @@ const TripCalendar = () => {
 		[5, 6, 7, 8, 9, 10, 11],
 		[5, 6, 7, 8, 9, 10, 11],
 	];
+
+	//TODO: retreive the values for these from redux based on the user's inputed dateRange.
 	const startDate = new Date(2021, 5, 15);
 	const endDate = new Date(2022, 6, 20);
 
 	const [startDayOfMonth, setStartDayOfMonth] = useState(
 		startOfMonth(startDate)
 	);
-
-	const [currYear, setCurrYear] = useState(startDate.getFullYear());
-	const [currMonth, setCurrMonth] = useState(
-		Number.parseInt(startDate.getMonth())
-	);
+	const [disableButton, setDisableButton] = useState();
 
 	// Handle pressing next/previous month.
 	// Once you go next and reach the endDate, you cant go further.
@@ -76,6 +75,8 @@ const TripCalendar = () => {
 			setStartDayOfMonth(addMonths(startDayOfMonth, 1));
 		} else if (!isNext && isBefore) {
 			setStartDayOfMonth(subMonths(startDayOfMonth, 1));
+		} else if (isNext) {
+			//CHANGE HERE
 		}
 	};
 
@@ -84,54 +85,118 @@ const TripCalendar = () => {
 	return (
 		<div>
 			Trip Calendar!
-			<div className="calendar-grid">
-				<header className="calendar-toolbar">
-					<button
-						onClick={() => handleChangetMonth(false)}
-						style={{ background: 'inherit', border: 'none' }}
-					>
-						{'<'}
-					</button>
-					<p>
-						{' '}
-						{startDayOfMonth.getFullYear() +
-							' ' +
-							MONTHS[startDayOfMonth.getMonth()]}
-					</p>
-					<button
-						onClick={() => handleChangetMonth(true)}
-						style={{ background: 'inherit', border: 'none' }}
-					>
-						{'>'}
-					</button>
-				</header>
-				<main>
-					<ul className="weekday-labels">
-						<li>Sun</li>
-						<li>Mon</li>
-						<li>Tue</li>
-						<li>Wed</li>
-						<li>Thu</li>
-						<li>Fri</li>
-						<li>Sat</li>
-					</ul>
-					{monthArray.map(weekArr => {
-						return (
-							<div className="week-container">
-								{weekArr.map(day => {
-									return (
-										<div className="day-container">
-											<Cell className="half-day" type="AM" date={startDate} />
-											<Cell className="half-day" type="PM" date={startDate} />
-										</div>
-									);
-								})}
+			<div className="container">
+				<div className="card">
+					<div className="card-header">
+						<div className="row justify-content-center align-items-center">
+							<div className="col">
+								<button
+									onClick={() => handleChangetMonth(false)}
+									className="month-nav-left"
+									style={{ background: 'inherit', border: 'none' }}
+								>
+									<BsFillCaretLeftFill />
+								</button>
 							</div>
-						);
-					})}
-				</main>
+							<div className="col text-center">
+								<p>
+									{' '}
+									{startDayOfMonth.getFullYear() +
+										' ' +
+										MONTHS[startDayOfMonth.getMonth()]}
+								</p>
+							</div>
+							<div className="col text-right">
+								<button
+									onClick={() => handleChangetMonth(true)}
+									className="month-nav-right"
+									style={{ background: 'inherit', border: 'none' }}
+								>
+									<BsFillCaretRightFill />
+								</button>
+							</div>
+						</div>
+					</div>
+					<main>
+						<ul className="weekday-labels">
+							<li>Sun</li>
+							<li>Mon</li>
+							<li>Tue</li>
+							<li>Wed</li>
+							<li>Thu</li>
+							<li>Fri</li>
+							<li>Sat</li>
+						</ul>
+						{monthArray.map(weekArr => {
+							return (
+								<div className="week-container">
+									{weekArr.map(day => {
+										return (
+											<div className="day-container">
+												<Cell className="half-day" type="AM" date={startDate} />
+												<Cell className="half-day" type="PM" date={startDate} />
+											</div>
+										);
+									})}
+								</div>
+							);
+						})}
+					</main>
+				</div>
 			</div>
 		</div>
+		// ---------------- O L D    C O D E --------------------
+		// <div>
+		// 	Trip Calendar!
+		// 	<div className="calendar-grid">
+		// 		<header className="calendar-toolbar">
+		// 			<button
+		// 				onClick={() => handleChangetMonth(false)}
+		// 				style={{ background: 'inherit', border: 'none' }}
+		// 			>
+		// 				{'<'}
+		// 			</button>
+		// 			<p>
+		// 				{' '}
+		// 				{startDayOfMonth.getFullYear() +
+		// 					' ' +
+		// 					MONTHS[startDayOfMonth.getMonth()]}
+		// 			</p>
+		// 			<button
+		// 				onClick={() => handleChangetMonth(true)}
+		// 				style={{ background: 'inherit', border: 'none' }}
+		// 			>
+		// 				{'>'}
+		// 			</button>
+		// 		</header>
+		// 		<main>
+		// 			<ul className="weekday-labels">
+		// 				<li>Sun</li>
+		// 				<li>Mon</li>
+		// 				<li>Tue</li>
+		// 				<li>Wed</li>
+		// 				<li>Thu</li>
+		// 				<li>Fri</li>
+		// 				<li>Sat</li>
+		// 			</ul>
+		// 			{monthArray.map(weekArr => {
+		// 				return (
+		// 					<div className="week-container">
+		// 						{weekArr.map(day => {
+		// 							return (
+		// 								<div className="day-container">
+		// 									<Cell className="half-day" type="AM" date={startDate} />
+		// 									<Cell className="half-day" type="PM" date={startDate} />
+		// 								</div>
+		// 							);
+		// 						})}
+		// 					</div>
+		// 				);
+		// 			})}
+		// 		</main>
+		// 	</div>
+		// </div>
+		// ---------------- O L D    C O D E --------------------
 	);
 };
 
