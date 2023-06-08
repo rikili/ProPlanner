@@ -24,24 +24,24 @@ const AddUserForm = () => {
     }
 
     return (
-        <div>
+        <>
             <Form onSubmit={handleSubmit}>
-                <p>
-                    Not There? Create a new User
-                </p>
+                <Form.Label>Not There? Create a new User</Form.Label>
                 <div>
-                    <input onChange={handleAddUser}
-                           type='text'
-                           placeholder='Name of new user'
-                           value={userName}/>
+                    <input
+                        style={{width: '100%', height: '40px'}}
+                        type='text'
+                        placeholder='Name of new user'
+                        value={userName}
+                        onChange={handleAddUser}/>
                 </div>
                 <div>
-                    <Button className='mt-3' type='submit'>
+                    <Button className='mt-3' type='submit' style={{width: '100%'}}>
                         Submit
                     </Button>
                 </div>
             </Form>
-        </div>
+        </>
     );
 }
 

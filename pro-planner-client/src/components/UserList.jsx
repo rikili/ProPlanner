@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form} from "react-bootstrap";
+import {Button, Form, ToggleButton} from "react-bootstrap";
 import {useSelector, useDispatch} from 'react-redux';
 import {selectUser} from '../redux/userSlice';
 import {useNavigate} from "react-router-dom";
@@ -9,7 +9,6 @@ const UserList = () => {
     const selectedUser = useSelector((state) => state.user.selectedUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
 
     if (!userList || userList.length === 0) {
         return <p>No User Yet</p>
@@ -29,25 +28,32 @@ const UserList = () => {
     };
 
     return (
-        <div>
-            <p>Which one is you?</p>
+        <>
             <Form>
-                {userList.map((user) => (
-                    <div key={user}>
-                        <Form.Check
-                            type="radio"
-                            id={user}
-                            label={user}
-                            checked={selectedUser === user}
-                            onChange={() => handleUserSelect(user)}
-                        />
-                    </div>
-                ))}
-                <Button onClick={handleContinueClick}>
+                <Form.Label>Which one is you?</Form.Label>
+                <div style={{width: '100%'}}>
+                    {userList.map((user) => (
+                        <div key={user}>
+                            <ToggleButton
+                                style={{width: '100%'}}
+                                className="mb-2"
+                                variant="outline-secondary"
+                                type="checkbox"
+                                id={user}
+                                checked={selectedUser === user} onChange={() => handleUserSelect(user)}
+                                value={user}
+                            >
+                                {user}
+                            </ToggleButton>
+                        </div>
+                    ))}
+                </div>
+                <Button style={{width: '100%'}}
+                    onClick={handleContinueClick}>
                     Continue
                 </Button>
             </Form>
-        </div>
+        </>
     );
 }
 

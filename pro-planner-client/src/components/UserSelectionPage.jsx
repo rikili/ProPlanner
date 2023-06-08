@@ -13,16 +13,18 @@ const UserSelectionPage = () => {
     };
 
     return (
-        <div>
-            <Container className='d-flex vh-100 justify-content-center align-items-center'>
-                <Card className='mt-3 p-3'>
-                    <UserList/>
-                </Card>
-                <Card className='mt-3 p-3'>
-                    <AddUserForm handleAdd={handleAddUser}/>
-                </Card>
+        <>
+            <Container className='d-flex vh-100 justify-content-center align-items-center flex-column'>
+                <div className='d-flex gap-4'>
+                    <Card className='mt-4 p-4' style={{width: '500px', height: '500px'}}>
+                        <UserList/>
+                    </Card>
+                    <Card className='mt-4 p-4' style={{width: '400px', height: '200px'}}>
+                        <AddUserForm handleAdd={handleAddUser}/>
+                    </Card>
+                </div>
             </Container>
-        </div>
+        </>
     );
 }
 

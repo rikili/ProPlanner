@@ -2,9 +2,9 @@ import React from 'react';
 import UserSelectionPage from "../components/UserSelectionPage";
 
 const LandingPage = () => {
-    return <p>
+    return <>
         <UserSelectionPage/>
-    </p>
+    </>
 };
 
 export default LandingPage;
