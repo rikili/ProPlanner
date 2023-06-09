@@ -1,6 +1,6 @@
 // descructuring references https://www.w3schools.com/react/react_es6_destructuring.asp
 import React from 'react';
-import { addMinutes, format, isAfter, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { addMinutes, format, isAfter, isWithinInterval, startOfDay, endOfDay, getDate } from 'date-fns';
 
 import './Day.css';
 
@@ -17,7 +17,7 @@ const isSegmentAvailable = (time, interval, additionalInterval) => {
 function Day({ availability }) {
   const segmentTotal = 60;
 
-  const {startInterval, endInterval, additionalStart, additionalEnd, isAvailable} = availability;
+  const { startInterval, endInterval, additionalStart, additionalEnd, isAvailable } = availability;
   let dayDisplay = [];
   let hourDisplay = [];
   let segmentTracker = segmentTotal;
@@ -44,10 +44,11 @@ function Day({ availability }) {
       hourDisplay = [];
       segmentTracker = segmentTotal;
     }
-} 
+  }
 
   return (
-    <div className="w-100 position-relative">
+    <div className="w-100 position-relative text-center">
+      {getDate(startInterval)}
       {dayDisplay}
     </div>
   );
