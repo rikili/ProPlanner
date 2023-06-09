@@ -24,7 +24,7 @@ const UserList = () => {
         if (selectedUser) {
             navigate(`/${tripId}`);
         } else {
-            console.log('Please select a user');
+            alert('Please select a user');
         }
     };
 

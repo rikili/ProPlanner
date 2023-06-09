@@ -1,11 +1,36 @@
 // code references https://date-fns.org/docs/Getting-Started
 
-import { isAfter, set, getDay, getHours, getMinutes, addDays, getDate, startOfWeek, endOfWeek, startOfDay } from 'date-fns';
+import { 
+    addMilliseconds,
+    isAfter,
+    set,
+    getDay,
+    getHours,
+    getMinutes, 
+    addDays,
+    getDate,
+    startOfWeek,
+    endOfWeek,
+    startOfDay,
+    endOfDay,
+    parseISO 
+} from 'date-fns';
 
 export function processDates(params) {
-    const startInterval = params.dateTimeRange[0][0];
-    const endInterval = params.dateTimeRange[0][1];
-    const endDate = params.dateTimeRange[1];
+
+    let startInterval;
+    let endInterval;
+    let endDate;
+    if (params.isAllDay) {
+        startInterval = parseISO(params.dateTimeRange[0]);
+        endInterval = addDays(startInterval, 1);
+        endInterval = addMilliseconds(endInterval, -1);
+        endDate = parseISO(params.dateTimeRange[1]);
+    } else {
+        startInterval = parseISO(params.dateTimeRange[0][0]);
+        endInterval = parseISO(params.dateTimeRange[0][1]);
+        endDate = parseISO(params.dateTimeRange[1]);
+    }
 
     let nextDayOverFlow = false;
     if (getDate(startInterval) !== getDate(endInterval)) {
@@ -55,6 +80,7 @@ export function processDates(params) {
 
         if (dates[datesIndex].isAvailable) {
             if (nextDayOverFlow) {
+                console.log('HELLO!');
                 if (!firstDay) {
                     let additionalStartInterval = startOfDay(currDate);
                     let additionalEndInterval = set(new Date(), {
@@ -98,10 +124,12 @@ export function processDates(params) {
 
 function setInterval(interval, currDate) {
     return set(interval, {
+        year: currDate.getFullYear(),
+        month: currDate.getMonth(),
         date: getDate(currDate),
     });
 }
 
 export function getWeekInterval(startOfWeek) {
-    return [startOfWeek, set(addDays(startOfWeek, 6), { hours: 23, minutes: 59, seconds: 59, milliseconds: 99 })];
+    return [startOfWeek, endOfDay(addDays(startOfWeek, 6))];
 }

@@ -14,11 +14,11 @@ const isValidOutingFormat = (dateTime) => {
     );
 }
 
-export const planParamSlice = createSlice({
+const planParamSlice = createSlice({
     name: 'parameters',
     initialState: {
         name: null,
-        planType: PLAN_TYPE.TRIP,
+        planType: PLAN_TYPE.OUTING,
         availableDays: [],
         dateTimeRange: [],
         isAllDay: false,
