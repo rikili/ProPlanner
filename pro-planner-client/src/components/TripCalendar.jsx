@@ -125,6 +125,7 @@ const TripCalendar = () => {
 												date={''}
 												isSelectingDate={isSelectingDate}
 												setIsSelectingDate={setIsSelectingDate}
+												validDate={false}
 											/>
 										);
 									}
@@ -135,6 +136,7 @@ const TripCalendar = () => {
 											date={subDays(tempDate, 1)}
 											isSelectingDate={isSelectingDate}
 											setIsSelectingDate={setIsSelectingDate}
+											validDate={true}
 										/>
 									);
 								})}
