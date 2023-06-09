@@ -1,6 +1,6 @@
 import './TripCalendar.css';
 import Cell from './Cell.jsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	format,
 	compareAsc,
@@ -10,6 +10,8 @@ import {
 	addMonths,
 	subMonths,
 	getMonth,
+	isSameYear,
+	isSameMonth
 } from 'date-fns';
 
 
@@ -43,45 +45,44 @@ const TripCalendar = () => {
 	const startDate = new Date(2021, 5, 15);
 	const endDate = new Date(2022, 6, 20);
 
-	const [startDayOfMonth, setStartDayOfMonth] = useState(
+	// currDate stores the first day of the currently viewing month and year
+	const [currDate, setCurrDate] = useState(
 		startOfMonth(startDate)
 	);
 
-	// Handle pressing next/previous month.
-	// Once you go next and reach the endDate, you cant go further.
-	// Once you go back and reach the startDate, you cant go further.
-	const handleChangetMonth = isNext => {
-		const isAfter = compareAsc(endDate, addMonths(startDayOfMonth, 1)) == 1;
-		const isBefore = compareAsc(startDate, subMonths(startDayOfMonth, 1)) == -1;
-
-		if (isNext && isAfter) {
-			setStartDayOfMonth(addMonths(startDayOfMonth, 1));
-		} else if (!isNext && isBefore) {
-			setStartDayOfMonth(subMonths(startDayOfMonth, 1));
-		} else if (isNext) {
-		}
+	
+	const [isLeftEnd, setIsLeftEnd] = useState( isSameMonth(currDate, startDate) ? true : false );
+	const [isRightEnd, setIsRightEnd] = useState( isSameMonth(currDate, endDate) ? true : false );
+	
+	useEffect(() => {
+		setIsLeftEnd(isSameMonth(currDate, startDate));
+		setIsRightEnd(isSameMonth(currDate, endDate));
+	}, [currDate]);
+	  
+	const handleChangeMonth = isNext => {
+		if (isNext && !isRightEnd) {
+			setCurrDate(addMonths(currDate, 1));
+		} else if (!isNext && !isLeftEnd) {
+			setCurrDate(subMonths(currDate, 1));
+		} 
 	};
-
-
+	
 	return (
 		<div>
 			<div className="calendar-grid">
 				<header className="calendar-toolbar">
 					<button
-						onClick={() => handleChangetMonth(false)}
+						onClick={ () => handleChangeMonth(false) }
 						style={{ background: 'inherit', border: 'none' }}
+						className={ isLeftEnd ? 'highlighted' : '' }
 					>
 						{'<'}
 					</button>
-					<p>
-						{' '}
-						{startDayOfMonth.getFullYear() +
-							' ' +
-							MONTHS[startDayOfMonth.getMonth()]}
-					</p>
+					{ currDate.getFullYear() + ' ' + MONTHS[currDate.getMonth()]}
 					<button
-						onClick={() => handleChangetMonth(true)}
+						onClick={() => handleChangeMonth(true)}
 						style={{ background: 'inherit', border: 'none' }}
+						className={isRightEnd ? 'highlighted' : ''}
 					>
 						{'>'}
 					</button>
@@ -114,6 +115,5 @@ const TripCalendar = () => {
 			</div>
 		</div>
 	);
-};
-
+}			
 export default TripCalendar;
