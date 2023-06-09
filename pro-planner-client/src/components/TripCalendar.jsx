@@ -1,5 +1,5 @@
 import './TripCalendar.css';
-import Day from './Day.jsx';
+import TripDay from './TripDay.jsx';
 import { useState, useEffect } from 'react';
 import {
 	format,
@@ -11,9 +11,11 @@ import {
 	subMonths,
 	getMonth,
 	isSameYear,
-	isSameMonth
+	isSameMonth,
+	addDays,
+	subDays,
+	isSameDay,
 } from 'date-fns';
-
 
 const MONTHS = {
 	0: 'January',
@@ -45,43 +47,49 @@ const TripCalendar = () => {
 	const startDate = new Date(2021, 5, 15);
 	const endDate = new Date(2022, 6, 20);
 
-	// currDate stores the first day of the currently viewing month and year
-	const [currDate, setCurrDate] = useState(startOfMonth(startDate));
-/** 
- * null: date range selection has not started
- * Date: start Date range for selection { isAM: bool , date: Date }
- */
-	const [isSelectingDate, setIsSelectingDate] = useState(null) 
-	const [isLeftEnd, setIsLeftEnd] = useState( isSameMonth(currDate, startDate) ? true : false );
-	const [isRightEnd, setIsRightEnd] = useState( isSameMonth(currDate, endDate) ? true : false );
-	
+	// currDateStart stores the first day of the currently viewing month and year
+	const [currDateStart, setCurrDateStart] = useState(startOfMonth(startDate));
+
+	/**
+	 * null: date range selection has not started
+	 * Date: start Date range for selection { isAM: bool , date: Date }
+	 */
+	const [isSelectingDate, setIsSelectingDate] = useState(null);
+	const [isLeftEnd, setIsLeftEnd] = useState(
+		isSameMonth(currDateStart, startDate) ? true : false
+	);
+	const [isRightEnd, setIsRightEnd] = useState(
+		isSameMonth(currDateStart, endDate) ? true : false
+	);
+
 	useEffect(() => {
-		setIsLeftEnd(isSameMonth(currDate, startDate));
-		setIsRightEnd(isSameMonth(currDate, endDate));
-	}, [currDate]);
-	  
+		setIsLeftEnd(isSameMonth(currDateStart, startDate));
+		setIsRightEnd(isSameMonth(currDateStart, endDate));
+	}, [currDateStart]);
+
 	const handleChangeMonth = isNext => {
 		if (isNext && !isRightEnd) {
-			setCurrDate(addMonths(currDate, 1));
+			setCurrDateStart(addMonths(currDateStart, 1));
 		} else if (!isNext && !isLeftEnd) {
-			setCurrDate(subMonths(currDate, 1));
-		} 
+			setCurrDateStart(subMonths(currDateStart, 1));
+		}
 	};
-	
-	
-	const tempDate = currDate;
+
+	let tempDate = currDateStart;
+	let tempDay = getDay(tempDate);
+	console.log(tempDay);
 	return (
 		<div>
 			<div className="calendar-grid">
 				<header className="calendar-toolbar">
 					<button
-						onClick={ () => handleChangeMonth(false) }
+						onClick={() => handleChangeMonth(false)}
 						style={{ background: 'inherit', border: 'none' }}
-						className={ isLeftEnd ? 'highlighted' : '' }
+						className={isLeftEnd ? 'highlighted' : ''}
 					>
 						{'<'}
 					</button>
-					{ currDate.getFullYear() + ' ' + MONTHS[currDate.getMonth()]}
+					{currDateStart.getFullYear() + ' ' + MONTHS[currDateStart.getMonth()]}
 					<button
 						onClick={() => handleChangeMonth(true)}
 						style={{ background: 'inherit', border: 'none' }}
@@ -100,12 +108,35 @@ const TripCalendar = () => {
 						<li>Fri</li>
 						<li>Sat</li>
 					</ul>
-					{monthArray.map(weekArr => {
+					{monthArray.map((weekArr, weekIndex) => {
 						return (
 							<div className="week-container">
-								{weekArr.map(day => {
-									// tempDay = tempDay.getNextDay() ~> pass down as date to Day component
-									return <Day className="day-container" date={ startDate } isSelectingDate={ isSelectingDate } setIsSelectingDate={ setIsSelectingDate }/>;
+								{weekArr.map((day, dayIndex) => {
+									if (
+										(weekIndex == 0 && dayIndex < getDay(tempDate)) ||
+										!isSameMonth(tempDate, currDateStart)
+									) {
+										// do not do anything
+										// tempDate doesn't update, simply return empty cells
+										//return empty day
+										return (
+											<TripDay
+												className="day-container"
+												date={''}
+												isSelectingDate={isSelectingDate}
+												setIsSelectingDate={setIsSelectingDate}
+											/>
+										);
+									}
+									tempDate = addDays(tempDate, 1);
+									return (
+										<TripDay
+											className="day-container"
+											date={subDays(tempDate, 1)}
+											isSelectingDate={isSelectingDate}
+											setIsSelectingDate={setIsSelectingDate}
+										/>
+									);
 								})}
 							</div>
 						);
@@ -114,5 +145,5 @@ const TripCalendar = () => {
 			</div>
 		</div>
 	);
-}			
+};
 export default TripCalendar;
