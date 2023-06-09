@@ -1,0 +1,13 @@
+.hours {
+  margin: 9px 5px -1px 0;
+}
+
+.hours-container {
+  position: relative;
+  top: 1px;
+  text-align: center;
+}
+
+.next-btn {
+  margin-left: 3px;
+}
