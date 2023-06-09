@@ -90,7 +90,7 @@ export function processDates(params) {
   }
 
   while (isAfter(endOfWeek(endDate), currDate)) {
-    dates.push({ isAvailable: false, currDate });
+    dates.push({ isAvailable: false, startInterval: currDate });
     currDate = addDays(currDate, 1);
   }
   return dates;

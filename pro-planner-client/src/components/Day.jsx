@@ -1,41 +1,54 @@
 // descructuring references https://www.w3schools.com/react/react_es6_destructuring.asp
 import React from 'react';
-import { addMinutes, set, isAfter, isWithinInterval } from 'date-fns';
+import { addMinutes, format, isAfter, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+
+import './Day.css';
 
 const segmentInterval = 30; // should be some interval of 15 minutes
 
 const isSegmentAvailable = (time, interval, additionalInterval) => {
-  let result = isWithinInterval(time, { start: interval[0], end: interval[1] });
+  let result = isWithinInterval(time, { start: interval[0], end: addMinutes(interval[1], -1) });
   if (additionalInterval[0] && !result) {
     result = isWithinInterval(time, { start: additionalInterval[0], end: additionalInterval[0] });
   }
   return result;
 };
 
-function Day({ startInterval, endInterval, additionalStart, additionalEnd, isAvailable }) {
+function Day({ availability }) {
   const segmentTotal = 60;
-  let segmentTracker = segmentTotal;
-  let timeTracker = set(startInterval, { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
-  const endOfDay = set(startInterval, { hours: 23, minutes: 59, seconds: 59 });
+
+  const {startInterval, endInterval, additionalStart, additionalEnd, isAvailable} = availability;
   let dayDisplay = [];
   let hourDisplay = [];
-  while (isAfter(endOfDay, timeTracker)) {
-    console.log('asdf');
-    const isInAvailable = isAvailable ? isSegmentAvailable(timeTracker, [startInterval, endInterval], [additionalStart, additionalEnd]) : false;
-    hourDisplay.push(<div style={{ backgroundColor: isInAvailable ? 'red' : 'transparent' }}>{`hour-${timeTracker.getHours()}`}</div>);
+  let segmentTracker = segmentTotal;
+  let timeTracker = startOfDay(startInterval);
+  const endOfCurrDay = endOfDay(startInterval);
+
+  while (isAfter(endOfCurrDay, timeTracker)) {
+    const isSelectable = isAvailable ? isSegmentAvailable(timeTracker, [startInterval, endInterval], [additionalStart, additionalEnd]) : false;
+    hourDisplay.push(
+      <div
+        key={`${format(timeTracker, 'hh-mm')}`}
+        className={`${segmentTracker % segmentTotal ? 'segment' : 'sub-segment'} ${isSelectable ? 'selected' : ''}`}
+      />
+    );
 
     timeTracker = addMinutes(timeTracker, segmentInterval);
     segmentTracker -= segmentInterval;
     if (segmentTracker <= 0) {
-      dayDisplay.push(hourDisplay);
+      dayDisplay.push(
+        <div key={`hr-${timeTracker.getHours()}-${timeTracker.getMinutes()}`} className="hour-container">
+          {hourDisplay}
+        </div>
+      );
       hourDisplay = [];
+      segmentTracker = segmentTotal;
     }
-  }
+} 
+
   return (
-    <div>
-      {dayDisplay.map((hour) => (
-        <div>{hour}</div>
-      ))}
+    <div className="w-100 position-relative">
+      {dayDisplay}
     </div>
   );
 }
