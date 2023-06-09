@@ -45,7 +45,7 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
         }
         
         dispatch(updatePlan(formResult));
-        navigate(`view/${tripId}`); // TODO: ID should be generated on confirm -- get from backend
+        navigate(`/user/${tripId}`); // TODO: ID should be generated on confirm -- get from backend
     }
 
     return <div className="w-50 mx-auto mt-5">

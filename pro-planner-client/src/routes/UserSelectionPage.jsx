@@ -1,6 +1,6 @@
 import React from 'react';
-import UserList from "./UserList";
-import AddUserForm from "./AddUserForm";
+import UserList from "../components/UserList";
+import AddUserForm from "../components/AddUserForm";
 import {Card, Container} from 'react-bootstrap';
 import {addUser} from '../redux/userSlice';
 import {useDispatch} from 'react-redux';
