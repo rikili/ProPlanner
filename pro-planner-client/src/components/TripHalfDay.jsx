@@ -3,7 +3,6 @@ import { getDate, isSameDay, isSameMonth } from 'date-fns';
 import { useState } from 'react';
 
 export const TripHalfDay = props => {
-	let x = '';
 	const handleSelection = () => {
 		if (props.isSelectingDate) {
 			// this is the second click case
@@ -13,7 +12,9 @@ export const TripHalfDay = props => {
 		}
 	};
 
-	const setClassName = () => {
+	console.log(props.validDate);
+
+	const setActive = () => {
 		if (
 			isSameDay(props.date, props.isSelectingDate) &&
 			isSameMonth(props.date, props.isSelectingDate)
@@ -22,10 +23,19 @@ export const TripHalfDay = props => {
 		}
 	};
 
+	const setHover = () => {
+		if (props.validDate) {
+			return 'valid-date';
+		}
+	};
+
 	//{ isSameDay(props.date, props.IsSelectingDate) && isSameMonth(props.date, props.IsSelectingDate) ? "half-day" : "half-day active" }
 
 	return (
-		<div className={'half-day ' + setClassName()} onClick={handleSelection}>
+		<div
+			className={'half-day' + ' ' + setActive() + ' ' + setHover()}
+			onClick={handleSelection}
+		>
 			{' '}
 			{props.date && props.date.getDate()}{' '}
 		</div>
