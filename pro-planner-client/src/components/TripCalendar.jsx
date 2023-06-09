@@ -1,5 +1,5 @@
 import './TripCalendar.css';
-import Cell from './Cell.jsx';
+import Day from './Day.jsx';
 import { useState, useEffect } from 'react';
 import {
 	format,
@@ -46,11 +46,12 @@ const TripCalendar = () => {
 	const endDate = new Date(2022, 6, 20);
 
 	// currDate stores the first day of the currently viewing month and year
-	const [currDate, setCurrDate] = useState(
-		startOfMonth(startDate)
-	);
-
-	
+	const [currDate, setCurrDate] = useState(startOfMonth(startDate));
+/** 
+ * null: date range selection has not started
+ * Date: start Date range for selection { isAM: bool , date: Date }
+ */
+	const [isSelectingDate, setIsSelectingDate] = useState(null) 
 	const [isLeftEnd, setIsLeftEnd] = useState( isSameMonth(currDate, startDate) ? true : false );
 	const [isRightEnd, setIsRightEnd] = useState( isSameMonth(currDate, endDate) ? true : false );
 	
@@ -67,6 +68,8 @@ const TripCalendar = () => {
 		} 
 	};
 	
+	
+	const tempDate = currDate;
 	return (
 		<div>
 			<div className="calendar-grid">
@@ -101,12 +104,8 @@ const TripCalendar = () => {
 						return (
 							<div className="week-container">
 								{weekArr.map(day => {
-									return (
-										<div className="day-container">
-											<Cell className="half-day" type="AM" date={startDate} />
-											<Cell className="half-day" type="PM" date={startDate} />
-										</div>
-									);
+									// tempDay = tempDay.getNextDay() ~> pass down as date to Day component
+									return <Day className="day-container" date={ startDate } isSelectingDate={ isSelectingDate } setIsSelectingDate={ setIsSelectingDate }/>;
 								})}
 							</div>
 						);
