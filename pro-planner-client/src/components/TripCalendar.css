@@ -1,58 +1,58 @@
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+    margin: 0;
+    padding:0;
+    box-sizing: border-box;
 }
 
 .calendar-grid {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	border: 3px rgb(169, 114, 223) solid;
-	width: 650px;
-	height: 500px;
-	margin: 0px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 3px rgb(169, 114, 223) solid;
+    width: 650px;
+    height: 500px;
+    margin: 0px auto;
 }
 
 .calendar-toolbar {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin: 0.5em auto;
-	width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0.5em auto;
+    width: 140px;
 }
 
 main {
-	border: 2px green solid;
-	height: auto;
+    border: 2px green solid;
+    height: auto;
 }
 
 .weekday-labels {
-	display: flex;
-	list-style-type: none;
-	justify-content: space-around;
-	border: 2px solid red;
+    display: flex;
+    list-style-type: none;
+    justify-content: space-around;
+    border: 2px solid red;
 }
 
 .week-container {
-	display: flex;
-	justify-content: space-evenly;
-	border: 1px black solid;
+    display: flex;
+    justify-content: space-evenly;
+    border: 1px black solid;
 }
 
 .day-container {
-	display: flex;
-	flex-direction: column;
-	border: 2px solid yellow;
-	width: 100%;
-	height: 4.2em;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid yellow;
+    width: 100%;
+    height: 4.2em;
 }
 
 .half-day {
-	border: 1px solid greenyellow;
-	height: 50%;
+    border: 1px solid greenyellow;
+    height: 50%;
 }
 
-.month-nav-btn {
-	color: red;
+.highlighted {
+    color: red;
 }
