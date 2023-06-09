@@ -53,6 +53,10 @@ main {
     height: 50%;
 }
 
+.active {
+    background-color: lightblue;
+}
+
 .highlighted {
     color: red;
 }
