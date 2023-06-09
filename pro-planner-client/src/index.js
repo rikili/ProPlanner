@@ -13,6 +13,7 @@ import CostPage from './routes/CostPage';
 import ErrorPage from './routes/ErrorPage';
 import store from './store';
 import HomePage from './routes/HomePage';
+import UserSelectionPage from './routes/UserSelectionPage';
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +24,12 @@ const router = createBrowserRouter([
   {
     path: 'create',
     element: <PlanCreator />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: 'user/:tripId',
+    loader: ({ params }) => params.tripId,
+    element: <UserSelectionPage />,
     errorElement: <ErrorPage />,
   },
   {

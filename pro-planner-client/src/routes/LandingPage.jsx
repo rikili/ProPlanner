@@ -27,7 +27,7 @@ const LandingPage = () => {
     const handleJoin = (event) => {
         event.preventDefault();
         //TODO: get ID if URL
-        navigate(`/${inputValue}`);
+        navigate(`/user/${inputValue}`);
     }
 
     const handleCreate = (planType) => {
@@ -52,7 +52,7 @@ const LandingPage = () => {
                                     Choose the Type of Plan you'd like to Create
                                 </p>
                                 <div className="mb-3">
-                                    <Row className="text-center">
+                                    <Row className="text-center mb-3">
                                         <Button
                                             variant="primary"
                                             size="lg"

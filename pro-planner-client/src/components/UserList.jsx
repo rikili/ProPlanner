@@ -3,12 +3,14 @@ import {Button, Form, ToggleButton} from "react-bootstrap";
 import {useSelector, useDispatch} from 'react-redux';
 import {selectUser} from '../redux/userSlice';
 import {useNavigate} from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
 const UserList = () => {
     const userList = useSelector((state) => state.user.userList);
     const selectedUser = useSelector((state) => state.user.selectedUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { tripId } = useParams();
 
     if (!userList || userList.length === 0) {
         return <p>No User Yet</p>
@@ -20,8 +22,7 @@ const UserList = () => {
 
     const handleContinueClick = () => {
         if (selectedUser) {
-            // to be updated
-            navigate('/OverViewPage');
+            navigate(`/${tripId}`);
         } else {
             console.log('Please select a user');
         }
