@@ -2,9 +2,9 @@
 // updating array references https://bobbyhadz.com/blog/javascript-modify-all-array-elements
 import React from 'react';
 import { eachHourOfInterval, getHours } from 'date-fns';
-import './Hours.css';
+import './OutingHourLabels.scss';
 
-function Hours() {
+function OutingHourLabels() {
     const hours = eachHourOfInterval({
         start: new Date(2023, 9, 6, 0),
         end: new Date(2023, 9, 6, 24),
@@ -24,4 +24,4 @@ function Hours() {
     );
 }
 
-export default Hours;
+export default OutingHourLabels;

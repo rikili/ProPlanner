@@ -2,7 +2,7 @@
 import React from 'react';
 import { addMinutes, format, isAfter, isWithinInterval, startOfDay, endOfDay, getDate } from 'date-fns';
 
-import './Day.css';
+import './OutingDay.scss';
 
 const segmentInterval = 30; // should be some interval of 15 minutes
 
@@ -14,7 +14,7 @@ const isSegmentAvailable = (time, interval, additionalInterval) => {
     return result;
 };
 
-function Day({ availability, borderLeft = false }) {
+function OutingDay({ availability, borderLeft = false }) {
     let isFirstSegment = true; // For styling top of day
     const segmentTotal = 60;
 
@@ -63,4 +63,4 @@ function Day({ availability, borderLeft = false }) {
     );
 }
 
-export default Day;
+export default OutingDay;
