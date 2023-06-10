@@ -1,6 +1,7 @@
 import './TripCalendar.scss';
 import TripDay from './TripDay.jsx';
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
 	format,
 	compareAsc,
@@ -13,8 +14,7 @@ import {
 	isSameYear,
 	isSameMonth,
 	addDays,
-	subDays,
-	isSameDay,
+	parseISO,
 } from 'date-fns';
 
 const MONTHS = {
@@ -42,9 +42,12 @@ const TripCalendar = () => {
 		[5, 6, 7, 8, 9, 10, 11],
 	];
 
+	const params = useSelector(state => state.planParameters);
+
 	//TODO: retreive the values for these from redux based on the user's inputed dateRange.
-	const startDate = new Date(2021, 5, 15);
-	const endDate = new Date(2022, 6, 20);
+
+	const startDate = new Date(params.dateTimeRange[0]);
+	const endDate = new Date(params.dateTimeRange[1]);
 
 	// currDateStart stores the first day of the currently viewing month and year
 	const [currDateStart, setCurrDateStart] = useState(startOfMonth(startDate));
@@ -60,10 +63,6 @@ const TripCalendar = () => {
 	 */
 	const [isSelectingDate, setIsSelectingDate] = useState(null);
 	const [dateSelections, setDateSelections] = useState([]);
-	
-
-
-	
 
 	useEffect(() => {
 		setIsLeftEnd(isSameMonth(currDateStart, startDate));
@@ -80,7 +79,7 @@ const TripCalendar = () => {
 
 	let tempDate = currDateStart;
 	let tempDay = getDay(tempDate);
-	
+
 	return (
 		<div>
 			<div className="calendar-grid">
@@ -115,23 +114,27 @@ const TripCalendar = () => {
 						return (
 							<div className="week-container">
 								{weekArr.map((day, dayIndex) => {
-									const dateVal = (weekIndex == 0 && dayIndex < getDay(tempDate)) || !isSameMonth(tempDate, currDateStart) ? '' : tempDate;
-									let classNameVal = "day-container";
+									const dateVal =
+										(weekIndex == 0 && dayIndex < getDay(tempDate)) ||
+										!isSameMonth(tempDate, currDateStart)
+											? ''
+											: tempDate;
+									let classNameVal = 'day-container';
 									let validDateVal = false;
 									if (dateVal) {
 										tempDate = addDays(tempDate, 1);
-										classNameVal += " validDate"
+										classNameVal += ' validDate';
 										validDateVal = true;
 									}
 									return (
 										<TripDay
-											className={ classNameVal }
-											date={ dateVal }
-											isSelectingDate={ isSelectingDate }
-											setIsSelectingDate={ setIsSelectingDate }
-											validDate={ validDateVal }
-											dateSelections={ dateSelections }
-											setDateSelections={ setDateSelections }
+											className={classNameVal}
+											date={dateVal}
+											isSelectingDate={isSelectingDate}
+											setIsSelectingDate={setIsSelectingDate}
+											validDate={validDateVal}
+											dateSelections={dateSelections}
+											setDateSelections={setDateSelections}
 										/>
 									);
 								})}
