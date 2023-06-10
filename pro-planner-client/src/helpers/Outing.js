@@ -17,7 +17,6 @@ import {
 } from 'date-fns';
 
 export function processDates(params) {
-
     let startInterval;
     let endInterval;
     let endDate;
@@ -50,12 +49,20 @@ export function processDates(params) {
         datesIndex++;
     }
 
-    dates.push({
-        isAvailable: true,
-        startInterval: startInterval,
-        endInterval: endInterval,
-    });
+    if (params.availableDays.includes(getDay(startInterval))) {
+      dates.push({
+          isAvailable: true,
+          startInterval: startInterval,
+          endInterval: endInterval,
+      });
+    } else {
+      dates.push({
+        isAvailable: false,
+        startInterval: startInterval
+      });
+    }
     datesIndex++;
+
     if (nextDayOverFlow) {
         dates[0].endInterval = startInterval(startInterval);
     }
