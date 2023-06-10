@@ -1,4 +1,4 @@
-import './TripCalendar.css';
+import './TripCalendar.scss';
 import TripDay from './TripDay.jsx';
 import { useState, useEffect } from 'react';
 import {
@@ -77,7 +77,7 @@ const TripCalendar = () => {
 
 	let tempDate = currDateStart;
 	let tempDay = getDay(tempDate);
-	console.log(tempDay);
+	
 	return (
 		<div>
 			<div className="calendar-grid">
