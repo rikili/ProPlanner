@@ -12,8 +12,6 @@ export const TripHalfDay = props => {
 		}
 	};
 
-	console.log(props.validDate);
-
 	const setActive = () => {
 		if (
 			isSameDay(props.date, props.isSelectingDate) &&
