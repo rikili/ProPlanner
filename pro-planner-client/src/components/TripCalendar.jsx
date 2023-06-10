@@ -33,7 +33,6 @@ const MONTHS = {
 };
 
 const TripCalendar = () => {
-	// temp variables
 	const monthArray = [
 		[1, 2, 3, 4, 5, 6, 7],
 		[5, 6, 7, 8, 9, 10, 11],
@@ -49,18 +48,22 @@ const TripCalendar = () => {
 
 	// currDateStart stores the first day of the currently viewing month and year
 	const [currDateStart, setCurrDateStart] = useState(startOfMonth(startDate));
-
-	/**
-	 * null: date range selection has not started
-	 * Date: start Date range for selection { isAM: bool , date: Date }
-	 */
-	const [isSelectingDate, setIsSelectingDate] = useState(null);
 	const [isLeftEnd, setIsLeftEnd] = useState(
 		isSameMonth(currDateStart, startDate) ? true : false
 	);
 	const [isRightEnd, setIsRightEnd] = useState(
 		isSameMonth(currDateStart, endDate) ? true : false
 	);
+	/**
+	 * null: date range selection has not started
+	 * Date: start Date range for selection { isAM: bool , date: Date }
+	 */
+	const [isSelectingDate, setIsSelectingDate] = useState(null);
+	const [dateSelections, setDateSelections] = useState([]);
+	
+
+
+	
 
 	useEffect(() => {
 		setIsLeftEnd(isSameMonth(currDateStart, startDate));
@@ -112,31 +115,23 @@ const TripCalendar = () => {
 						return (
 							<div className="week-container">
 								{weekArr.map((day, dayIndex) => {
-									if (
-										(weekIndex == 0 && dayIndex < getDay(tempDate)) ||
-										!isSameMonth(tempDate, currDateStart)
-									) {
-										// do not do anything
-										// tempDate doesn't update, simply return empty cells
-										//return empty day
-										return (
-											<TripDay
-												className="day-container"
-												date={''}
-												isSelectingDate={isSelectingDate}
-												setIsSelectingDate={setIsSelectingDate}
-												validDate={false}
-											/>
-										);
+									const dateVal = (weekIndex == 0 && dayIndex < getDay(tempDate)) || !isSameMonth(tempDate, currDateStart) ? '' : tempDate;
+									let classNameVal = "day-container";
+									let validDateVal = false;
+									if (dateVal) {
+										tempDate = addDays(tempDate, 1);
+										classNameVal += " validDate"
+										validDateVal = true;
 									}
-									tempDate = addDays(tempDate, 1);
 									return (
 										<TripDay
-											className="day-container"
-											date={subDays(tempDate, 1)}
-											isSelectingDate={isSelectingDate}
-											setIsSelectingDate={setIsSelectingDate}
-											validDate={true}
+											className={ classNameVal }
+											date={ dateVal }
+											isSelectingDate={ isSelectingDate }
+											setIsSelectingDate={ setIsSelectingDate }
+											validDate={ validDateVal }
+											dateSelections={ dateSelections }
+											setDateSelections={ setDateSelections }
 										/>
 									);
 								})}
