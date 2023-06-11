@@ -1,13 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit';
 
-const initialState = {
-    userList: ['User A', 'User B'],
-    selectedUser: null,
-};
-
 const userSlice = createSlice({
     name: 'user',
-    initialState,
+    initialState: {
+        userList: [],
+        selectedUser: null,
+    },
     reducers: {
         addUser: (state, action) => {
             state.userList.push(action.payload);

@@ -8,11 +8,11 @@ const AddUserForm = () => {
     const [userName, setUserName] = useState('')
     const dispatch = useDispatch();
 
-    const handleAddUser = (e) => {
+    const handleUserNameChange = (e) => {
         setUserName(e.target.value)
     }
 
-    const handleSubmit = (e) => {
+    const handleNewUserSubmit = (e) => {
         e.preventDefault()
         if (userName !== '' && userName.trim().length > 0) {
 
@@ -25,7 +25,7 @@ const AddUserForm = () => {
 
     return (
         <>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleNewUserSubmit}>
                 <Form.Label>Not There? Create a new User</Form.Label>
                 <div>
                     <input
@@ -33,7 +33,7 @@ const AddUserForm = () => {
                         type='text'
                         placeholder='Name of new user'
                         value={userName}
-                        onChange={handleAddUser}/>
+                        onChange={handleUserNameChange}/>
                 </div>
                 <div>
                     <Button className='mt-3' type='submit' style={{width: '100%'}}>
