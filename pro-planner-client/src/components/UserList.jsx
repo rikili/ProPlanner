@@ -3,20 +3,20 @@ import {Button, Form, ToggleButton} from "react-bootstrap";
 import {useSelector, useDispatch} from 'react-redux';
 import {selectUser} from '../redux/userSlice';
 import {useNavigate} from "react-router-dom";
-import { useParams } from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 
 const UserList = () => {
     const userList = useSelector((state) => state.user.userList);
     const selectedUser = useSelector((state) => state.user.selectedUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { tripId } = useParams();
+    const {tripId} = useParams();
 
     if (!userList || userList.length === 0) {
-        return <p>No User Yet</p>
+        return <p>No User Yet, Please add a user.</p>
     }
 
-    const handleUserSelect = (user) => {
+    const handleUserSelectChange = (user) => {
         dispatch(selectUser(user));
     };
 
@@ -41,7 +41,8 @@ const UserList = () => {
                                 variant="outline-secondary"
                                 type="checkbox"
                                 id={user}
-                                checked={selectedUser === user} onChange={() => handleUserSelect(user)}
+                                checked={selectedUser === user}
+                                onChange={() => handleUserSelectChange(user)}
                                 value={user}
                             >
                                 {user}
@@ -50,7 +51,7 @@ const UserList = () => {
                     ))}
                 </div>
                 <Button style={{width: '100%'}}
-                    onClick={handleContinueClick}>
+                        onClick={handleContinueClick}>
                     Continue
                 </Button>
             </Form>
