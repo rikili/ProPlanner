@@ -1,5 +1,5 @@
 import './TripCalendar.scss';
-import TripDay from './TripDay.jsx';
+import { TripHalfDay } from './TripHalfDay.jsx';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -16,7 +16,6 @@ import {
 	addDays,
 	parseISO,
 } from 'date-fns';
-
 const MONTHS = {
 	0: 'January',
 	1: 'February',
@@ -81,68 +80,79 @@ const TripCalendar = () => {
 	let tempDay = getDay(tempDate);
 
 	return (
-		<div>
-			<div className="calendar-grid">
-				<header className="calendar-toolbar">
-					<button
-						onClick={() => handleChangeMonth(false)}
-						style={{ background: 'inherit', border: 'none' }}
-						className={isLeftEnd ? 'highlighted' : ''}
-					>
-						{'<'}
-					</button>
-					{currDateStart.getFullYear() + ' ' + MONTHS[currDateStart.getMonth()]}
-					<button
-						onClick={() => handleChangeMonth(true)}
-						style={{ background: 'inherit', border: 'none' }}
-						className={isRightEnd ? 'highlighted' : ''}
-					>
-						{'>'}
-					</button>
-				</header>
-				<main>
-					<ul className="weekday-labels">
-						<li>Sun</li>
-						<li>Mon</li>
-						<li>Tue</li>
-						<li>Wed</li>
-						<li>Thu</li>
-						<li>Fri</li>
-						<li>Sat</li>
-					</ul>
-					{monthArray.map((weekArr, weekIndex) => {
-						return (
-							<div className="week-container">
-								{weekArr.map((day, dayIndex) => {
-									const dateVal =
-										(weekIndex == 0 && dayIndex < getDay(tempDate)) ||
-										!isSameMonth(tempDate, currDateStart)
-											? ''
-											: tempDate;
-									let classNameVal = 'day-container';
-									let validDateVal = false;
-									if (dateVal) {
-										tempDate = addDays(tempDate, 1);
-										classNameVal += ' validDate';
-										validDateVal = true;
-									}
-									return (
-										<TripDay
-											className={classNameVal}
-											date={dateVal}
-											isSelectingDate={isSelectingDate}
-											setIsSelectingDate={setIsSelectingDate}
-											validDate={validDateVal}
-											dateSelections={dateSelections}
-											setDateSelections={setDateSelections}
-										/>
-									);
-								})}
-							</div>
-						);
-					})}
-				</main>
+		<div className='container width' style={ { border:'solid black 1px'} }>
+			<header className="row" style={ { background: 'rgb(225, 225, 225)' } }>
+				<button
+					onClick={() => handleChangeMonth(false)}
+					style={{ background: 'inherit', border: 'none' }}
+					className={isLeftEnd ? 'col highlighted' : 'col'}
+				>
+					{'<'}
+				</button>
+				{currDateStart.getFullYear() + ' ' + MONTHS[currDateStart.getMonth()]}
+				<button
+					onClick={() => handleChangeMonth(true)}
+					style={{ background: 'inherit', border: 'none' }}
+					className={isRightEnd ? 'col highlighted' : 'col'}
+				>
+					{'>'}
+				</button>
+			</header>
+
+			<div className="row text-center" style={{ background: 'rgb(225, 225, 225)' }}>
+				<div className='col'>Sun</div>
+				<div className='col'>Mon</div>
+				<div className='col'>Tue</div>
+				<div className='col'>Wed</div>
+				<div className='col'>Thu</div>
+				<div className='col'>Fri</div>
+				<div className='col'>Sat</div>
 			</div>
+			
+			{monthArray.map((weekArr, weekIndex) => {
+				return (
+					<div className="row">
+						{weekArr.map((day, dayIndex) => {
+							const dateVal =
+								(weekIndex == 0 && dayIndex < getDay(tempDate)) ||
+								!isSameMonth(tempDate, currDateStart)
+									? ''
+									: tempDate;
+							let classNameVal = 'day-container';
+							let validDateVal = false;
+							if (dateVal) {
+								tempDate = addDays(tempDate, 1);
+								classNameVal += ' validDate';
+								validDateVal = true;
+							}
+							return (
+								<div className='col' style={{ border: "1px solid green", padding: '0px', height: '100px'}}> 
+									<TripHalfDay
+										className={classNameVal }
+										date={dateVal}
+										isSelectingDate={isSelectingDate}
+										setIsSelectingDate={setIsSelectingDate}
+										validDate={validDateVal}
+										dateSelections={dateSelections}
+										setDateSelections={setDateSelections}
+										type="AM"
+									/>
+									<TripHalfDay
+										className={classNameVal}
+										date={dateVal}
+										isSelectingDate={isSelectingDate}
+										setIsSelectingDate={setIsSelectingDate}
+										validDate={validDateVal}
+										dateSelections={dateSelections}
+										setDateSelections={setDateSelections}
+										type="PM"
+									/>
+								</div>
+							);
+						})}
+					</div>
+				);
+			})}
 		</div>
 	);
 };
