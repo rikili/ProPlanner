@@ -2,7 +2,7 @@ import React from 'react';
 import { getDate, isSameDay, isSameMonth, isBefore, isAfter } from 'date-fns';
 import { useState } from 'react';
 
-export const TripHalfDay = props => {
+export const TripHalfDay =  props => {
 	const handleSelection = () => {
 		//
 		if (props.isSelectingDate) {
@@ -52,3 +52,5 @@ export const TripHalfDay = props => {
 		</div>
 	);
 };
+
+export default TripHalfDay;
