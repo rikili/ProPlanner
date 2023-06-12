@@ -20,7 +20,7 @@ const SchedulePage = () => {
     return <div>
         {planParams.name && (planParams.planType === PLAN_TYPE.OUTING)
         ? <WeeklyCalendar />
-        : <TripCalendar/>}
+        : <TripCalendar />}
     </div>
 };
 
