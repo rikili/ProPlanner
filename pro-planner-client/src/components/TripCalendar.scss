@@ -9,21 +9,11 @@
 	height: 50%;
 }
 
-// .active {
-// 	background-color: lightblue;
-// }
-
-// .highlighted {
-// 	// color: red; 
-// 	cursor: pointer;
-// 	background-image: linear-gradient( 179deg,  rgba(0,0,0,1) 9.2%, rgba(127,16,16,1) 103.9% );
-// 	color: rgb(245, 226, 226);
-// 	scale: 1.5;
-// }
-
-
-.valid-date:hover {
-	background-color: rgb(147, 178, 189);
+.valid:hover {
+	background-color: rgb(95, 210, 255);
 	transform: scale(1.2);
 	transition: transform 0.3s ease;
+}
+.invalid {
+	color: rgb(176, 176, 176);
 }

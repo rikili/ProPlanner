@@ -1,8 +1,11 @@
 import React from 'react';
-import { getDate, isSameDay, isSameMonth, isBefore, isAfter } from 'date-fns';
+import { format, getDate, isSameDay, isSameMonth, isBefore, isAfter, parseISO} from 'date-fns';
 import { useState } from 'react';
 
 export const TripHalfDay =  props => {
+	let classVal = "";
+	
+
 	const handleSelection = () => {
 		//
 		if (props.isSelectingDate) {
@@ -30,25 +33,39 @@ export const TripHalfDay =  props => {
 
 	const setActive = () => {
 		if (
-			isSameDay(props.date, props.isSelectingDate) &&
-			isSameMonth(props.date, props.isSelectingDate)
+			isSameDay(parseISO(props.date), parseISO(props.isSelectingDate)) &&
+			isSameMonth(parseISO(props.date), parseISO(props.isSelectingDate))
 		) {
 			return 'active';
 		}
 	};
 
-	const setHover = () => {
-		if (props.validDate) {
-			return 'valid-date';
+	const setHover = () => { 
+		if (props.className === 'valid') {
+			return 'valid';
 		}
+		return '';
 	};
+
+	const isAM = () => {
+
+		if (props.date && props.date.getHours() < 12) {
+			const time = format(props.date, 'HH');
+			return true;
+		}
+
+		return false;
+	}
 
 	// TODO: use the followoing attributes for hover effect
 	// onMouseEnter={handleMouseEnter}
 	// onMouseLeave={handleMouseLeave}
 	return (
-		<div className={'half-day' + ' ' + setActive() + ' ' + setHover()}>
-			{props.type == 'AM' && props.date && props.date.getDate()}{' '}
+		<div 
+			className={'half-day' + ' ' +  props.className + " " +  setActive() + ' ' + setHover()}
+			
+		>
+			{ isAM() && props.date.getDate() }
 		</div>
 	);
 };
