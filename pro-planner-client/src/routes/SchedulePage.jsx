@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import WeeklyCalendar from '../components/WeeklyCalandar';
-import { PLAN_TYPE } from '../redux/planParamSlice';
+import { PLAN_TYPE } from '../constants';
 
 const SchedulePage = () => {
     const planParams = useSelector(state => state.planParameters);

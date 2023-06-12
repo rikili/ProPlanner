@@ -13,7 +13,8 @@ import { FiInfo } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import { PLAN_TYPE, changePlanType } from '../redux/planParamSlice';
+import { changePlanType } from '../redux/planParamSlice';
+import { PLAN_TYPE } from '../constants';
 
 const LandingPage = () => {
     const [inputValue, setInputValue] = useState('');
