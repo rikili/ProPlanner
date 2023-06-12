@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const calendarSlice = createSlice({
-	name: 'parameters',
+	name: 'calendar',
 	initialState: {
 		user1: [
-			[new Date(2021, 5, 15), new Date(2021, 5, 20)],
-			[new Date(2021, 5, 22), new Date(2021, 5, 26)]
+			[new Date('July 2, 2010 06:00:00'), new Date("July 4, 2010 06:00:00")],
+			[new Date('July 6, 2010 18:00:00'), new Date("July 9, 2010 18:00:00")],
 		],
 		user2: [],
 	},
