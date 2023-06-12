@@ -10,10 +10,14 @@
 }
 
 .valid:hover {
-	background-color: rgb(95, 210, 255);
+	background-color: rgba(71, 174, 215, 0.964);
 	transform: scale(1.2);
 	transition: transform 0.3s ease;
 }
+.valid {
+	font-weight: bold;
+}
+
 .invalid {
-	color: rgb(176, 176, 176);
+	color: rgb(178, 178, 178);
 }

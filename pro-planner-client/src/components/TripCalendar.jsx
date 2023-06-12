@@ -15,7 +15,8 @@ import {
 	isSameMonth,
 	addDays,
 	parseISO,
-	subDays
+	subDays,
+	getDate
 } from 'date-fns';
 const MONTHS = {
 	0: 'January',
@@ -37,6 +38,7 @@ const MONTHS = {
  * returns an object array of size of (current month size) * 2, where each associate to a half-day
  * The value for each element is a number representing the number of people available for that half-day
  */
+// grab dates from calendarSlice and count num of users 
 const processCalendar = (calendar) => {
   /**
  * returns an object:
@@ -56,7 +58,6 @@ const TripCalendar = () => {
 	const plan = useSelector(state => state.planParameters);
 	const startDate = parseISO(plan.dateTimeRange[0]);
 	const endDate = parseISO(plan.dateTimeRange[1]);
-	const availableDays = parseISO(plan.availableDays)
 	const calendar = useSelector(state => state.calendar);
 
 	// local states
@@ -67,10 +68,11 @@ const TripCalendar = () => {
 
 	const [ june2023, july2023 ] = [format(new Date('June 2, 2023 06:00:00'), 'MMMM yyyy'), format(new Date('July 15, 2023 06:00:00'), 'MMMM yyyy')];
 	const usersSelections = {     //  = processCalendar(calendar, startDate, endDate);   // [2, 3, 4, 5, 6, 7, 7] size 60-62
-		june2023 : new Array(60).fill(1),
-		july2023 : new Array(62).fill(2)
+		[june2023] : new Array(84).fill(1),
+		[july2023] : new Array(84).fill(2)
 	};
 
+	// userSelections[...]
 	
 
 	/**
@@ -102,6 +104,19 @@ const TripCalendar = () => {
 		}
 		return tempDate;
 	};
+
+	const getNumSelections = (isAm, date) => {
+		
+		let keyIndex = getDate(date) * 2 - 1;
+		if (!isAm) {
+			keyIndex++
+		} 
+		const x = usersSelections[format(date, 'MMMM yyyy')];
+		if (usersSelections[format(date, 'MMMM yyyy')]) { 
+			return usersSelections[format(date, 'MMMM yyyy')][keyIndex];
+		}
+	};
+
 
 	let tempDate = currDateStart;
 		
@@ -152,19 +167,23 @@ const TripCalendar = () => {
 								<div className='col' style={{ border: "1px solid green", padding: '0px', height: '100px'}}> 
 									<TripHalfDay
 										className={classNameVal}
-										date={ dateVal ? new Date(dateVal.setHours(6)) : dateVal }
+										date={dateVal ? new Date(dateVal.setHours(6)) : dateVal}
+										key={dayIndex + weekIndex + "AM"}
 										isSelectingDate={isSelectingDate}
 										setIsSelectingDate={setIsSelectingDate }
 										dateSelections={dateSelections}
 										setDateSelections={setDateSelections}
+										numSelections={getNumSelections(true, tempDate) }
 									/>
 									<TripHalfDay
 										className={classNameVal}
-										date={ dateVal ? new Date(dateVal.setHours(18)): dateVal }
+										date={dateVal ? new Date(dateVal.setHours(18)): dateVal}
+										key={dayIndex + weekIndex + "PM"} 
 										isSelectingDate={isSelectingDate}
 										setIsSelectingDate={setIsSelectingDate}
 										dateSelections={dateSelections}
 										setDateSelections={setDateSelections}
+										numSelections={getNumSelections(false, tempDate)}
 									/>
 								</div>
 							);

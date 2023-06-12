@@ -63,7 +63,7 @@ export const TripHalfDay =  props => {
 	return (
 		<div 
 			className={'half-day' + ' ' +  props.className + " " +  setActive() + ' ' + setHover()}
-			
+			style={ props.numSelections && {background: `rgba(30, 255, 50, ${props.numSelections * 0.2})`} }
 		>
 			{ isAM() && props.date.getDate() }
 		</div>
