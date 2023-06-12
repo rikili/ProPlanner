@@ -95,9 +95,16 @@ const TripCalendar = () => {
 	};
 
 
-	let tempDate = currDateStart;
+	const setDateVal = (tempDate, dayIndex, weekIndex) => {
 
-	
+		if (weekIndex == 0 && dayIndex < getDay(tempDate) || !isSameMonth(tempDate, currDateStart)) {
+			return subDays(tempDate, getDay(tempDate) - dayIndex);
+		}
+		return tempDate;
+	};
+
+	let tempDate = currDateStart;
+		
 	return (
 		<div className='container width' style={ { border:'solid black 1px'} }>
 			<header className="row" style={ { background: 'rgb(225, 225, 225)' } }>
@@ -132,20 +139,15 @@ const TripCalendar = () => {
 					<div className="row">
 						{weekArr.map((day, dayIndex) => {
 							let classNameVal; 
-							const dateVal =
-								(weekIndex == 0 && dayIndex < getDay(tempDate)) ||
-								!isSameMonth(tempDate, currDateStart)
-									? ''
-									: tempDate;
-							if (dateVal) {
-								tempDate = addDays(tempDate, 1);
-								if (plan.availableDays.includes(getDay(subDays(tempDate, 1)))) {
-									classNameVal = 'valid';
-								} else {
-									classNameVal = 'invalid'
-								}
+							const dateVal = setDateVal(tempDate, dayIndex, weekIndex);
+							tempDate = addDays(dateVal, 1);
+
+							if (plan.availableDays.includes(getDay(tempDate)) && (tempDate >= startDate) && (tempDate <= endDate)) {
+								classNameVal = 'valid';
+							} else {
+								classNameVal = 'invalid'
 							}
-							
+
 							return (
 								<div className='col' style={{ border: "1px solid green", padding: '0px', height: '100px'}}> 
 									<TripHalfDay
