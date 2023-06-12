@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import PlanCreator from './routes/PlanCreator';
+import CreatorPage from './routes/CreatorPage';
 import LandingPage from './routes/LandingPage';
 import SchedulePage from './routes/SchedulePage';
 import VotePage from './routes/VotePage';
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
     },
     {
         path: 'create',
-        element: <PlanCreator />,
+        element: <CreatorPage />,
         errorElement: <ErrorPage />,
     },
     {

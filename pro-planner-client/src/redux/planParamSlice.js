@@ -1,18 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-export const PLAN_TYPE = {
-    OUTING: 'outing',
-    TRIP: 'trip',
-}
-
-const isValidOutingFormat = (dateTime) => {
-    return (dateTime 
-        && dateTime[0]
-        && dateTime[1]
-        && dateTime[0][0]
-        && dateTime[0][1]
-    );
-}
+import { PLAN_TYPE } from '../constants';
 
 const planParamSlice = createSlice({
     name: 'parameters',
@@ -42,14 +29,6 @@ const planParamSlice = createSlice({
         // payload contains complete set of values to update -- should be complete even if values don't change
         updatePlan(state, action) {
             const input = action.payload;
-            if (!(input.name
-                && input.availableDays.length 
-                && input.dateTimeRange.length 
-                && (input.isAllDay || isValidOutingFormat(input.dateTimeRange)) 
-                && input.location)) {
-                    console.error("Incomplete payload sent to state for updating plan.");
-                    return;
-                }
             state.name = input.name;
             state.availableDays = input.availableDays;
             state.isAllDay = input.isAllDay;
