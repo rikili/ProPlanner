@@ -25,7 +25,7 @@ const ErrorContainer = ({ children }) => {
             ? <>
                 <div
                     className="min-vh-100 w-100 position-absolute"
-                    style={{backgroundColor: 'rgba(0,0,0,0.5)', zIndex: '1'}}
+                    style={{backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1, top: 0, left: 0}}
                 />
                 <div
                     onClick={handleOverlayClick}
