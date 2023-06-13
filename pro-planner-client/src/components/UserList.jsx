@@ -5,6 +5,9 @@ import {selectUser} from '../redux/userSlice';
 import {useNavigate} from "react-router-dom";
 import {useParams} from 'react-router-dom';
 
+import { setError, resetError } from '../redux/errorSlice';
+import { ERR_TYPE } from '../constants';
+
 const UserList = () => {
     const userList = useSelector((state) => state.user.userList);
     const selectedUser = useSelector((state) => state.user.selectedUser);
@@ -22,9 +25,14 @@ const UserList = () => {
 
     const handleContinueClick = () => {
         if (selectedUser) {
+            dispatch(resetError());
             navigate(`/${tripId}`);
         } else {
-            alert('Please select a user');
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Please select a user to continue.',
+            }));
+            return;
         }
     };
 
