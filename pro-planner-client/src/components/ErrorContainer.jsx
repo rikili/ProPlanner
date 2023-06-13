@@ -1,18 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from "react-redux";
+import { Outlet } from 'react-router-dom';
 import ErrorToast from './ErrorToast';
 
 const handleOverlayClick = (event) => {
     event.stopPropagation();
 }
 
-const ErrorContainer = ({ children }) => {
+const ErrorContainer = () => {
     const showErr = useSelector(state => state.error.isShowError);
     const disableControl = useSelector(state => state.error.disableControl);
+    const closeButton = useRef(null);
     
     const handleKeyPress = (event) => {
         if (disableControl && event.keyCode === 9) {
             event.preventDefault();
+            if (closeButton.current) {
+                closeButton.current.focus();
+            }
         }
     }
 
@@ -31,12 +36,12 @@ const ErrorContainer = ({ children }) => {
                     onClick={handleOverlayClick}
                     style={{ pointerEvents: 'none' }}
                 >
-                    {children}
+                    <Outlet />
                 </div>
             </>
-            : children
+            : <Outlet />
         }
-        {showErr && <div className="position-absolute bottom-0 end-0"><ErrorToast /></div>}
+        {showErr && <div className="position-absolute bottom-0 end-0"><ErrorToast ref={closeButton}/></div>}
     </>
 };
 

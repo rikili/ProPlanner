@@ -6,3 +6,17 @@
 .err-toast {
     z-index: 2;
 }
+
+.toast-close {
+    border-width: 0;
+    background-color: transparent;
+}
+
+.close-symbol {
+    height: 1.3em;
+    width: 1.3em;
+
+    &:hover {
+        color: darkgrey;
+    }
+}

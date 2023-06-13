@@ -15,9 +15,10 @@ const SchedulePage = () => {
         if (!planParams.name) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
-                message: 'Information of this plan is invalid, malformed, or missing. Redirecting to the landing page.'
+                message: 'Information of this plan is invalid, malformed, or missing. Close this notification to be redirected to the landing page.',
+                redirect: '/',
+                disableControl: true
             }));
-            navigate('/');
         }
     }, [planParams, navigate]);
 

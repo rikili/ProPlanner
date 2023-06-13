@@ -19,38 +19,45 @@ import ErrorContainer from './components/ErrorContainer';
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <LandingPage />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: 'create',
-        element: <CreatorPage />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: 'user/:tripId',
-        loader: ({ params }) => params.tripId,
-        element: <UserSelectionPage />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: '/:tripId/',
-        loader: ({ params }) => params.tripId, // TODO: can be made to cause an API call to fetch ID, passing it for now
-        element: <HomePage />,
+        element: <ErrorContainer />,
         errorElement: <ErrorPage />,
         children: [
             {
                 path: '',
-                element: <SchedulePage />
+                element: <LandingPage />,
+                errorElement: <ErrorPage />,
             },
             {
-                path: 'vote',
-                element: <VotePage />
+                path: 'create',
+                element: <CreatorPage />,
+                errorElement: <ErrorPage />,
             },
             {
-                path: 'cost',
-                element: <CostPage />
+                path: 'user/:tripId',
+                loader: ({ params }) => params.tripId,
+                element: <UserSelectionPage />,
+                errorElement: <ErrorPage />,
             },
+            {
+                path: '/:tripId/',
+                loader: ({ params }) => params.tripId, // TODO: can be made to cause an API call to fetch ID, passing it for now
+                element: <HomePage />,
+                errorElement: <ErrorPage />,
+                children: [
+                    {
+                        path: '',
+                        element: <SchedulePage />
+                    },
+                    {
+                        path: 'vote',
+                        element: <VotePage />
+                    },
+                    {
+                        path: 'cost',
+                        element: <CostPage />
+                    },
+                ]
+            }
         ]
     },
 ]);
@@ -59,9 +66,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <Provider store={store}>
-            <ErrorContainer>
-                <RouterProvider router={router} />
-            </ErrorContainer>
+            <RouterProvider router={router} />
         </Provider>
     </React.StrictMode>
 );
