@@ -35,10 +35,9 @@ const MONTHS = {
 
 
 /**
- * returns an object array of size of (current month size) * 2, where each associate to a half-day
- * The value for each element is a number representing the number of people available for that half-day
+ * returns an object where keys are “MMMM YYYY” (unique month-year combination)
+ * and values are arrays of numbers displaying # of selections for each half-day of the month
  */
-// grab dates from calendarSlice and count num of users 
 const processCalendar = (calendar) => {
   /**
  * returns an object:
@@ -48,6 +47,24 @@ const processCalendar = (calendar) => {
  * 		May 2023: [0, 1, 2, 3, 3, 3, 3]
  * }
  */
+};
+
+// returns the number of users that have selected the given date (or “half-day”)
+const getNumSelections = (isAm, date) => {
+	const [ june2023, july2023 ] = [format(new Date('June 2, 2023 06:00:00'), 'MMMM yyyy'), format(new Date('July 15, 2023 06:00:00'), 'MMMM yyyy')];
+	const usersSelections = {     //  = processCalendar(calendar, startDate, endDate);   // [2, 3, 4, 5, 6, 7, 7] size 60-62
+		[june2023] : new Array(84).fill(1),
+		[july2023] : new Array(84).fill(2)
+	};
+
+	let keyIndex = getDate(date) * 2 - 1;
+	if (!isAm) {
+		keyIndex++
+	} 
+	const x = usersSelections[format(date, 'MMMM yyyy')];
+	if (usersSelections[format(date, 'MMMM yyyy')]) { 
+		return usersSelections[format(date, 'MMMM yyyy')][keyIndex];
+	}
 };
 
 
@@ -65,29 +82,17 @@ const TripCalendar = () => {
 	const [isLeftEnd, setIsLeftEnd] = useState(isSameMonth(currDateStart, startDate) ? true : false);
 	const [isRightEnd, setIsRightEnd] = useState(isSameMonth(currDateStart, endDate) ? true : false);
 
-
-	const [ june2023, july2023 ] = [format(new Date('June 2, 2023 06:00:00'), 'MMMM yyyy'), format(new Date('July 15, 2023 06:00:00'), 'MMMM yyyy')];
-	const usersSelections = {     //  = processCalendar(calendar, startDate, endDate);   // [2, 3, 4, 5, 6, 7, 7] size 60-62
-		[june2023] : new Array(84).fill(1),
-		[july2023] : new Array(84).fill(2)
-	};
-
-	// userSelections[...]
-	
-
-	/**
-	 * null: date range selection has not started
-	 * Date: start Date range for selection { isAM: bool , date: Date }
-	 */
-	const [isSelectingDate, setIsSelectingDate] = useState(null);  // stores null or first selected Date
-	const [dateSelections, setDateSelections] = useState(calendar.user1);
+	// stores null or first selected Date (or TripHalfDay) for date range selection
+	const [isSelectingDate, setIsSelectingDate] = useState(null);  
+	// stores user's date range selections (which later gets pushed into store when user submits/adds the changes)
+	const [dateSelections, setDateSelections] = useState(calendar.user1); // stores user's date selections 
 
 	useEffect(() => {
 		setIsLeftEnd(isSameMonth(currDateStart, startDate));
 		setIsRightEnd(isSameMonth(currDateStart, endDate));
 	}, [currDateStart]);
 
-	
+	// updates the displaying month on the calendar
 	const handleChangeMonth = isNext => {
 		if (isNext && !isRightEnd) {
 			setCurrDateStart(addMonths(currDateStart, 1));
@@ -96,27 +101,22 @@ const TripCalendar = () => {
 		}
 	};
 
-
-	const setDateVal = (tempDate, dayIndex, weekIndex) => {
-
+	// returns the associated date for each half-day cell (or TripHalfDay)
+	const getDateVal = (tempDate, dayIndex, weekIndex) => {
 		if (weekIndex == 0 && dayIndex < getDay(tempDate) || !isSameMonth(tempDate, currDateStart)) {
 			return subDays(tempDate, getDay(tempDate) - dayIndex);
 		}
 		return tempDate;
 	};
 
-	const getNumSelections = (isAm, date) => {
-		
-		let keyIndex = getDate(date) * 2 - 1;
-		if (!isAm) {
-			keyIndex++
-		} 
-		const x = usersSelections[format(date, 'MMMM yyyy')];
-		if (usersSelections[format(date, 'MMMM yyyy')]) { 
-			return usersSelections[format(date, 'MMMM yyyy')][keyIndex];
+	// returns “valid” or “invalid” depending on whether the given date is valid/availble for scheduling
+    // “valid” means date is within the plan’s available date range and a possible day of the week
+	const getClassName = (tempDate, startDate, endDate) => {
+		if (plan.availableDays.includes(getDay(tempDate)) && (tempDate >= startDate) && (tempDate <= endDate)) {
+			return 'valid';
 		}
+		return 'invalid';
 	};
-
 
 	let tempDate = currDateStart;
 		
@@ -148,21 +148,17 @@ const TripCalendar = () => {
 				<div className='col'>Thu</div>
 				<div className='col'>Fri</div>
 				<div className='col'>Sat</div>
-			</div>			
+			</div>		
+				
 			{monthArray.map((weekArr, weekIndex) => {
 				return (
 					<div className="row">
 						{weekArr.map((day, dayIndex) => {
-							let classNameVal; 
-							const dateVal = setDateVal(tempDate, dayIndex, weekIndex);
+							const dateVal = getDateVal(tempDate, dayIndex, weekIndex);
+							const classNameVal = getClassName(tempDate, startDate, endDate)
+
 							tempDate = addDays(dateVal, 1);
-
-							if (plan.availableDays.includes(getDay(tempDate)) && (tempDate >= startDate) && (tempDate <= endDate)) {
-								classNameVal = 'valid';
-							} else {
-								classNameVal = 'invalid'
-							}
-
+							
 							return (
 								<div className='col' style={{ border: "1px solid green", padding: '0px', height: '100px'}}> 
 									<TripHalfDay
