@@ -34,19 +34,31 @@ const MONTHS = {
 };
 
 
+
+// updates calendarSlice with the user's new inputs
+// called when user submits/adds new inputs
+// called only in edit calendar mode
+const updateCalendar = (calendar) => {
+	// dispatches
+};
+
 /**
  * returns an object where keys are “MMMM YYYY” (unique month-year combination)
  * and values are arrays of numbers displaying # of selections for each half-day of the month
  */
 const processCalendar = (calendar) => {
-  /**
- * returns an object:
- *  {
- * 		June 2023 : [ 1, 1, 0, 0, 3, ...],
- * 		April 2023: [0, 0, 0, 1, 3, 0],
- * 		May 2023: [0, 1, 2, 3, 3, 3, 3]
- * }
- */
+	let processedCalendar = {};
+	for (let user in calendar) {
+		for (let range in calendar[user]) {
+			let startDate = calendar[user][range][0];
+			let endDate = calendar[user][range][1];
+			
+			// the dates selected for each user ("month year" format)
+			let startDateFormatted = format(startDate, 'MMMM yyyy');
+			let endDateFormatted = format(endDate, 'MMMM yyyy');
+			let monthsInBtwFormatted = [];
+		}
+	}
 };
 
 // returns the number of users that have selected the given date (or “half-day”)
@@ -58,15 +70,13 @@ const getNumSelections = (isAm, date) => {
 	};
 
 	let keyIndex = getDate(date) * 2 - 1;
-	if (!isAm) {
-		keyIndex++
-	} 
-	const x = usersSelections[format(date, 'MMMM yyyy')];
-	if (usersSelections[format(date, 'MMMM yyyy')]) { 
-		return usersSelections[format(date, 'MMMM yyyy')][keyIndex];
-	}
-};
+	keyIndex += (!isAm) ? 1 : 0;
 
+	const validMonth = usersSelections[format(date, 'MMMM yyyy')];
+
+	return validMonth ? validMonth[keyIndex] : null;
+};
+ 
 
 
 const TripCalendar = () => {
@@ -81,11 +91,12 @@ const TripCalendar = () => {
 	const [currDateStart, setCurrDateStart] = useState(startOfMonth(startDate));
 	const [isLeftEnd, setIsLeftEnd] = useState(isSameMonth(currDateStart, startDate) ? true : false);
 	const [isRightEnd, setIsRightEnd] = useState(isSameMonth(currDateStart, endDate) ? true : false);
+	const [isEditMode, setIsEditMode] = useState(false);
 
 	// stores null or first selected Date (or TripHalfDay) for date range selection
 	const [isSelectingDate, setIsSelectingDate] = useState(null);  
 	// stores user's date range selections (which later gets pushed into store when user submits/adds the changes)
-	const [dateSelections, setDateSelections] = useState(calendar.user1); // stores user's date selections 
+	const [dateSelections, setDateSelections] = useState(calendar.user1);  // TODO: initial state needs to be the correct user (currently hard-coded to user1)
 
 	useEffect(() => {
 		setIsLeftEnd(isSameMonth(currDateStart, startDate));
@@ -123,6 +134,11 @@ const TripCalendar = () => {
 	return (
 		<div className='container width' style={ { border:'solid black 1px'} }>
 			<header className="row" style={ { background: 'rgb(225, 225, 225)' } }>
+				<button 
+					className="btn btn-primary"
+					onClick={ () => setIsEditMode(!isEditMode) }
+				> 
+					{ (isEditMode) ? "Add" : "Edit" } </button>
 				<button
 					onClick={() => handleChangeMonth(false)}
 					style={{ background: 'inherit', border: 'none' }}
@@ -149,7 +165,7 @@ const TripCalendar = () => {
 				<div className='col'>Fri</div>
 				<div className='col'>Sat</div>
 			</div>		
-				
+
 			{monthArray.map((weekArr, weekIndex) => {
 				return (
 					<div className="row">
