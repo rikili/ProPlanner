@@ -3,11 +3,12 @@ import { format, getDate, isSameDay, isSameMonth, isBefore, isAfter, parseISO} f
 import { useState } from 'react';
 
 export const TripHalfDay =  props => {
-	let classVal = "";
+	let styleVal = {
+
+	};
 	
 
 	const handleSelection = () => {
-		//
 		if (props.isSelectingDate) {
 			// TODO: take care of logic of double selecting the same date aka isSelectingDate == props.date
 			// this is the second click case
@@ -33,19 +34,19 @@ export const TripHalfDay =  props => {
 
 	const setActive = () => {
 		if (
-			isSameDay(parseISO(props.date), parseISO(props.isSelectingDate)) &&
-			isSameMonth(parseISO(props.date), parseISO(props.isSelectingDate))
+			isSameDay(props.date, props.isSelectingDate) &&
+			isSameMonth(props.date, props.isSelectingDate)
 		) {
 			return 'active';
 		}
 	};
 
-	const setHover = () => { 
-		if (props.className === 'valid') {
-			return 'valid';
-		}
-		return '';
-	};
+	// const setHover = () => { 
+	// 	if (props.className === 'valid') {
+	// 		return 'valid';
+	// 	}
+	// 	return '';
+	// };
 
 	const isAM = () => {
 
@@ -57,13 +58,20 @@ export const TripHalfDay =  props => {
 		return false;
 	}
 
+	if (props.isEditMode) {
+		// handleSelections
+		// props.isSelectingDate
+		// 
+	}
+
 	// TODO: use the followoing attributes for hover effect
 	// onMouseEnter={handleMouseEnter}
 	// onMouseLeave={handleMouseLeave}
 	return (
 		<div 
-			className={'half-day' + ' ' +  props.className + " " +  setActive() + ' ' + setHover()}
-			style={ props.numSelections && {background: `rgba(30, 255, 50, ${props.numSelections * 0.2})`} }
+			className={'half-day' + ' ' +  props.className + " " +  setActive() }
+			style={ (props.numSelections && !props.isEditMode) ? {background: `rgba(30, 255, 50, ${props.numSelections * 0.2})`} : {} }
+			// on
 		>
 			{ isAM() && props.date.getDate() }
 		</div>

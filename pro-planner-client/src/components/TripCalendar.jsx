@@ -2,6 +2,7 @@ import './TripCalendar.scss';
 import { TripHalfDay } from './TripHalfDay.jsx';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import {Container, Row, Col, Button} from 'react-bootstrap';
 import {
 	format,
 	compareAsc,
@@ -10,14 +11,16 @@ import {
 	endOfMonth,
 	addMonths,
 	subMonths,
-	getMonth,
-	isSameYear,
+	getHours,
 	isSameMonth,
 	addDays,
+	addHours,
 	parseISO,
 	subDays,
-	getDate
+	getDate,
+	getDaysInMonth
 } from 'date-fns';
+import UserSelectionPage from '../routes/UserSelectionPage';
 const MONTHS = {
 	0: 'January',
 	1: 'February',
@@ -43,40 +46,43 @@ const updateCalendar = (calendar) => {
 };
 
 /**
- * returns an object where keys are “MMMM YYYY” (unique month-year combination)
- * and values are arrays of numbers displaying # of selections for each half-day of the month
+ * if isTrip:
+ * 	returns an object where keys are “MMMM YYYY” (unique month-year combination)
+ * 	and values are arrays of numbers displaying # of selections for each half-day of the month
+ * else:
+ * 	returns an object where keys are "MMMMYY"
  */
-const processCalendar = (calendar) => {
-	let processedCalendar = {};
-	for (let user in calendar) {
-		for (let range in calendar[user]) {
-			let startDate = calendar[user][range][0];
-			let endDate = calendar[user][range][1];
-			
-			// the dates selected for each user ("month year" format)
-			let startDateFormatted = format(startDate, 'MMMM yyyy');
-			let endDateFormatted = format(endDate, 'MMMM yyyy');
-			let monthsInBtwFormatted = [];
-		}
-	}
+const processCalendar = (isTrip, calendar) => {
+	let result = {};
+	let allSelectedRanges = Object.values(calendar)
+
+	allSelectedRanges.forEach( user => { 
+		user.forEach( range => {
+			let [startDate, endDate] = range;
+			let currDate = startDate;
+			while (currDate <= endDate) {
+				const monthKey = format(currDate, "MM-yyyy")
+				
+				let halfDayIndex = getHalfDayIndex(currDate)
+				
+				if (!result[monthKey]) {
+					const numDaysInMonth = getDaysInMonth(currDate);
+					result[monthKey] = new Array(60).fill(0); 
+				}
+				result[monthKey][halfDayIndex]++
+				currDate = addHours(currDate, 12);
+			}
+		})
+	});
+	return result;
 };
 
-// returns the number of users that have selected the given date (or “half-day”)
-const getNumSelections = (isAm, date) => {
-	const [ june2023, july2023 ] = [format(new Date('June 2, 2023 06:00:00'), 'MMMM yyyy'), format(new Date('July 15, 2023 06:00:00'), 'MMMM yyyy')];
-	const usersSelections = {     //  = processCalendar(calendar, startDate, endDate);   // [2, 3, 4, 5, 6, 7, 7] size 60-62
-		[june2023] : new Array(84).fill(1),
-		[july2023] : new Array(84).fill(2)
-	};
 
-	let keyIndex = getDate(date) * 2 - 1;
-	keyIndex += (!isAm) ? 1 : 0;
-
-	const validMonth = usersSelections[format(date, 'MMMM yyyy')];
-
-	return validMonth ? validMonth[keyIndex] : null;
-};
- 
+const getHalfDayIndex = (date) => { 
+	const isAM = getHours(date) < 12;
+	let keyIndex = (getDate(date) - 1) * 2;
+	return (isAM) ? keyIndex : keyIndex + 1;
+}
 
 
 const TripCalendar = () => {
@@ -110,7 +116,18 @@ const TripCalendar = () => {
 		} else if (!isNext && !isLeftEnd) {
 			setCurrDateStart(subMonths(currDateStart, 1));
 		}
+	}; 
+
+	const usersSelections = processCalendar(true, calendar);
+
+
+	// returns the number of users that have selected the given date (or “half-day”)
+	const getNumSelections = (date) => {
+		let halfDayIndex = getHalfDayIndex(date);
+		const validMonth = usersSelections[format(date, 'MM-yyyy')];
+		return validMonth ? validMonth[halfDayIndex] : null;
 	};
+
 
 	// returns the associated date for each half-day cell (or TripHalfDay)
 	const getDateVal = (tempDate, dayIndex, weekIndex) => {
@@ -132,13 +149,14 @@ const TripCalendar = () => {
 	let tempDate = currDateStart;
 		
 	return (
-		<div className='container width' style={ { border:'solid black 1px'} }>
-			<header className="row" style={ { background: 'rgb(225, 225, 225)' } }>
+		<Container className='width' style={ { border:'solid black 1px'} }>
+			<Row style={ { background: 'rgb(225, 225, 225)' } }>
 				<button 
 					className="btn btn-primary"
 					onClick={ () => setIsEditMode(!isEditMode) }
 				> 
-					{ (isEditMode) ? "Add" : "Edit" } </button>
+					{ (isEditMode) ? "Add" : "Edit" }
+				</button>
 				<button
 					onClick={() => handleChangeMonth(false)}
 					style={{ background: 'inherit', border: 'none' }}
@@ -154,9 +172,9 @@ const TripCalendar = () => {
 				>
 					{'>'}
 				</button> 
-			</header> 
+			</Row> 
 
-			<div className="row text-center" style={{ background: 'rgb(225, 225, 225)' }}>
+			<Row className="text-center" style={{ background: 'rgb(225, 225, 225)' }}>
 				<div className='col'>Sun</div>
 				<div className='col'>Mon</div>
 				<div className='col'>Tue</div>
@@ -164,28 +182,28 @@ const TripCalendar = () => {
 				<div className='col'>Thu</div>
 				<div className='col'>Fri</div>
 				<div className='col'>Sat</div>
-			</div>		
+			</Row>		
 
 			{monthArray.map((weekArr, weekIndex) => {
 				return (
-					<div className="row">
+					<Row>
 						{weekArr.map((day, dayIndex) => {
 							const dateVal = getDateVal(tempDate, dayIndex, weekIndex);
 							const classNameVal = getClassName(tempDate, startDate, endDate)
-
 							tempDate = addDays(dateVal, 1);
 							
 							return (
-								<div className='col' style={{ border: "1px solid green", padding: '0px', height: '100px'}}> 
+								<Col style={{ border: "1px solid green", padding: '0px', height: '100px'}}> 
 									<TripHalfDay
 										className={classNameVal}
 										date={dateVal ? new Date(dateVal.setHours(6)) : dateVal}
 										key={dayIndex + weekIndex + "AM"}
 										isSelectingDate={isSelectingDate}
-										setIsSelectingDate={setIsSelectingDate }
+										setIsSelectingDate={setIsSelectingDate}
 										dateSelections={dateSelections}
 										setDateSelections={setDateSelections}
-										numSelections={getNumSelections(true, tempDate) }
+										numSelections={getNumSelections(dateVal ? new Date(dateVal.setHours(6)) : dateVal)}
+										isEditMode={isEditMode}
 									/>
 									<TripHalfDay
 										className={classNameVal}
@@ -195,15 +213,16 @@ const TripCalendar = () => {
 										setIsSelectingDate={setIsSelectingDate}
 										dateSelections={dateSelections}
 										setDateSelections={setDateSelections}
-										numSelections={getNumSelections(false, tempDate)}
+										numSelections={getNumSelections(dateVal ? new Date(dateVal.setHours(18)): dateVal)}
+										isEditMode={isEditMode}
 									/>
-								</div>
+								</Col>
 							);
 						})}
-					</div>
+					</Row>
 				);
 			})}
-		</div>
+		</Container>
 	);
 };
 export default TripCalendar;
