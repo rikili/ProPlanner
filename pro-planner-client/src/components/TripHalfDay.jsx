@@ -30,7 +30,8 @@ export const TripHalfDay = props => {
 		if (props.isSelectingDate) {
 			//deselect case
 			if (
-				isSameDay(props.isSelectingDate, props.date) &&
+				isSameDay(props.isSelectingDate, props.date)
+				 &&
 				isSameMonth(props.isSelectingDate, props.date)
 			) {
 				props.setIsSelectingDate(null);
@@ -40,31 +41,23 @@ export const TripHalfDay = props => {
 			if (isAfter(props.date, props.isSelectingDate)) {
 				props.setDateSelections([
 					...props.dateSelections,
-					[props.isSelectingDate, props.date],
+					[props.isSelectingDate, props.date], 
 				]);
-			}
+			} 
 			//first click: set the first date of the range!
 		} else {
 			props.setIsSelectingDate(props.date);
 		}
 	};
 
-	// resets isSelectingDate to null when a range is added to dateSelections
-	useEffect(() => {
-		props.setIsSelectingDate(null);
-	}, [props.dateSelections]);
-
 	// when you leave edit mode, the selections are cleared.
 	useEffect(() => {
 		props.setDateSelections([]);
+		props.setIsSelectingDate(null);
 	}, [props.isEditMode]);
-
-	// console.log('DATESELECTIONS :  -> ', props.dateSelections)
 
 	const isDateSelected = date => {
 		let daysInRange = [];
-
-		// console.log('SELECTED DATES', props.dateSelections);
 
 		if (props.dateSelections) {
 			props.dateSelections.forEach(range => {
@@ -117,10 +110,6 @@ export const TripHalfDay = props => {
 		<div
 			className={'half-day' + ' ' + props.className + ' ' + setActive()}
 			style={styleVal}
-			// 	props.numSelections && !props.isEditMode
-			// 		? { background: `rgba(30, 255, 50, ${props.numSelections * 0.2})` }
-			// 		: {}
-			// }
 			onClick={props.isEditMode ? handleSelection : null}
 		>
 			{isAM() && props.date.getDate()}
