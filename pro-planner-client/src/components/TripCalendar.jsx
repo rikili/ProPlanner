@@ -2,7 +2,7 @@ import './TripCalendar.scss';
 import { TripHalfDay } from './TripHalfDay.jsx';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import {Container, Row, Col, Button} from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import {
 	format,
 	compareAsc,
@@ -18,7 +18,7 @@ import {
 	parseISO,
 	subDays,
 	getDate,
-	getDaysInMonth
+	getDaysInMonth,
 } from 'date-fns';
 import UserSelectionPage from '../routes/UserSelectionPage';
 const MONTHS = {
@@ -36,12 +36,10 @@ const MONTHS = {
 	11: 'December',
 };
 
-
-
 // updates calendarSlice with the user's new inputs
 // called when user submits/adds new inputs
 // called only in edit calendar mode
-const updateCalendar = (calendar) => {
+const updateCalendar = calendar => {
 	// dispatches
 };
 
@@ -54,36 +52,34 @@ const updateCalendar = (calendar) => {
  */
 const processCalendar = (isTrip, calendar) => {
 	let result = {};
-	let allSelectedRanges = Object.values(calendar)
+	let allSelectedRanges = Object.values(calendar);
 
-	allSelectedRanges.forEach( user => { 
-		user.forEach( range => {
+	allSelectedRanges.forEach(user => {
+		user.forEach(range => {
 			let [startDate, endDate] = range;
 			let currDate = startDate;
 			while (currDate <= endDate) {
-				const monthKey = format(currDate, "MM-yyyy")
-				
-				let halfDayIndex = getHalfDayIndex(currDate)
-				
+				const monthKey = format(currDate, 'MM-yyyy');
+
+				let halfDayIndex = getHalfDayIndex(currDate);
+
 				if (!result[monthKey]) {
 					const numDaysInMonth = getDaysInMonth(currDate);
-					result[monthKey] = new Array(60).fill(0); 
+					result[monthKey] = new Array(60).fill(0);
 				}
-				result[monthKey][halfDayIndex]++
+				result[monthKey][halfDayIndex]++;
 				currDate = addHours(currDate, 12);
 			}
-		})
+		});
 	});
 	return result;
 };
 
-
-const getHalfDayIndex = (date) => { 
+const getHalfDayIndex = date => {
 	const isAM = getHours(date) < 12;
 	let keyIndex = (getDate(date) - 1) * 2;
-	return (isAM) ? keyIndex : keyIndex + 1;
-}
-
+	return isAM ? keyIndex : keyIndex + 1;
+};
 
 const TripCalendar = () => {
 	const monthArray = new Array(6).fill(new Array(7).fill(-1));
@@ -95,14 +91,18 @@ const TripCalendar = () => {
 
 	// local states
 	const [currDateStart, setCurrDateStart] = useState(startOfMonth(startDate));
-	const [isLeftEnd, setIsLeftEnd] = useState(isSameMonth(currDateStart, startDate) ? true : false);
-	const [isRightEnd, setIsRightEnd] = useState(isSameMonth(currDateStart, endDate) ? true : false);
+	const [isLeftEnd, setIsLeftEnd] = useState(
+		isSameMonth(currDateStart, startDate) ? true : false
+	);
+	const [isRightEnd, setIsRightEnd] = useState(
+		isSameMonth(currDateStart, endDate) ? true : false
+	);
 	const [isEditMode, setIsEditMode] = useState(false);
 
 	// stores null or first selected Date (or TripHalfDay) for date range selection
-	const [isSelectingDate, setIsSelectingDate] = useState(null);  
+	const [isSelectingDate, setIsSelectingDate] = useState(null);
 	// stores user's date range selections (which later gets pushed into store when user submits/adds the changes)
-	const [dateSelections, setDateSelections] = useState(calendar.user1);  // TODO: initial state needs to be the correct user (currently hard-coded to user1)
+	const [dateSelections, setDateSelections] = useState([]); // TODO: initial state needs to be the correct user (currently hard-coded to user1)
 
 	useEffect(() => {
 		setIsLeftEnd(isSameMonth(currDateStart, startDate));
@@ -116,46 +116,51 @@ const TripCalendar = () => {
 		} else if (!isNext && !isLeftEnd) {
 			setCurrDateStart(subMonths(currDateStart, 1));
 		}
-	}; 
+	};
 
 	const usersSelections = processCalendar(true, calendar);
 
-
 	// returns the number of users that have selected the given date (or “half-day”)
-	const getNumSelections = (date) => {
+	const getNumSelections = date => {
 		let halfDayIndex = getHalfDayIndex(date);
 		const validMonth = usersSelections[format(date, 'MM-yyyy')];
 		return validMonth ? validMonth[halfDayIndex] : null;
 	};
 
-
 	// returns the associated date for each half-day cell (or TripHalfDay)
 	const getDateVal = (tempDate, dayIndex, weekIndex) => {
-		if (weekIndex == 0 && dayIndex < getDay(tempDate) || !isSameMonth(tempDate, currDateStart)) {
+		if (
+			(weekIndex == 0 && dayIndex < getDay(tempDate)) ||
+			!isSameMonth(tempDate, currDateStart)
+		) {
 			return subDays(tempDate, getDay(tempDate) - dayIndex);
 		}
 		return tempDate;
 	};
 
 	// returns “valid” or “invalid” depending on whether the given date is valid/availble for scheduling
-    // “valid” means date is within the plan’s available date range and a possible day of the week
+	// “valid” means date is within the plan’s available date range and a possible day of the week
 	const getClassName = (tempDate, startDate, endDate) => {
-		if (plan.availableDays.includes(getDay(tempDate)) && (tempDate >= startDate) && (tempDate <= endDate)) {
+		if (
+			plan.availableDays.includes(getDay(tempDate)) &&
+			tempDate >= startDate &&
+			tempDate <= endDate
+		) {
 			return 'valid';
 		}
 		return 'invalid';
 	};
 
 	let tempDate = currDateStart;
-		
+
 	return (
-		<Container className='width' style={ { border:'solid black 1px'} }>
-			<Row style={ { background: 'rgb(225, 225, 225)' } }>
-				<button 
+		<Container className="width" style={{ border: 'solid black 1px' }}>
+			<Row style={{ background: 'rgb(225, 225, 225)' }}>
+				<button
 					className="btn btn-primary"
-					onClick={ () => setIsEditMode(!isEditMode) }
-				> 
-					{ (isEditMode) ? "Add" : "Edit" }
+					onClick={() => setIsEditMode(!isEditMode)}
+				>
+					{isEditMode ? 'Add' : 'Edit'}
 				</button>
 				<button
 					onClick={() => handleChangeMonth(false)}
@@ -171,49 +176,59 @@ const TripCalendar = () => {
 					className={isRightEnd ? 'col highlighted' : 'col'}
 				>
 					{'>'}
-				</button> 
-			</Row> 
+				</button>
+			</Row>
 
 			<Row className="text-center" style={{ background: 'rgb(225, 225, 225)' }}>
-				<div className='col'>Sun</div>
-				<div className='col'>Mon</div>
-				<div className='col'>Tue</div>
-				<div className='col'>Wed</div>
-				<div className='col'>Thu</div>
-				<div className='col'>Fri</div>
-				<div className='col'>Sat</div>
-			</Row>		
+				<div className="col">Sun</div>
+				<div className="col">Mon</div>
+				<div className="col">Tue</div>
+				<div className="col">Wed</div>
+				<div className="col">Thu</div>
+				<div className="col">Fri</div>
+				<div className="col">Sat</div>
+			</Row>
 
 			{monthArray.map((weekArr, weekIndex) => {
 				return (
 					<Row>
 						{weekArr.map((day, dayIndex) => {
 							const dateVal = getDateVal(tempDate, dayIndex, weekIndex);
-							const classNameVal = getClassName(tempDate, startDate, endDate)
+							const classNameVal = getClassName(dateVal, startDate, endDate);
 							tempDate = addDays(dateVal, 1);
-							
+
 							return (
-								<Col style={{ border: "1px solid green", padding: '0px', height: '100px'}}> 
+								<Col
+									style={{
+										border: '1px solid green',
+										padding: '0px',
+										height: '100px',
+									}}
+								>
 									<TripHalfDay
 										className={classNameVal}
 										date={dateVal ? new Date(dateVal.setHours(6)) : dateVal}
-										key={dayIndex + weekIndex + "AM"}
+										key={dayIndex + weekIndex + 'AM'}
 										isSelectingDate={isSelectingDate}
 										setIsSelectingDate={setIsSelectingDate}
 										dateSelections={dateSelections}
 										setDateSelections={setDateSelections}
-										numSelections={getNumSelections(dateVal ? new Date(dateVal.setHours(6)) : dateVal)}
+										numSelections={getNumSelections(
+											dateVal ? new Date(dateVal.setHours(6)) : dateVal
+										)}
 										isEditMode={isEditMode}
 									/>
 									<TripHalfDay
 										className={classNameVal}
-										date={dateVal ? new Date(dateVal.setHours(18)): dateVal}
-										key={dayIndex + weekIndex + "PM"} 
+										date={dateVal ? new Date(dateVal.setHours(18)) : dateVal}
+										key={dayIndex + weekIndex + 'PM'}
 										isSelectingDate={isSelectingDate}
 										setIsSelectingDate={setIsSelectingDate}
 										dateSelections={dateSelections}
 										setDateSelections={setDateSelections}
-										numSelections={getNumSelections(dateVal ? new Date(dateVal.setHours(18)): dateVal)}
+										numSelections={getNumSelections(
+											dateVal ? new Date(dateVal.setHours(18)) : dateVal
+										)}
 										isEditMode={isEditMode}
 									/>
 								</Col>
