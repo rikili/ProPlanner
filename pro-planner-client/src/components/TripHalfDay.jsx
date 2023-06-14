@@ -1,79 +1,129 @@
 import React from 'react';
-import { format, getDate, isSameDay, isSameMonth, isBefore, isAfter, parseISO} from 'date-fns';
+import {
+	format,
+	getDate,
+	isSameDay,
+	isSameMonth,
+	isBefore,
+	isAfter,
+	parseISO,
+	eachDayOfInterval,
+} from 'date-fns';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
-export const TripHalfDay =  props => {
-	let styleVal = {
-
+export const TripHalfDay = props => {
+	const styleVal = {
+		backgroundColor: '',
 	};
-	
+	if (props.numSelections && !props.isEditMode) {
+		styleVal.backgroundColor = `rgba(30, 255, 50, ${
+			props.numSelections * 0.2
+		})`;
+	}
 
+	// 		? { background: `rgba(30, 255, 50, ${props.numSelections * 0.2})` }
+	// 		: {}
+	// const getStyle = () => {};
 	const handleSelection = () => {
+		//second click. the first date has been selected
 		if (props.isSelectingDate) {
-			// TODO: take care of logic of double selecting the same date aka isSelectingDate == props.date
-			// this is the second click case
-			// we need to add the date range to the store from [isSelectingDate, props.date] ~> might need to be flipped
-			// props.date
-			// [ [s1, e1] , ... ]
-			// clicking isSameDate(isSelectingDate, props.date)
-			if (isBefore(props.isSelectingDate, props.date)) {
+			//deselect case
+			if (
+				isSameDay(props.isSelectingDate, props.date) &&
+				isSameMonth(props.isSelectingDate, props.date)
+			) {
+				props.setIsSelectingDate(null);
+			}
+
+			// selecting date after isSelectingDate -> create a new range
+			if (isAfter(props.date, props.isSelectingDate)) {
 				props.setDateSelections([
 					...props.dateSelections,
 					[props.isSelectingDate, props.date],
 				]);
-			} else {
-				props.setDateSelections([
-					...props.dateSelections,
-					[props.date, props.isSelectingDate],
-				]);
 			}
+			//first click: set the first date of the range!
 		} else {
 			props.setIsSelectingDate(props.date);
 		}
 	};
 
+	// resets isSelectingDate to null when a range is added to dateSelections
+	useEffect(() => {
+		props.setIsSelectingDate(null);
+	}, [props.dateSelections]);
+
+	// when you leave edit mode, the selections are cleared.
+	useEffect(() => {
+		props.setDateSelections([]);
+	}, [props.isEditMode]);
+
+	// console.log('DATESELECTIONS :  -> ', props.dateSelections)
+
+	const isDateSelected = date => {
+		let daysInRange = [];
+
+		// console.log('SELECTED DATES', props.dateSelections);
+
+		if (props.dateSelections) {
+			props.dateSelections.forEach(range => {
+				const selectedDates = eachDayOfInterval({
+					start: range[0],
+					end: range[1],
+				});
+				daysInRange.push(...selectedDates);
+			});
+		}
+
+		return daysInRange.some(
+			selectedDate =>
+				isSameDay(selectedDate, date) && isSameMonth(selectedDate, date)
+		);
+	};
+
+	/* conditions
+	 * must be in edit mode
+	 * we want to setActive all the dates in props.dateSelections
+	 */
 	const setActive = () => {
 		if (
-			isSameDay(props.date, props.isSelectingDate) &&
-			isSameMonth(props.date, props.isSelectingDate)
+			props.isEditMode &&
+			(isDateSelected(props.date) ||
+				(props.isSelectingDate &&
+					isSameDay(props.isSelectingDate, props.date) &&
+					isSameMonth(props.isSelectingDate, props.date))) &&
+			props.className == 'valid'
 		) {
 			return 'active';
+		} else {
+			return '';
 		}
 	};
 
-	// const setHover = () => { 
-	// 	if (props.className === 'valid') {
-	// 		return 'valid';
-	// 	}
-	// 	return '';
-	// };
-
 	const isAM = () => {
-
 		if (props.date && props.date.getHours() < 12) {
 			const time = format(props.date, 'HH');
 			return true;
 		}
 
 		return false;
-	}
-
-	if (props.isEditMode) {
-		// handleSelections
-		// props.isSelectingDate
-		// 
-	}
+	};
 
 	// TODO: use the followoing attributes for hover effect
 	// onMouseEnter={handleMouseEnter}
 	// onMouseLeave={handleMouseLeave}
 	return (
-		<div 
-			className={'half-day' + ' ' +  props.className + " " +  setActive() }
-			style={ (props.numSelections && !props.isEditMode) ? {background: `rgba(30, 255, 50, ${props.numSelections * 0.2})`} : {} }
-			// on
+		<div
+			className={'half-day' + ' ' + props.className + ' ' + setActive()}
+			style={styleVal}
+			// 	props.numSelections && !props.isEditMode
+			// 		? { background: `rgba(30, 255, 50, ${props.numSelections * 0.2})` }
+			// 		: {}
+			// }
+			onClick={props.isEditMode ? handleSelection : null}
 		>
-			{ isAM() && props.date.getDate() }
+			{isAM() && props.date.getDate()}
 		</div>
 	);
 };
