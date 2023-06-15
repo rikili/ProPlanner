@@ -20,7 +20,7 @@ const SchedulePage = () => {
                 disableControl: true
             }));
         }
-    }, [planParams, navigate, dispatch]);
+    }, [planParams, navigate]);
 
     return <div>
         {planParams.name && (planParams.planType === PLAN_TYPE.OUTING)
