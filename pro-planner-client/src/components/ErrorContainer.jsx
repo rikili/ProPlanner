@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from "react-redux";
 import { Outlet } from 'react-router-dom';
 import ErrorToast from './ErrorToast';
@@ -12,14 +12,14 @@ const ErrorContainer = () => {
     const disableControl = useSelector(state => state.error.disableControl);
     const closeButton = useRef(null);
     
-    const handleKeyPress = useCallback((event) => {
+    const handleKeyPress = (event) => {
         if (disableControl && event.keyCode === 9) {
             event.preventDefault();
             if (closeButton.current) {
                 closeButton.current.focus();
             }
         }
-    }, [disableControl]);
+    }
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress);
