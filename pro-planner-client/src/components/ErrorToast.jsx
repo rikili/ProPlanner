@@ -8,8 +8,8 @@ import { CgClose } from 'react-icons/cg';
 
 import { resetError } from '../redux/errorSlice';
 import { ERR_TYPE } from '../constants';
-import '../styles/ErrorToast.scss';
 import { useNavigate } from 'react-router-dom';
+import './ErrorToast.scss';
 
 const ErrorToast = forwardRef((props, ref) => {
     const showError = useSelector(state => state.error.isShowError);
