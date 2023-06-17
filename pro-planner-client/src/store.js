@@ -6,6 +6,7 @@ import pollSlice from "./redux/pollSlice";
 import costSlice from "./redux/costSlice";
 import errorSlice from './redux/errorSlice';
 import calendarSlice from './redux/calendarSlice';
+import tripSlice from './redux/tripSlice';
 
 export default configureStore({
     reducer: combineReducers({
@@ -13,7 +14,7 @@ export default configureStore({
         user: userSlice,
         error: errorSlice,
         poll: pollSlice,
-        cost: costSlice,
-        outingSelections: calendarSlice
+        outingSelections: calendarSlice,
+        tripSelections: tripSlice,
     }),
 });
