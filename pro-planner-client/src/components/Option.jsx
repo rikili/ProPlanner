@@ -17,7 +17,8 @@ function Option({option, poll, setSelectedOptions, selectedOptions}) {
         } else {
             setSelectedOptions(selectedOptions.filter((i) => i !== option.optionId));
         }
-    }
+    };
+
 
     return (
         <>
@@ -25,7 +26,7 @@ function Option({option, poll, setSelectedOptions, selectedOptions}) {
                 <Row>
                     <Col>
                         <Form.Check
-                            type={'radio'}
+                            type={'checkbox'}
                             id={'default-radio'}
                             checked={isChecked}
                             label={option.option}
