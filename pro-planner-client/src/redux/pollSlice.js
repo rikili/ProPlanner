@@ -31,15 +31,15 @@ const pollSlice = createSlice({
             const input = action.payload;
 
             const poll = state.polls.find((p) => p.pollId === input.pollId);
-            const userVoted = poll.votedUsers[input.userId];
+            // const userVoted = poll.votedUsers[input.userId]; TODO... implement after userId is set
 
-            if (!userVoted) {
+            // if (!userVoted) { TODO... implement after userId is set
                 input.selectedOptions.forEach((optionId) => {
                     poll.options.find((o) => o.optionId === optionId).voteCount++
                 })
-            }
+            //}
 
-            poll.votedUsers[input.userId] = true;
+            // poll.votedUsers[input.userId] = true; TODO... implement after userId is set
 
         },
     }
