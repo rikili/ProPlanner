@@ -11,7 +11,9 @@ function Polls() {
         <>
             <Container className='d-flex flex-column justify-content-center align-items-center'>
                 {pollList.map((poll) =>
-                    <Poll poll={poll}/>)}
+                    <Poll poll={poll}
+                          key={poll.pollId}
+                    />)}
             </Container>
         </>
     );

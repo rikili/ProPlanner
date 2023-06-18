@@ -30,7 +30,7 @@ function Poll({poll}) {
     }
 
     let formResult = {
-        pollId: poll.id,
+        pollId: poll.pollId,
         selectedOptions: selectedOptions
     }
 
@@ -46,16 +46,20 @@ function Poll({poll}) {
                     <Container>
                         <Row>
                             <Col>
-                                <Card.Title>{poll.question}</Card.Title>
+                                <Card.Title>
+                                    {poll.question}
+                                </Card.Title>
                             </Col>
                             <Col className="d-flex justify-content-end">
                                 {!isOptionListDisplay &&
                                     (<BiCaretDown size={caretIconSize}
-                                                  onClick={handleIconClick}/>)
+                                                  onClick={handleIconClick}
+                                    />)
                                 }
                                 {isOptionListDisplay &&
                                     (<BiCaretUp size={caretIconSize}
-                                                onClick={handleIconClick}/>)
+                                                onClick={handleIconClick}
+                                    />)
                                 }
                             </Col>
                         </Row>
@@ -63,10 +67,10 @@ function Poll({poll}) {
                     {isOptionListDisplay && (
                         <>
                             <Options style={{marginTop: '10px'}}
-                                     options={poll.options}
-                                     pollId={poll.id}
+                                     poll={poll}
                                      setSelectedOptions={setSelectedOptions}
-                                     selectedOptions={selectedOptions}/>
+                                     selectedOptions={selectedOptions}
+                            />
                             <Button style={{marginTop: '10px'}}
                                     variant="primary"
                                     size='sm'
@@ -83,9 +87,10 @@ function Poll({poll}) {
                     )}
                 </Card.Body>
             </Card>
-            <AddOptionForm pollId={poll.id}
+            <AddOptionForm poll={poll}
                            showModal={showModal}
-                           setShowModal={setShowModal}/>
+                           setShowModal={setShowModal}
+            />
         </>
     );
 }
