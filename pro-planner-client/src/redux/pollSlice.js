@@ -3,7 +3,8 @@ import {createSlice} from "@reduxjs/toolkit";
 const pollSlice = createSlice({
     name: 'poll',
     initialState: {
-        polls: []
+        polls: [],
+        votedUsers: {}
     },
     reducers: {
         addPoll: (state, action) => {
@@ -12,6 +13,7 @@ const pollSlice = createSlice({
                 pollId: input.pollId,
                 question: input.question,
                 options: input.options,
+                votedUsers: input.votedUsers
             };
             state.polls.push(newPoll);
         },
@@ -27,10 +29,18 @@ const pollSlice = createSlice({
         },
         voteOption: (state, action) => {
             const input = action.payload;
-            input.selectedOptions.forEach((optionId) => {
-                const poll = state.polls.find((p) => p.pollId === input.pollId);
-                poll.options.find((o) => o.optionId === optionId).voteCount++
-            })
+
+            const poll = state.polls.find((p) => p.pollId === input.pollId);
+            const userVoted = poll.votedUsers[input.userId];
+
+            if (!userVoted) {
+                input.selectedOptions.forEach((optionId) => {
+                    poll.options.find((o) => o.optionId === optionId).voteCount++
+                })
+            }
+
+            poll.votedUsers[input.userId] = true;
+
         },
     }
 })

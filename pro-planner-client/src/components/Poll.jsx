@@ -29,12 +29,16 @@ function Poll({poll}) {
         }
     }
 
+    // const userId = "user"; TODO... userID from backend
+
     let formResult = {
         pollId: poll.pollId,
-        selectedOptions: selectedOptions
+        selectedOptions: selectedOptions,
+        // userId: userId TODO...
     }
 
     const handleVote = () => {
+        // TODO... implement error message if user has already voted
         dispatch(voteOption(formResult))
     }
 
