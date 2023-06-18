@@ -1,11 +1,11 @@
 import React from 'react';
 import Poll from "./Poll";
 import {Container} from "react-bootstrap";
-import initialState from "../redux/pollSlice";
+import {useSelector} from 'react-redux';
 
-function PollsList() {
+function Polls() {
 
-    const pollList = initialState.pollList;
+    const pollList = useSelector((state) => state.poll.polls);
 
     return (
         <>
@@ -17,4 +17,4 @@ function PollsList() {
     );
 }
 
-export default PollsList;
+export default Polls;

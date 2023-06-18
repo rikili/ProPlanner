@@ -1,13 +1,20 @@
 import React, {useState} from 'react';
 import {Modal, Button, Form} from "react-bootstrap";
+import {useDispatch} from 'react-redux';
+import {addOption} from "../redux/pollSlice";
 
-function AddOptionForm({showModal, setShowModal}) {
+function AddOptionForm({pollId, showModal, setShowModal}) {
     const [newOption, setNewOption] = useState("")
+    const dispatch = useDispatch();
+
+    let formResult = {
+        pollId: pollId,
+        option: newOption,
+        voteCount: 0,
+    }
 
     const handleSaveOption = () => {
-        // TODO...
-        console.log(newOption);
-
+        dispatch(addOption(formResult));
         handleCloseModal();
     };
 
@@ -16,6 +23,10 @@ function AddOptionForm({showModal, setShowModal}) {
         setNewOption("");
     }
 
+
+    const handleOptionChange = (e) => {
+        setNewOption(e.target.value)
+    }
 
     return (
         <Modal show={showModal} onHide={handleCloseModal}>
@@ -28,7 +39,7 @@ function AddOptionForm({showModal, setShowModal}) {
                         type="text"
                         placeholder="Enter new option"
                         value={newOption}
-                        onChange={(e) => setNewOption(e.target.value)}
+                        onChange={handleOptionChange}
                     />
                 </Form.Group>
             </Modal.Body>
