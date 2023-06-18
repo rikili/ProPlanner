@@ -8,15 +8,15 @@ function AddPollForm() {
     const [newQuestion, setNewQuestion] = useState('')
     const dispatch = useDispatch();
 
-    let newPoll = {
-        id: uuidv4(),
+    let formResult = {
+        pollId: uuidv4(),
         question: newQuestion,
         options: []
     }
 
     const handleAddPoll = (e) => {
         e.preventDefault();
-        dispatch(addPoll(newPoll))
+        dispatch(addPoll(formResult))
         setNewQuestion('')
     }
 
@@ -36,7 +36,7 @@ function AddPollForm() {
                             onChange={handleQuestionChange}
                             value={newQuestion}
                         />
-                        <Button variant="outline-secondary"
+                        <Button variant="outline-primary"
                                 id="button-addon2"
                                 type='submit'
                                 onClick={handleAddPoll}>

@@ -9,7 +9,7 @@ const pollSlice = createSlice({
         addPoll: (state, action) => {
             const input = action.payload;
             const newPoll = {
-                id: input.id,
+                pollId: input.pollId,
                 question: input.question,
                 options: input.options,
             };
@@ -18,17 +18,18 @@ const pollSlice = createSlice({
         addOption: (state, action) => {
             const input = action.payload;
             const newOption = {
+                optionId: input.optionId,
                 option: input.option,
                 voteCount: input.voteCount
             }
-            const poll = state.polls.find((poll) => poll.id === input.pollId);
+            const poll = state.polls.find((p) => p.pollId === input.pollId);
             poll.options.push(newOption);
         },
         voteOption: (state, action) => {
             const input = action.payload;
-            input.selectedOptions.forEach((optionIndex) => {
-                const poll = state.polls.find((poll) => poll.id === input.pollId);
-                poll.options[optionIndex].voteCount++;
+            input.selectedOptions.forEach((optionId) => {
+                const poll = state.polls.find((p) => p.pollId === input.pollId);
+                poll.options.find((o) => o.optionId === optionId).voteCount++
             })
         },
     }

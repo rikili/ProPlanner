@@ -3,19 +3,19 @@ import {Col, Container, Form, ProgressBar, Row} from "react-bootstrap";
 import {useState} from "react";
 import {useSelector} from 'react-redux';
 
-function Option({option, pollId, index, setSelectedOptions, selectedOptions}) {
+function Option({option, poll, setSelectedOptions, selectedOptions}) {
 
     const [isChecked, setIsChecked] = useState(false);
-    const poll = useSelector((state) =>
-        state.poll.polls.find((poll) => poll.id === pollId)
+    const currPoll = useSelector((state) =>
+        state.poll.polls.find((p) => p.pollId === poll.pollId)
     );
 
     const handleRadioChange = () => {
         setIsChecked((prevState) => !prevState);
         if (!isChecked) {
-            setSelectedOptions([...selectedOptions, index]);
+            setSelectedOptions([...selectedOptions, option.optionId]);
         } else {
-            setSelectedOptions(selectedOptions.filter((item) => item !== index));
+            setSelectedOptions(selectedOptions.filter((i) => i !== option.optionId));
         }
     }
 
@@ -29,12 +29,17 @@ function Option({option, pollId, index, setSelectedOptions, selectedOptions}) {
                             id={'default-radio'}
                             checked={isChecked}
                             label={option.option}
-                            onClick={handleRadioChange}
+                            key={option.optionId}
+                            onChange={handleRadioChange}
                         />
                     </Col>
+                    <Col className="d-flex justify-content-end">
+                        {currPoll.options.find((o) => o.optionId === option.optionId).voteCount}
+                    </Col>
                     <Col>
-                        <ProgressBar now={poll.options[index].voteCount}
-                                     label={`${poll.options[index].voteCount}`}/>
+                        <ProgressBar
+                            now={currPoll.options.find((o) => o.optionId === option.optionId).voteCount}
+                        />
                     </Col>
                 </Row>
             </Container>
