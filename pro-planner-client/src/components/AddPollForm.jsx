@@ -1,7 +1,29 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {InputGroup, Button, Form, Card, Container} from "react-bootstrap";
+import {v4 as uuidv4} from 'uuid';
+import {useDispatch} from 'react-redux';
+import {addPoll} from "../redux/pollSlice";
 
 function AddPollForm() {
+    const [newQuestion, setNewQuestion] = useState('')
+    const dispatch = useDispatch();
+
+    let newPoll = {
+        id: uuidv4(),
+        question: newQuestion,
+        options: []
+    }
+
+    const handleAddPoll = (e) => {
+        e.preventDefault();
+        dispatch(addPoll(newPoll))
+        setNewQuestion('')
+    }
+
+    const handleQuestionChange = (e) => {
+        setNewQuestion(e.target.value);
+    }
+
     return (
         <>
             <Container className='d-flex flex-column mt-4 justify-content-center align-items-center'>
@@ -11,8 +33,13 @@ function AddPollForm() {
                             placeholder="Poll Question"
                             aria-label="Recipient's username"
                             aria-describedby="basic-addon2"
+                            onChange={handleQuestionChange}
+                            value={newQuestion}
                         />
-                        <Button variant="outline-secondary" id="button-addon2">
+                        <Button variant="outline-secondary"
+                                id="button-addon2"
+                                type='submit'
+                                onClick={handleAddPoll}>
                             Add
                         </Button>
                     </InputGroup>

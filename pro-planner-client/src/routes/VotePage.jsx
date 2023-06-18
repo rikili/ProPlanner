@@ -1,13 +1,13 @@
 import React from "react";
 import NavigationBar from "../components/NavigationBar";
 import AddPollForm from "../components/AddPollForm";
-import PollsList from "../components/PollsList";
+import Polls from "../components/Polls";
 
 const VotePage = () => {
     return <>
         <NavigationBar/>
         <AddPollForm/>
-        <PollsList/>
+        <Polls/>
     </>
 };
 
