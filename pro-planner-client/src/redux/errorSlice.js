@@ -38,6 +38,7 @@ const errorSlice = createSlice({
             state.disableControl = false;
             state.errorType = null;
             state.errorMessage = '';
+            state.redirect = null;
         }
     }
 });
