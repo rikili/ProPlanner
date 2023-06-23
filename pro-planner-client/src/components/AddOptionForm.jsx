@@ -3,7 +3,7 @@ import {Modal, Button, Form} from "react-bootstrap";
 import {useDispatch} from 'react-redux';
 import {addOption} from "../redux/pollSlice";
 import {v4 as uuidv4} from 'uuid';
-import {setError} from "../redux/errorSlice";
+import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
 function AddOptionForm({poll, showModal, setShowModal}) {
@@ -37,6 +37,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
             return;
         }
 
+        dispatch(resetError());
         dispatch(addOption(formResult));
         handleCloseModal();
     };
