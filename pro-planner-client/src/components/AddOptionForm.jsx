@@ -3,6 +3,8 @@ import {Modal, Button, Form} from "react-bootstrap";
 import {useDispatch} from 'react-redux';
 import {addOption} from "../redux/pollSlice";
 import {v4 as uuidv4} from 'uuid';
+import {setError} from "../redux/errorSlice";
+import {ERR_TYPE} from "../constants";
 
 function AddOptionForm({poll, showModal, setShowModal}) {
     const [newOption, setNewOption] = useState("")
@@ -15,8 +17,26 @@ function AddOptionForm({poll, showModal, setShowModal}) {
         voteCount: 0,
     }
 
-    const handleSaveOption = (e) => {
+    const handleAddOption = (e) => {
         e.preventDefault();
+        const formattedNewOption = newOption.trim();
+
+        if (formattedNewOption.length === 0) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Option is invalid. Option must contain at least one character.',
+            }));
+            return;
+        }
+
+        if (poll.options.find(option => option.option === newOption)) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Option already exists, please add a different option.',
+            }));
+            return;
+        }
+
         dispatch(addOption(formResult));
         handleCloseModal();
     };
@@ -48,7 +68,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
             </Modal.Body>
             <Modal.Footer>
                 <Button type='submit'
-                        onClick={handleSaveOption}>
+                        onClick={handleAddOption}>
                     Add Option
                 </Button>
             </Modal.Footer>

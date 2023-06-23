@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
 import {InputGroup, Button, Form, Card, Container} from "react-bootstrap";
 import {v4 as uuidv4} from 'uuid';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {addPoll} from "../redux/pollSlice";
+import {resetError, setError} from "../redux/errorSlice";
+import {ERR_TYPE} from "../constants";
 
 function AddPollForm() {
     const [newQuestion, setNewQuestion] = useState('')
+    const polls = useSelector((state) => state.poll.polls)
     const dispatch = useDispatch();
 
     let formResult = {
@@ -17,6 +20,25 @@ function AddPollForm() {
 
     const handleAddPoll = (e) => {
         e.preventDefault();
+        const formattedNewQuestion = newQuestion.trim();
+
+        if (formattedNewQuestion.length === 0) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Question is invalid. Question must contain at least one character.',
+            }));
+            return;
+        }
+
+        if (polls.find(poll => poll.question === newQuestion)) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Poll already exists, please add a different poll.',
+            }));
+            return;
+        }
+
+        dispatch(resetError());
         dispatch(addPoll(formResult))
         setNewQuestion('')
     }
