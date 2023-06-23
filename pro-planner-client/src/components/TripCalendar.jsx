@@ -21,13 +21,13 @@ import {
 } from 'date-fns';
 import { setUserSelections } from '../redux/calendarSlice';
 
-const FIRST_HALF_HOUR = 9;
-const SECOND_HALF_HOUR = 15;
+const FIRST_HALF_HOUR = 6;
+const SECOND_HALF_HOUR = 18;
 
 const getHalfDate = (date, isFirstHalf) => set(new Date(date), {hours: isFirstHalf ? FIRST_HALF_HOUR : SECOND_HALF_HOUR})
 const isFirstHalf = (dateHalf) => dateHalf.getHours() === FIRST_HALF_HOUR;
 
-const makeMonthIndex = (date) => `${date.getMonth() + 1}-${date.getFullYear()}`;
+const makeMonthIndex = (date) => `${date.getMonth()}-${date.getFullYear()}`;
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
 	if (!destArr[dayIndex].length) {
 		destArr[dayIndex].push([]);
@@ -45,17 +45,29 @@ const TripCalendar = () => {
 	const calendar = useSelector(state => state.tripSelections);
 	const userCalendar = calendar['user1']; // TODO: remove hard-coding
 
-	// local states
+	// States for calendar logic
+	// First day of month (used for tracking which month is our target)
 	const [currDateStart, setCurrDateStart] = useState(startOfMonth(startDate));
+
+	// Check for whether we can move further left or right using month selectors
 	let isLeftEnd = isSameMonth(currDateStart, startDate);
 	let isRightEnd = isSameMonth(currDateStart, endDate);
+
+	// Edit mode toggle
 	const [isEditMode, setIsEditMode] = useState(false);
+
+	// For backend, what months have been updated and are required to be sent to backend
+	const [monthsToUpdate, setUpdateMonths] = useState([]);
+
+	// What is the top-left first day of calendar
 	const calendarStart = startOfWeek(setDate(currDateStart, 1));
 	const calendarEnd = endOfWeek(addWeeks(calendarStart, 5));
+
 	const dispatch = useDispatch();
 
 	const combinedSelections = useMemo(() => {
 		// TODO: run through each user and ensure concerned months are there
+		
 
 		const result = {};
 		Object.entries(calendar).forEach(([username, monthSelects], index) => {
@@ -96,31 +108,42 @@ const TripCalendar = () => {
 		});
 		return result;
 	}, [currDateStart, calendar, calendarStart, calendarEnd]);
+	console.log(combinedSelections);
 
-	// stores null or first selected Date (or TripHalfDay) for date range selection
-	const [isSelectingDate, setIsSelectingDate] = useState(null);
+	// States for Selection Logic
+
+	// tracks if we are doing a selection right now
+	const [isSelectingDate, setIsSelectingDate] = useState(false);
 
 	// tracks wheter we are deleting or adding to selection
 	const [isAddingSelect, setIsAdding] = useState(true);
 
 	// stores user's date range selections (which later gets pushed into store when user submits/adds the changes)
 	const [dateSelections, setSelections] = useState(JSON.parse(JSON.stringify(userCalendar))); // TODO: initial state needs to be the correct user (currently hard-coded to user1)
-	// let dateSelections = JSON.parse(JSON.stringify(userCalendar));
+	
+	// tracks selection range (start/end)
 	const [selectStart, setSelectStart] = useState(null);
 	const [selectCursor, setSelectCursor] = useState(null);
 
 	const isValidSelect = (date) => plan.availableDays.includes(getDay(date)) && date >= startDate && date <= endDate;
 	const isInPreview = (dateHalf) => dateHalf <= selectCursor && dateHalf >= selectStart;
-	// dateSelections = JSON.parse(JSON.stringify(userCalendar));
+	
+	const resetSelecting = () => {
+		setSelectStart(null);
+		setSelectCursor(null);
+		setIsSelectingDate(false);
+	}
+	
 	const toggleEdit = () => {
 		setIsEditMode(!isEditMode);
 		setSelections(JSON.parse(JSON.stringify(userCalendar)));
-		setSelectStart(null);
-		setSelectCursor(null);
+		resetSelecting();
 	}
 
 	const confirmEdits = () => {
 		dispatch(setUserSelections({user: 'user1', selections: dateSelections})); //TODO: change user
+		setUpdateMonths([]);
+		resetSelecting();
 		toggleEdit();
 	}
 
@@ -141,6 +164,7 @@ const TripCalendar = () => {
 		
 		while(selectCursor >= iterHalfDate) {
 			if (isValidSelect(iterHalfDate)) {
+				if (!monthsToUpdate.includes(iterHalfDate.getMonth())) setUpdateMonths([...monthsToUpdate, iterHalfDate.getMonth()]);
 				if (onFirstHalf) {
 					newSelections[makeMonthIndex(iterHalfDate)][iterHalfDate.getDate() - 1][0] = isAddingSelect;
 					iterHalfDate = getHalfDate(iterHalfDate, false);
@@ -160,12 +184,9 @@ const TripCalendar = () => {
 	const handleSelection = (dateHalf) => {
 		if (isSelectingDate) {
 			updateSelections();
-			// setSelections(JSON.parse(JSON.stringify(userCalendar)));
-			setIsSelectingDate(false);
-			setSelectStart(null);
-			setSelectCursor(null);
+			resetSelecting();
 		} else {
-			setIsSelectingDate(dateHalf);
+			setIsSelectingDate(true);
 			setIsAdding(!checkSelected(dateHalf));
 			setSelectStart(new Date(dateHalf));
 			setSelectCursor(new Date(dateHalf));
@@ -186,6 +207,8 @@ const TripCalendar = () => {
 			updateMonthState(subMonths(currDateStart, 1));
 		}
 	};
+
+	const maxUsers = Object.keys(calendar).length;
 
 	let iterDate = new Date(calendarStart);
 	let dayIndex = 0;
@@ -227,10 +250,12 @@ const TripCalendar = () => {
 					onMouseEnter={() => updateSelectionPrev(firstHalfDate)}
 					onClick={() => handleSelection(firstHalfDate)}
 					selections={isEditMode ? null : firstSelects}
+					maxUsers={maxUsers}
 					isSelected={isEditMode ? firstEdit : null}
 					isValid={isValidSelect(firstHalfDate)}
 					isPreviewed={isInPreview(firstHalfDate)}
 					style={{backgroundColor: 'yellow', height: '50%'}}
+					key={`${format(iterDate, 'yyyy-MM-dd')}-first`}
 				/>
 				<TripHalfDay
 					date={new Date(secHalfDate)}
@@ -238,10 +263,12 @@ const TripCalendar = () => {
 					onMouseEnter={() => updateSelectionPrev(secHalfDate)}
 					onClick={() => handleSelection(secHalfDate)}
 					selections={isEditMode ? null : secondSelects}
+					maxUsers={maxUsers}
 					isSelected={isEditMode ? secondEdit : null}
 					isValid={isValidSelect(secHalfDate)}
 					isPreviewed={isInPreview(secHalfDate)}
 					style={{backgroundColor: 'orange', height: '50%'}}
+					key={`${format(iterDate, 'yyyy-MM-dd')}-second`}
 				/>
 			</Col>
 		);
@@ -290,8 +317,8 @@ const TripCalendar = () => {
 			</button>
 		</Row>
 		<Row>
-			{weekArr.map((week) => {
-				return <Row>
+			{weekArr.map((week, index) => {
+				return <Row key={`week-${index}`}>
 					{week.map((day) => day)}
 				</Row>
 			})}

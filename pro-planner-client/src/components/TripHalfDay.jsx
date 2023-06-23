@@ -7,6 +7,7 @@ const TripHalfDay = ({
 	onMouseEnter,
 	onClick,
 	selections,
+	maxUsers,
 	isSelected,
 	isValid,
 	isPreviewed,
@@ -17,8 +18,11 @@ const TripHalfDay = ({
 		onClick={editable ? onClick : ()=>{}}
 		onMouseEnter={editable ? onMouseEnter : ()=>{}}
 	>
-		<div>{selections === null ? (isSelected ? 'edit' : 'b') : (selections.length ? 'selected' : 'a')}</div>
-		<div>{format(date, 'yyyy-MM-dd')}</div>
+		{isValid && <>
+			<div style={{fontSize: '12px'}}>{selections === null ? (isSelected ? 'edit' : 'X') : (selections.length ? 'sel' : 'X')}</div>
+			<div style={{fontSize: '12px'}}>{format(date, 'MM-dd')}</div>
+			<div style={{fontSize: '12px'}}>{!editable ? `${selections?.length}/${maxUsers}` : ''}</div>
+		</>}
 	</div>
 };
 
