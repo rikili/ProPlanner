@@ -6,6 +6,8 @@ import AddOptionForm from "./AddOptionForm";
 import {BiCaretDown, BiCaretUp} from "react-icons/bi";
 import {useDispatch} from 'react-redux';
 import {voteOption} from "../redux/pollSlice";
+import {setError} from "../redux/errorSlice";
+import {ERR_TYPE} from "../constants";
 
 
 function Poll({poll}) {
@@ -38,6 +40,14 @@ function Poll({poll}) {
     }
 
     const handleVote = () => {
+
+        if (selectedOptions.length === 0) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Option(s) not selected. Please select at least one option to vote.',
+            }));
+            return;
+        }
         // TODO... implement error message if user has already voted
         dispatch(voteOption(formResult))
     }
