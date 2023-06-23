@@ -43,8 +43,6 @@ const ErrorToast = forwardRef((props, ref) => {
         {showError
             && <Toast
                 className="m-3 position-relative err-toast"
-                // makes the toast appear above the grey shadow created by the Modal component
-                style={{zIndex: 9999}}
             >
                 <Toast.Header className="d-flex justify-content-between" closeButton={false}>
                     <div className="d-flex align-items-center">

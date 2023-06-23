@@ -24,6 +24,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
         if (formattedNewOption.length === 0) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
+                disableControl: true,
                 message: 'Option is invalid. Option must contain at least one character.',
             }));
             return;
@@ -32,6 +33,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
         if (poll.options.find(option => option.option === newOption)) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
+                disableControl: true,
                 message: 'Option already exists, please add a different option.',
             }));
             return;
