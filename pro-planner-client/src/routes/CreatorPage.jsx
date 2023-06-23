@@ -55,6 +55,22 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
             availableDays: detailResults.availableDays,
         };
 
+        if (!formResult.name) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Name is missing. Please enter a name.',
+            }));
+            return;
+        }
+
+        if (!formResult.location) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Location is missing. Please enter a location.',
+            }));
+            return;
+        }
+
         const testStart = new Date(detailResults.dateRange[0]);
         const testEnd = new Date(detailResults.dateRange[1]);
 
