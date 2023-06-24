@@ -7,6 +7,7 @@
 // getting substring by char references: https://stackoverflow.com/questions/9133102/how-to-grab-substring-before-a-specified-character-in-javascript
 // returning updated document references: https://stackoverflow.com/questions/32811510/mongoose-findoneandupdate-doesnt-return-updated-document
 // projecting nested object references: https://stackoverflow.com/questions/70590047/projection-on-nested-object-mongodb-find-query
+// reading mongodb object references: https://stackoverflow.com/questions/44833736/object-keys-returns-unexpected-keys-on-mongodb-object-from-collection
 
 const express = require('express');
 const router = express.Router();
