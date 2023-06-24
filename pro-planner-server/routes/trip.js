@@ -8,6 +8,7 @@
 // returning updated document references: https://stackoverflow.com/questions/32811510/mongoose-findoneandupdate-doesnt-return-updated-document
 // projecting nested object references: https://stackoverflow.com/questions/70590047/projection-on-nested-object-mongodb-find-query
 // reading mongodb object references: https://stackoverflow.com/questions/44833736/object-keys-returns-unexpected-keys-on-mongodb-object-from-collection
+// finding key in object references: https://stackoverflow.com/questions/39018389/mongodb-find-key-on-nested-object-key-json
 
 const express = require('express');
 const router = express.Router();
@@ -34,7 +35,7 @@ router.post('/', async (req, res) => {
       location: req.body.location,
       dateTimeRange: req.body.dateTimeRange,
     },
-    userInfo: [{ user: userId, selections: userSelections }],
+    userInfo: { [userId]: userSelections },
   });
   let savedData = await tripModel.save();
   res.status(200).json(savedData);
@@ -43,34 +44,36 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const month = Object.keys(req.body.selection)[0];
   const addedNewUserInfo = await addSelection(req.params.id, req.body.userId, month, req.body.selection[month]);
-  res.status(200).send(addedNewUserInfo.toJSON().month);
+  res.status(200).send({ month: addedNewUserInfo.toJSON().month });
 });
 
-router.get('/:id/:userId/:month?', async (req, res) => {
+router.get('/:id/:userId', async (req, res) => {
   const monthQuery = req.query.month;
-  const month = `$userInfo.selections.${monthQuery}`;
-  const requestedMonth = await trip.find(
-    { _id: new ObjectId(req.params.id), 'userInfo.user': new ObjectId(req.params.userId) },
+  const userId = req.params.userId;
+  const month = `$userInfo.${userId}.${monthQuery}`;
+  let requestedMonth = await trip.find(
+    { _id: new ObjectId(req.params.id), [`userInfo.${userId}`]: { $exists: true } },
     {
       month: month,
     }
   );
-  if (requestedMonth[0].month === undefined) {
+  requestedMonth = requestedMonth[0].toJSON();
+  if (!requestedMonth.month) {
     const newMonth = timezone.createMonth(new Date(`${monthQuery.split('-')[0]}-2-${monthQuery.split('-')[1]}`));
     const addedNewMonth = await addSelection(req.params.id, req.params.userId, req.query.month, newMonth);
-    res.send(addedNewMonth.toJSON().month);
+    res.status(200).send({ month: addedNewMonth.toJSON().month });
   } else {
-    res.status(200).send(requestedMonth.toJSON().month);
+    res.status(200).send({ month: requestedMonth.month });
   }
 });
 
 const addSelection = async (tripId, userId, month, monthToAdd) => {
-  const monthPath = `$userInfo.selections.${month}`;
+  const monthPath = `$userInfo.${userId}.${month}`;
   const addMonth = await trip.findOneAndUpdate(
-    { _id: new ObjectId(tripId), 'userInfo.user': new ObjectId(userId) },
+    { _id: new ObjectId(tripId) },
     {
       $set: {
-        [`userInfo.$.selections.${month}`]: monthToAdd,
+        [`userInfo.${userId}.${month}`]: monthToAdd,
       },
     },
     {

@@ -12,7 +12,7 @@ const tripSchema = new Schema(
       location: Schema.Types.String,
       dateTimeRange: Schema.Types.Array,
     },
-    userInfo: [{ user: Schema.Types.ObjectId, selections: Schema.Types.Mixed }],
+    userInfo: Schema.Types.Mixed,
   },
   {
     collection: 'Trip',
