@@ -57,7 +57,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
     return (
         <Modal show={showModal} onHide={handleCloseModal}>
             <Modal.Header closeButton>
-                <Modal.Title>Add New Option</Modal.Title>
+                <Modal.Title>Add Option</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form.Group>
@@ -72,7 +72,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
             <Modal.Footer>
                 <Button type='submit'
                         onClick={handleAddOption}>
-                    Add Option
+                    Add
                 </Button>
             </Modal.Footer>
         </Modal>
