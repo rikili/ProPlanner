@@ -1,24 +1,28 @@
 import React from 'react';
 import {Col, Container, Form, ProgressBar, Row} from "react-bootstrap";
-import {useState} from "react";
 import {useSelector} from 'react-redux';
 
-function Option({option, poll, setSelectedOptions, selectedOptions}) {
+function Option({option, poll, setSelectedOption}) {
 
-    const [isChecked, setIsChecked] = useState(false);
     const currPoll = useSelector((state) =>
         state.poll.polls.find((p) => p.pollId === poll.pollId)
     );
+    const currUser = 'User A'; // TODO: fetch current user
 
-    const handleRadioChange = () => {
-        setIsChecked((prevState) => !prevState);
-        if (!isChecked) {
-            setSelectedOptions([...selectedOptions, option.optionId]);
-        } else {
-            setSelectedOptions(selectedOptions.filter((i) => i !== option.optionId));
+    const handleRadioChange = (e) => {
+        setSelectedOption(e.target.id);
+
+    }
+
+    const isOptionDisabled = (optionId) => {
+        const votedUser = currPoll.votedUsers.find((u) => u.user === currUser);
+
+        if (votedUser) {
+            return votedUser.votedOptionId === optionId;
         }
-    };
 
+        return false;
+    }
 
     return (
         <>
@@ -26,10 +30,11 @@ function Option({option, poll, setSelectedOptions, selectedOptions}) {
                 <Row>
                     <Col>
                         <Form.Check
-                            type={'checkbox'}
-                            id={'default-radio'}
-                            checked={isChecked}
+                            disabled={isOptionDisabled(option.optionId)}
+                            type={'radio'}
                             label={option.option}
+                            name={poll.pollId}
+                            id={option.optionId}
                             key={option.optionId}
                             onChange={handleRadioChange}
                         />
@@ -49,3 +54,5 @@ function Option({option, poll, setSelectedOptions, selectedOptions}) {
 }
 
 export default Option;
+
+
