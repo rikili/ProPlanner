@@ -80,3 +80,4 @@ function AddOptionForm({poll, showModal, setShowModal}) {
 }
 
 export default AddOptionForm;
+

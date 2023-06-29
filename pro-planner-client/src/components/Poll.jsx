@@ -12,31 +12,29 @@ import {ERR_TYPE} from "../constants";
 function Poll({poll}) {
 
     const [showModal, setShowModal] = useState(false);
-    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [selectedOption, setSelectedOption] = useState('');
     const dispatch = useDispatch();
 
     const handleAddOption = () => {
         setShowModal(true);
     };
 
-    // const userId = "user"; TODO... userID from backend
+    const currUser = 'User A'; // TODO: fetch current user
 
     let formResult = {
         pollId: poll.pollId,
-        selectedOptions: selectedOptions,
-        // userId: userId TODO...
+        selectedOption: selectedOption, // selected option ID
+        user: currUser,
     }
 
     const handleVote = () => {
-
-        if (selectedOptions.length === 0) {
+        if (selectedOption.length === 0) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
                 message: 'Option(s) not selected. Please select at least one option to vote.',
             }));
             return;
         }
-        // TODO... implement error message if user has already voted
 
         dispatch(resetError());
         dispatch(voteOption(formResult))
@@ -51,8 +49,8 @@ function Poll({poll}) {
                     <Accordion.Body>
                         <Options style={{marginTop: '10px'}}
                                  poll={poll}
-                                 setSelectedOptions={setSelectedOptions}
-                                 selectedOptions={selectedOptions}
+                                 setSelectedOption={setSelectedOption}
+                                 selectedOption={selectedOption}
                         />
                         <Button style={{marginTop: '10px'}}
                                 variant="primary"
@@ -78,3 +76,4 @@ function Poll({poll}) {
 }
 
 export default Poll;
+

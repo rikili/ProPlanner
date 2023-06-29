@@ -4,7 +4,6 @@ const pollSlice = createSlice({
     name: 'poll',
     initialState: {
         polls: [],
-        votedUsers: {}
     },
     reducers: {
         addPoll: (state, action) => {
@@ -29,21 +28,21 @@ const pollSlice = createSlice({
         },
         voteOption: (state, action) => {
             const input = action.payload;
-
             const poll = state.polls.find((p) => p.pollId === input.pollId);
-            // const userVoted = poll.votedUsers[input.userId]; TODO... implement after userId is set
-
-            // if (!userVoted) { TODO... implement after userId is set
-                input.selectedOptions.forEach((optionId) => {
-                    poll.options.find((o) => o.optionId === optionId).voteCount++
-                })
-            //}
-
-            // poll.votedUsers[input.userId] = true; TODO... implement after userId is set
-
+            const votedUser = poll.votedUsers.find((u) => u.user === input.user);
+            if (votedUser) {
+                // user already voted before
+                poll.options.find((o) => o.optionId === votedUser.votedOptionId).voteCount--
+                votedUser.votedOptionId = input.selectedOption;
+                poll.options.find((o) => o.optionId === input.selectedOption).voteCount++
+            } else {
+                poll.votedUsers.push({user: input.user, votedOptionId: input.selectedOption});
+                poll.options.find((o) => o.optionId === input.selectedOption).voteCount++
+            }
         },
     }
 })
 
 export const {addPoll, addOption, voteOption} = pollSlice.actions;
 export default pollSlice.reducer;
+

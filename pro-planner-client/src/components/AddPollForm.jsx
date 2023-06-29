@@ -15,7 +15,7 @@ function AddPollForm() {
         pollId: uuidv4(),
         question: newQuestion,
         options: [],
-        votedUsers: {}
+        votedUsers: []
     }
 
     const handleAddPoll = (e) => {
@@ -73,3 +73,4 @@ function AddPollForm() {
 }
 
 export default AddPollForm;
+
