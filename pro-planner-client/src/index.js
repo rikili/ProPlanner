@@ -24,7 +24,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '',
-                element: <VotePage />,
+                element: <LandingPage />,
                 errorElement: <ErrorPage />,
             },
             {
