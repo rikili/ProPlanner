@@ -6,6 +6,8 @@ import {v4 as uuidv4} from 'uuid';
 import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
+const MAX_OPTION_LIMIT = 70;
+
 function AddOptionForm({poll, showModal, setShowModal}) {
     const [newOption, setNewOption] = useState("")
     const dispatch = useDispatch();
@@ -26,6 +28,14 @@ function AddOptionForm({poll, showModal, setShowModal}) {
                 errType: ERR_TYPE.ERR,
                 disableControl: true,
                 message: 'Option is invalid. Option must contain at least one character.',
+            }));
+            return;
+        }
+
+        if (formattedNewOption.length > MAX_OPTION_LIMIT) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: `Option is invalid. Option must not exceed ${MAX_OPTION_LIMIT} characters.`,
             }));
             return;
         }

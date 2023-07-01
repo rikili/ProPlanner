@@ -31,7 +31,7 @@ function Poll({poll}) {
         if (selectedOption.length === 0) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
-                message: 'Option(s) not selected. Please select at least one option to vote.',
+                message: 'Option not selected. Please select an option to vote.',
             }));
             return;
         }
