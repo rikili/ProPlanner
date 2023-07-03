@@ -8,6 +8,7 @@ const planParamSlice = createSlice({
         planType: PLAN_TYPE.OUTING,
         availableDays: [],
         dateTimeRange: [],
+        dayOffset: [],
         isAllDay: false,
         location: null
     },
@@ -30,7 +31,7 @@ const planParamSlice = createSlice({
         updatePlan(state, action) {
             const input = action.payload;
             state.name = input.name;
-            state.availableDays = input.availableDays;
+            state.dayOffset = input.dayOffset;
             state.isAllDay = input.isAllDay;
             state.location = input.location;
             state.dateTimeRange = input.dateTimeRange;

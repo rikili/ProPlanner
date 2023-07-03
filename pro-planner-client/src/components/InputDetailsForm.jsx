@@ -3,13 +3,13 @@ import { Card, Form, Row, ButtonGroup, Button, Col } from 'react-bootstrap';
 
 const InputDetailsForm = forwardRef(({ title = false }, ref) => {
     const [selectedDays, setSelectedDays] = useState({
-        'Su': false,
-        'Mo': false,
-        'Tu': false,
-        'We': false,
-        'Th': false,
-        'Fr': false,
-        'Sa': false,
+        'Su': true,
+        'Mo': true,
+        'Tu': true,
+        'We': true,
+        'Th': true,
+        'Fr': true,
+        'Sa': true,
     });
     const formRef = useRef(null);
 
@@ -33,7 +33,7 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
                         formRef.current.formPlanStartDate.value,
                         formRef.current.formPlanEndDate.value
                     ],
-                    availableDays: formatSelectedDays(),
+                    dayOffset: formatSelectedDays(),
                 };
             }
         }
