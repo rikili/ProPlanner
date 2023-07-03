@@ -1,66 +1,116 @@
-// descructuring references https://www.w3schools.com/react/react_es6_destructuring.asp
-import React from 'react';
-import { addMinutes, format, isAfter, isWithinInterval, startOfDay, endOfDay, getDate } from 'date-fns';
+import { eachMinuteOfInterval, format, isAfter, isWithinInterval, startOfDay, subMinutes, endOfDay } from "date-fns";
+import { selectToInterval, getEndOfSegment, SEGMENT_TIME } from '../helpers/Outing';
+import { assembleClass } from '../helpers/Utils';
 
 import './OutingDay.scss';
 
-const segmentInterval = 30; // should be some interval of 15 minutes
+const OutingDay = ({
+    date,
+    slots,
+    selections,
+    isFirstDay=false,
+    onSegmentClick,
+    onSegmentEnter,
+    isEditing,
+    editSelections,
+    anchor,
+    cursor,
+}) => {
+    const hasSlots = !!slots;
+    let slotsIntervals;
+    let userIntervals;
+    let editIntervals;
 
-const isSegmentAvailable = (time, interval, additionalInterval) => {
-    let result = isWithinInterval(time, { start: interval[0], end: addMinutes(interval[1], -1) });
-    if (additionalInterval[0] && !result) {
-        result = isWithinInterval(time, { start: additionalInterval[0], end: additionalInterval[0] });
-    }
-    return result;
-};
+    if (hasSlots) {
+        slotsIntervals = slots.map(([start, end]) => {return {start, end: end.getMinutes() === 59 ? end : subMinutes(end, 1)}});
 
-function OutingDay({ availability, borderLeft = false }) {
-    let isFirstSegment = true; // For styling top of day
-    const segmentTotal = 60;
-
-    const { startInterval, endInterval, additionalStart, additionalEnd, isAvailable } = availability;
-    let dayDisplay = [];
-    let hourDisplay = [];
-    let segmentTracker = segmentTotal;
-    let timeTracker = startOfDay(startInterval);
-    const endOfCurrDay = endOfDay(startInterval);
-
-    while (isAfter(endOfCurrDay, timeTracker)) {
-        const isSelectable = isAvailable ? isSegmentAvailable(timeTracker, [startInterval, endInterval], [additionalStart, additionalEnd]) : false;
-        const segmentClass = [
-            segmentTracker % segmentTotal && 'segment',
-            !(segmentTracker % segmentTotal) && 'sub-segment',
-            isSelectable && 'selectable',
-            isFirstSegment && 'top-segment',
-            borderLeft && 'left-segment'
-        ].filter(Boolean).join(' ');
-        hourDisplay.push(
-            <div
-                key={`${format(timeTracker, 'hh-mm')}`}
-                className={segmentClass}
-            />
-        );
-        isFirstSegment = false;
-
-        timeTracker = addMinutes(timeTracker, segmentInterval);
-        segmentTracker -= segmentInterval;
-        if (segmentTracker <= 0) {
-            dayDisplay.push(
-                <div key={`hr-${timeTracker.getHours()}-${timeTracker.getMinutes()}`} className="hour-container">
-                    {hourDisplay}
-                </div>
-            );
-            hourDisplay = [];
-            segmentTracker = segmentTotal;
+        if (isEditing) {
+            if (editSelections) {
+                editIntervals = editSelections.map(
+                    (selectInterval) => selectToInterval(date, selectInterval)
+                );
+            }
+        } else {
+            userIntervals = {};
+            Object.entries(selections).forEach(([username, selections]) => {
+                if (selections) {
+                    userIntervals[username] = selections.map(
+                        (selectInterval) => selectToInterval(date, selectInterval)
+                    );
+                }
+            });
         }
     }
 
-    return (
-        <div className="w-100 position-relative text-center">
-            {getDate(startInterval)}
-            {dayDisplay}
-        </div>
-    );
-}
+    const inAnyInterval = (date, listOfInterval, reduceDefault = false) => {
+        return listOfInterval.reduce((acc, interval) => acc || isWithinInterval(date, interval), reduceDefault);
+    }
+
+    const displaySegments = eachMinuteOfInterval({
+        start: startOfDay(date),
+        end: endOfDay(date)
+    }, {step: SEGMENT_TIME})
+        .map((segmentStart, index) => {
+            let isSelected = false;
+            const isHourStart = segmentStart.getMinutes() === 0;
+            let segmentClass = assembleClass(
+                !isHourStart && 'first-segment',
+                isHourStart && 'second-segment',
+                index === 0 && 'top-segment',
+                isFirstDay && 'left-segment'
+            );
+
+            if (!hasSlots) {
+                return <div
+                    className={segmentClass + ' ' + 'unavailable'}
+                    key={format(segmentStart, 'dd-HH-mm')}
+                />
+            }
+            if (!inAnyInterval(segmentStart, slotsIntervals)) {
+                return <div
+                    className={segmentClass  + ' ' + 'unavailable'}
+                    key={format(segmentStart, 'dd-HH-mm')}
+                />
+            }
+            
+            if (isEditing) {
+                if (editIntervals) {
+                    isSelected = inAnyInterval(segmentStart, editIntervals);
+                } else {
+                    isSelected = false;
+                }
+            } else {
+                isSelected = Object.entries(userIntervals)
+                    .filter(([_, intervals]) => inAnyInterval(segmentStart, intervals))
+                    .map(([user, _]) => user);
+            }
+
+            const isHovered = (anchor && cursor)
+                && (isAfter(cursor, anchor))
+                && isWithinInterval(segmentStart, {start: anchor, end: subMinutes(cursor, 1)});
+            const isSelectedSegment = isEditing ? isSelected : !!isSelected.length; // TODO: refactor isSelected.length to accommodate multiple selects
+            const isAvailable = isHovered || (isEditing ? !isSelected : !isSelected.length);
+
+            segmentClass += ' ' + assembleClass(
+                isAvailable && 'available',
+                isHovered && 'hovered',
+                !isHovered && isSelectedSegment && 'selected',
+                isEditing && 'editable',
+            );
+
+            return <div
+                key={format(segmentStart, 'dd-HH-mm')}
+                className={segmentClass}
+                onClick={isEditing ? () => onSegmentClick(segmentStart, isSelected) : null}
+                onMouseEnter={isEditing ? () => onSegmentEnter(getEndOfSegment(segmentStart)) : null}
+            />
+        });
+
+    return <div className="d-flex flex-column week-calendar">
+        {displaySegments.map((segment) => {
+            return segment
+        })}
+    </div>
+};
 
 export default OutingDay;
