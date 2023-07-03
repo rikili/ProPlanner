@@ -21,7 +21,7 @@ const dateToInputValue = (date) => {
     return format(date, 'yyyy-MM-dd');
 };
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
-
+// require('dotenv').config()
 
 
 
@@ -29,11 +29,13 @@ import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 const InputDetailsForm = ({ title = false, editDetails, showBack = false, isOuting = false }) => {
 
     const { isLoaded } = useJsApiLoader({
-		//NOTE: manually insert API KEY. .env file not working right now.
-		googleMapsApiKey: '***********************',
+        googleMapsApiKey: process.env.REACT_APP_API_KEY,
 
 		libraries: ['places'],
 	});
+
+    console.log(process.env);
+    // console.log(process.env.API_KEY);
 
 
 
