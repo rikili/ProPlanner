@@ -13,7 +13,7 @@ const containerStyle = {
 
 
 
-const apiKey = '*****************************************';
+const apiKey = process.env.REACT_APP_API_KEY;
 const getLatLng = address => {
     return new Promise((resolve, reject) => {
         fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`)
@@ -60,7 +60,7 @@ const Map = () => {
         <GoogleMap
             mapContainerStyle={containerStyle}
             center={{lat, lng}}
-            zoom={11.5}
+            zoom={6.5}
         >
             <Marker
             position={{lat, lng}}

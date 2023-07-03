@@ -9,7 +9,7 @@ Google Maps Places Autocomplete API Docs: https://developers.google.com/maps/doc
 import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Card, Form, Row, ButtonGroup, Button, Col } from 'react-bootstrap';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
-
+// require('dotenv').config()
 
 
 
@@ -17,11 +17,13 @@ import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 const InputDetailsForm = forwardRef(({ title = false }, ref) => {
 
     const { isLoaded } = useJsApiLoader({
-		//NOTE: manually insert API KEY. .env file not working right now.
-		googleMapsApiKey: '***********************',
+        googleMapsApiKey: process.env.REACT_APP_API_KEY,
 
 		libraries: ['places'],
 	});
+
+    console.log(process.env);
+    // console.log(process.env.API_KEY);
 
 
 
