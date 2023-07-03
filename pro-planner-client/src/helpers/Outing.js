@@ -1,29 +1,95 @@
 // code references https://date-fns.org/docs/Getting-Started
 
-import { 
-    addMilliseconds,
+import {
     isAfter,
-    set,
-    getDay,
-    getHours,
-    getMinutes, 
+    format,
+    addMinutes,
     addDays,
-    getDate,
-    startOfWeek,
-    endOfWeek,
     startOfDay,
     endOfDay,
-    parseISO 
+    parseISO,
+    isSameDay,
+    subDays,
+    subMinutes,
+    set,
 } from 'date-fns';
 
-export function processDates(params) {
+export const SEGMENT_TIME = 30;
+
+export const isLooseEndOfDay = (date) => date.getHours() === 23 && date.getMinutes() === 59;
+
+// get dateTime of the end of a segment, unless it is the last segment of the day
+export const getEndOfSegment = (date) => {
+    return (isLooseEndOfDay(date)) ? endOfDay(date) : addMinutes(date, SEGMENT_TIME); // 23:30 is hard-coded, look for alternatives
+}
+export const getTime = (date) => format(date, "HH:mm");
+const processTime = (timeString) => {
+    const results = timeString.match(/[0-9]+/g);
+    return {hours: results[0], minutes: results[1]}
+};
+
+export const getMonthIndex = (date) => format(date, "MM-yyyy");
+
+// turn selectInterval (eg. ["00:00", "01:00"]) to a date-fns interval
+export const selectToInterval = (date, [start, end]) => {
+    let endDate = buildDate(date, end);
+    endDate = (end === '23:59') ? endDate : subMinutes(endDate, 1);
+    return {start: buildDate(date, start), end: endDate};
+}
+
+const buildDate = (date, time) => set(new Date(date), processTime(time));
+
+const getDayFromTemplate = (date, template, cutoff = null) => {
+    if (!cutoff) cutoff = endOfDay(date);
+    const dayArr = [];
+    let buildArr = [];
+
+    const start = buildDate(date, template[0]);
+    if (isAfter(start, cutoff)) return [];
+    buildArr.push(start);
+
+    const firstEnd = buildDate(date, template[1]);
+    if (isAfter(firstEnd, cutoff)) {
+        buildArr.push(cutoff);
+        dayArr.push(buildArr);
+        return dayArr;
+    }
+    buildArr.push(firstEnd);
+    dayArr.push(buildArr);
+
+    // Early return for full day or non-overlapping days
+    if (!template[2]) {
+        return dayArr;
+    }
+    buildArr = [];
+
+    const secStart = buildDate(date, template[2]);
+    if (isAfter(secStart, cutoff)) {
+        return dayArr;
+    }
+    buildArr.push(secStart);
+
+    const secEnd = buildDate(date, template[3]);
+    if (isAfter(secEnd, cutoff)) {
+        buildArr.push(cutoff);
+        dayArr.push(buildArr);
+        return dayArr;
+    }
+
+    buildArr.push(secEnd);
+    dayArr.push(buildArr);
+    return dayArr;
+}
+
+export function generateSlots(params) {
+
     let startInterval;
     let endInterval;
     let endDate;
+
     if (params.isAllDay) {
         startInterval = parseISO(params.dateTimeRange[0]);
-        endInterval = addDays(startInterval, 1);
-        endInterval = addMilliseconds(endInterval, -1);
+        endInterval = endOfDay(startInterval);
         endDate = parseISO(params.dateTimeRange[1]);
     } else {
         startInterval = parseISO(params.dateTimeRange[0][0]);
@@ -31,110 +97,55 @@ export function processDates(params) {
         endDate = parseISO(params.dateTimeRange[1]);
     }
 
-    let nextDayOverFlow = false;
-    if (getDate(startInterval) !== getDate(endInterval)) {
-        nextDayOverFlow = true;
+    let isOverflow = false;
+    let firstDay = [];
+    let secOverlapDay = [];
+
+    firstDay = [getTime(startInterval),  getTime(new Date(endInterval))];
+    if (!isSameDay(startInterval, endInterval)) {
+        isOverflow = true;
+        firstDay = [getTime(startInterval), getTime(endOfDay(startInterval))];
+        secOverlapDay = [
+            getTime(startOfDay(endInterval)),
+            getTime(endInterval),
+            getTime(startInterval),
+            getTime(endOfDay(endInterval)),
+        ];
     }
 
-    let startWeekForInterval = startOfWeek(startInterval);
-
-    let datesIndex = 0;
-    let dates = [];
-    while (getDay(startInterval) !== getDay(startWeekForInterval)) {
-        dates[datesIndex] = {
-            isAvailable: false,
-            startInterval: startWeekForInterval,
-        };
-        startWeekForInterval = addDays(startWeekForInterval, 1);
-        datesIndex++;
-    }
-
-    if (params.availableDays.includes(getDay(startInterval))) {
-      dates.push({
-          isAvailable: true,
-          startInterval: startInterval,
-          endInterval: endInterval,
-      });
-    } else {
-      dates.push({
-        isAvailable: false,
-        startInterval: startInterval
-      });
-    }
-    datesIndex++;
-
-    if (nextDayOverFlow) {
-        dates[0].endInterval = startInterval(startInterval);
-    }
-    let currDate = addDays(startInterval, 1);
-    let tempStartInterval = startInterval;
-    let tempEndInterval = endInterval;
-
-    let dayOfWeekIndex = getDay(startInterval) === 6 ? 0 : getDay(startInterval) + 1;
-
-    let firstDay = true;
-    while (!isAfter(currDate, endDate)) {
-        dates[datesIndex] = {};
-        if (params.availableDays.includes(dayOfWeekIndex)) {
-            dates[datesIndex].isAvailable = true;
+    const months = {};
+    let monthTrack = {};
+    let iterDate = new Date(startInterval);
+    let currMonth = iterDate.getMonth();
+    let weekdayIndex = 0;
+    let isPrevAvailable = false;
+    while(iterDate < endDate) {
+        if (isPrevAvailable && isOverflow) {
+            monthTrack[iterDate.getDate()] = (getDayFromTemplate(iterDate, secOverlapDay, endDate));
         } else {
-            dates[datesIndex].isAvailable = false;
-        }
-        dayOfWeekIndex++;
-        if (dayOfWeekIndex === 7) {
-            dayOfWeekIndex = 0;
+            monthTrack[iterDate.getDate()] = (getDayFromTemplate(iterDate, firstDay, endDate));
         }
 
-        if (dates[datesIndex].isAvailable) {
-            if (nextDayOverFlow) {
-                console.log('HELLO!');
-                if (!firstDay) {
-                    let additionalStartInterval = startOfDay(currDate);
-                    let additionalEndInterval = set(new Date(), {
-                        date: getDate(currDate),
-                        hours: getHours(endInterval),
-                        minutes: getMinutes(endInterval),
-                        seconds: getHours(endInterval),
-                        milliseconds: getHours(endInterval),
-                    });
-                    dates[datesIndex].additionalStart = additionalStartInterval;
-                    dates[datesIndex].additionalEnd = additionalEndInterval;
-                }
-                tempStartInterval = setInterval(tempStartInterval, currDate);
-                tempEndInterval = set(new Date(), {
-                    date: getDate(currDate),
-                    hours: 23,
-                    minutes: 59,
-                    seconds: 59,
-                    milliseconds: 59,
-                });
-                dates[datesIndex].startInterval = tempStartInterval;
-                dates[datesIndex].endInterval = tempEndInterval;
-            } else {
-                tempStartInterval = setInterval(tempStartInterval, currDate);
-                tempEndInterval = setInterval(tempEndInterval, currDate);
-                dates[datesIndex].startInterval = tempStartInterval;
-                dates[datesIndex].endInterval = tempEndInterval;
-            }
+        const dayAdd = params.dayOffset[weekdayIndex];
+        iterDate = addDays(iterDate, dayAdd);
+        isPrevAvailable = dayAdd === 1;
+        weekdayIndex++;
+        if (weekdayIndex >= params.dayOffset.length) weekdayIndex = 0;
+        if (currMonth !== iterDate.getMonth()) {
+            months[getMonthIndex(subDays(iterDate, 1))] = monthTrack;
+            monthTrack = {};
+            currMonth = iterDate.getMonth();
         }
-        dates[datesIndex].startInterval = currDate;
-        currDate = addDays(currDate, 1);
-        datesIndex++;
     }
 
-    while (isAfter(endOfWeek(endDate), currDate)) {
-        dates.push({ isAvailable: false, startInterval: currDate });
-        currDate = addDays(currDate, 1);
-    }
-    return dates;
-}
+    months[getMonthIndex(iterDate)] = monthTrack;
 
-function setInterval(interval, currDate) {
-    return set(interval, {
-        year: currDate.getFullYear(),
-        month: currDate.getMonth(),
-        date: getDate(currDate),
-    });
+    // Catch overflow on last day case
+    if (isPrevAvailable && isOverflow) {
+        monthTrack[iterDate.getDate()] = (getDayFromTemplate(iterDate, secOverlapDay, endDate));
+    }
+
+    return months;
 }
 
 export function getWeekInterval(startOfWeek) {

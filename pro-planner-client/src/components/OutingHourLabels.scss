@@ -1,11 +1,14 @@
 .hours {
-    margin: 9px 5px -1px 0;
+    margin: 0 5px 0.72em 0;
+    font-size: 0.9em;
 }
 
 .hours-container {
     position: relative;
-    top: 1px;
+    top: 1em;
     text-align: center;
+    height: 100%;
+    min-width: 3em;
 }
 
 .next-btn {
