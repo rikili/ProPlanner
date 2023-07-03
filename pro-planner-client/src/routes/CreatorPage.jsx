@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { isAfter } from 'date-fns';
+import { START_DAY_TIME, END_DAY_TIME } from '../constants';
 
 import InputDetailsForm from '../components/InputDetailsForm';
 import TimeRangeForm from '../components/TimeRangeForm';
@@ -35,8 +36,6 @@ const isTimingProper = (start, end, endInterval, isOuting = false) => {
 const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => { 
     //TODO: currently title is customizable, may want to consider removing
     //      if creator isn't re-used (ie. if we use this comp for editing)
-
-    // const { tripId } = useParams(); //Access for tripId
     const tripId = 123;
 
     const detailForm = useRef(null);
@@ -52,7 +51,7 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
             location: detailResults.location,
             isAllDay: true,
             dateTimeRange: [],
-            availableDays: detailResults.availableDays,
+            dayOffset: [],
         };
 
         if (!formResult.name) {
@@ -82,7 +81,7 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
             return;
         }
 
-        if (!formResult.availableDays.length) {
+        if (!detailResults.dayOffset.length) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
                 message: 'At least one day of the week must be selected.'
@@ -91,12 +90,22 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
         }
 
         const timeResults = isOuting ? timeForm.current.retrieveData() : null;
-        if (isOuting && !timeResults.isAllDay) {
-            const startDateTime = new Date(`${detailResults.dateRange[0]}, ${timeResults.timeRange[0]}`);
-            const endTime = new Date(`${detailResults.dateRange[0]}, ${timeResults.timeRange[1]}`);
-            const endDate = new Date(`${detailResults.dateRange[1]}, ${timeResults.timeRange[1]}`);
+        let startDateTime;
+        if (isOuting) {
+            let startTime;
+            let endTime;
+            if (timeResults.isAllDay) {
+                startTime = START_DAY_TIME;
+                endTime = END_DAY_TIME;
+            } else {
+                startTime = timeResults.timeRange[0];
+                endTime = timeResults.timeRange[1];
+            }
+            startDateTime = new Date(`${detailResults.dateRange[0]}, ${startTime}`);
+            const startEndTime = new Date(`${detailResults.dateRange[0]}, ${endTime}`);
+            const endDate = new Date(`${detailResults.dateRange[1]}, ${endTime}`);
 
-            if (!isTimingProper(startDateTime, endDate, endTime, true)) {
+            if (!isTimingProper(startDateTime, endDate, startEndTime, true)) {
                 dispatch(setError({
                     errType: ERR_TYPE.ERR,
                     message: 'Timing inputs are invalid, start times must be before end times.',
@@ -105,12 +114,52 @@ const PlanCreator = ({ title = <>Setup the <b>Plan</b></> }) => {
             }
 
             formResult.isAllDay = false;
-            formResult.dateTimeRange =  [[startDateTime.toISOString(), endTime.toISOString()], endDate.toISOString()];
+            formResult.dateTimeRange =  [[startDateTime.toISOString(), startEndTime.toISOString()], endDate.toISOString()];
         } else {
-            const startDateTime = new Date(`${detailResults.dateRange[0]}, 00:00:00`);
-            const endDate = new Date(`${detailResults.dateRange[1]}, 23:59:59`);
+            startDateTime = new Date(`${detailResults.dateRange[0]}, ${START_DAY_TIME}`);
+            const endDate = new Date(`${detailResults.dateRange[1]}, ${END_DAY_TIME}`);
 
             formResult.dateTimeRange = [startDateTime.toISOString(), endDate.toISOString()];
+        }
+
+        const selectedDays = detailResults.dayOffset;
+        const maxDaysOfWeek = 7;
+
+        if (selectedDays.length === 1) {
+            formResult.dayOffset.push(maxDaysOfWeek);
+        } else {
+            const startDayOfWeek = startDateTime.getDay();
+            let closestIndex;
+            selectedDays.map((dayOfWeek) => {
+                const normalDiff = Math.abs(startDayOfWeek - dayOfWeek);
+                const wrapDiff = Math.abs(dayOfWeek - (startDayOfWeek + maxDaysOfWeek));
+                return normalDiff < wrapDiff ? normalDiff : wrapDiff;
+              }).reduce((acc, difference, index) => {
+                if (difference < acc) {
+                  closestIndex = index;
+                  return difference;
+                }
+                return acc
+              }, Infinity);
+            
+            let iterIndex = closestIndex;
+            const endIndex = iterIndex;
+            let hasWrapped = false;
+            
+            let iterDOW = selectedDays[iterIndex];
+            let prevDOW;
+            do {
+                prevDOW = iterDOW;
+                iterIndex++;
+                if (iterIndex >= selectedDays.length) {
+                  iterIndex = 0;
+                  hasWrapped = true;
+                }
+                iterDOW = selectedDays[iterIndex] + (hasWrapped ? maxDaysOfWeek : 0);
+                formResult.dayOffset.push(
+                  iterDOW - prevDOW
+                );
+            } while (iterIndex !== endIndex);
         }
 
         if (!isProperSubmission(formResult, isOuting)) {
