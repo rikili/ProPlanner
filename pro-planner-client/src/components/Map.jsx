@@ -53,7 +53,7 @@ const Map = () => {
 
     
     return (
-    <>
+    <div style={{ display: 'flex', justifyContent: 'center'}}>
         { !isLoaded ? (
         <h1>Loading...</h1>
         ) : (
@@ -67,7 +67,7 @@ const Map = () => {
             />
         </GoogleMap>
         )}
-    </>
+    </div>
 
     )
 
