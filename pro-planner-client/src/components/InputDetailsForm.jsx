@@ -1,7 +1,30 @@
+/* REFERENCES:
+
+Google Maps Geocoding API Docs: https://developers.google.com/maps/documentation/geocoding
+
+Google Maps Places Autocomplete API Docs: https://developers.google.com/maps/documentation/javascript/place-autocomplete
+
+*/
+
 import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Card, Form, Row, ButtonGroup, Button, Col } from 'react-bootstrap';
+import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+
+
+
+
 
 const InputDetailsForm = forwardRef(({ title = false }, ref) => {
+
+    const { isLoaded } = useJsApiLoader({
+		//NOTE: manually insert API KEY. .env file not working right now.
+		googleMapsApiKey: '***********************',
+
+		libraries: ['places'],
+	});
+
+
+
     const [selectedDays, setSelectedDays] = useState({
         'Su': false,
         'Mo': false,
@@ -39,10 +62,19 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
         }
     });
 
-    const updateSelection = (dayLabel) => {
+    const updateSelection = async (dayLabel) => {
         const newSelection = {...selectedDays};
         newSelection[dayLabel] = !selectedDays[dayLabel]
         setSelectedDays(newSelection);
+        // const results = getLatLng(formRef.current.formPlanLoc.value);
+    }
+    
+    
+    
+
+
+    if (!isLoaded) {
+        return <> Loading.. </>
     }
 
     return <Card className="m-3">
@@ -59,7 +91,9 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
 
                 <Form.Group controlId="formPlanLoc" className="mb-2">
                     <Form.Label>Location </Form.Label>
-                    <Form.Control type="text" placeholder="Name your destination" />
+                    <Autocomplete>
+                        <Form.Control type="text" placeholder="Name your destination"/>
+                    </Autocomplete>
                 </Form.Group>
 
                 <Row className="d-flex flex-row">
