@@ -1,3 +1,11 @@
+/* REFERENCES:
+
+Google Maps Geocoding API Docs: https://developers.google.com/maps/documentation/geocoding
+
+Google Maps Places Autocomplete API Docs: https://developers.google.com/maps/documentation/javascript/place-autocomplete
+
+*/
+
 import { useState, useRef, useEffect } from 'react';
 import { Card, Form, Row, ButtonGroup, Col } from 'react-bootstrap';
 import Button from './override/Button';
@@ -12,8 +20,23 @@ import { useNavigate } from 'react-router-dom';
 const dateToInputValue = (date) => {
     return format(date, 'yyyy-MM-dd');
 };
+import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+
+
+
+
 
 const InputDetailsForm = ({ title = false, editDetails, showBack = false, isOuting = false }) => {
+
+    const { isLoaded } = useJsApiLoader({
+		//NOTE: manually insert API KEY. .env file not working right now.
+		googleMapsApiKey: '***********************',
+
+		libraries: ['places'],
+	});
+
+
+
     const [selectedDays, setSelectedDays] = useState({
         Su: true,
         Mo: true,
@@ -75,6 +98,15 @@ const InputDetailsForm = ({ title = false, editDetails, showBack = false, isOuti
     const handleBack = (e) => {
         e.preventDefault();
         navigate('/');
+        // const results = getLatLng(formRef.current.formPlanLoc.value);
+    }
+    
+    
+    
+
+
+    if (!isLoaded) {
+        return <> Loading.. </>
     }
 
     return (
@@ -104,8 +136,10 @@ const InputDetailsForm = ({ title = false, editDetails, showBack = false, isOuti
 
                     <Form.Group controlId="planLocation" className="mb-2">
                         <Form.Label>Location* </Form.Label>
-                        <Form.Control type="text" placeholder="Name your destination" ref={locationInput} required />
-                    </Form.Group>
+                        <Autocomplete>
+                        <Form.Control type="text" placeholder="Name your destination" ref={locationInput} required/>
+                        </Autocomplete>
+                </Form.Group>
 
                     <Form.Group controlId="planDescription" className="mb-2">
                         <Form.Label>Description </Form.Label>
