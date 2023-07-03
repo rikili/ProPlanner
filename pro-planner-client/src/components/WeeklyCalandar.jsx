@@ -265,7 +265,7 @@ function WeeklyCalandar() {
 
     return <Container>
         <Col className="d-flex flex-row mb-2">
-            <Button onClick={toggleEdit} style={{backgroundColor: isEditing ? 'red' : 'blue'}}>edit</Button>
+            <Button key={'edit'} onClick={toggleEdit} style={{backgroundColor: isEditing ? 'red' : 'blue'}}>edit</Button>
             <Button
                 onClick={() => changeWeek(false)}
                 disabled={!checkAnyAvailable(prevWeek[0], prevWeek[1], slots, endDay)}
@@ -286,10 +286,10 @@ function WeeklyCalandar() {
                     const editsForDay = currentSelects[getMonthIndex(day)]
                         ? currentSelects[getMonthIndex(day)][day.getDate()]
                         : null;
-                    return <Row className="w-100">
+                    return <Row className="w-100" key={`dayCol-${format(day, 'yyyy-MM-dd')}`}>
                         <div className="text-center">{format(day, 'MMM dd')}</div>
                         <OutingDay
-                            key={format(day, 'yyyy-MM-dd')}
+                            key={`daySegments-${format(day, 'yyyy-MM-dd')}`}
                             date={new Date(day)}
                             slots={getDayRanges(day, slots)}
                             selections={selectsInDay(day, selections)}

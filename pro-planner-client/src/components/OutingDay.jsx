@@ -62,13 +62,13 @@ const OutingDay = ({
 
             if (!hasSlots) {
                 return <div
-                    className={segmentClass + ' ' + 'unavailable'}
+                    className={segmentClass + ' unavailable'}
                     key={format(segmentStart, 'dd-HH-mm')}
                 />
             }
             if (!inAnyInterval(segmentStart, slotsIntervals)) {
                 return <div
-                    className={segmentClass  + ' ' + 'unavailable'}
+                    className={segmentClass + ' unavailable'}
                     key={format(segmentStart, 'dd-HH-mm')}
                 />
             }
@@ -99,7 +99,7 @@ const OutingDay = ({
             );
 
             return <div
-                key={format(segmentStart, 'dd-HH-mm')}
+                key={`segment-${format(segmentStart, 'dd-HH-mm')}`}
                 className={segmentClass}
                 onClick={isEditing ? () => onSegmentClick(segmentStart, isSelected) : null}
                 onMouseEnter={isEditing ? () => onSegmentEnter(getEndOfSegment(segmentStart)) : null}
