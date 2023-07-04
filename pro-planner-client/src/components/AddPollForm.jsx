@@ -10,7 +10,7 @@ const MAX_QUESTION_LIMIT = 105;
 
 function AddPollForm() {
     const [newQuestion, setNewQuestion] = useState('')
-    const polls = useSelector((state) => state.poll.polls)
+    const polls = useSelector((state) => Object.values(state.poll.polls))
     const dispatch = useDispatch();
 
 
