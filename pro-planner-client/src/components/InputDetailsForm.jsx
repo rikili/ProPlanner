@@ -23,6 +23,11 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
         return result;
     }
 
+    const reformatDateString = (inpString) =>  {
+        const splits = inpString.match(/[0-9]+/g);
+        return `${splits[1]}-${splits[2]}-${splits[0]}`;
+    }
+
     useImperativeHandle(ref, () => {
         return {
             retrieveData: () => {
@@ -30,10 +35,10 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
                     name: formRef.current.formPlanName.value,
                     location: formRef.current.formPlanLoc.value,
                     dateRange: [
-                        formRef.current.formPlanStartDate.value,
-                        formRef.current.formPlanEndDate.value
+                        reformatDateString(formRef.current.formPlanStartDate.value),
+                        reformatDateString(formRef.current.formPlanEndDate.value)
                     ],
-                    dayOffset: formatSelectedDays(),
+                    selectedDaysOfWeek: formatSelectedDays(),
                 };
             }
         }
@@ -50,7 +55,7 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
             <h2>{title}</h2>
         </Card.Title>}
         <Card.Body className="ps-5 pe-5">
-            <h6><b>Plan Details</b></h6>
+            <h6><b>Details</b></h6>
             <Form className="d-flex flex-column" ref={formRef} onSubmit={e => e.preventDefault()}>
                 <Form.Group controlId="formPlanName" className="mb-2">
                     <Form.Label>Plan Name </Form.Label>

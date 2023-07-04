@@ -19,7 +19,7 @@ const ErrorContainer = () => {
                 closeButton.current.focus();
             }
         }
-    }, [disableControl]);
+    }, [disableControl, closeButton]);
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress);
@@ -43,6 +43,6 @@ const ErrorContainer = () => {
         }
         {showErr && <div className="position-absolute bottom-0 end-0"><ErrorToast ref={closeButton}/></div>}
     </>
-};
+}
 
 export default ErrorContainer;
