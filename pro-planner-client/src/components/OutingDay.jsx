@@ -62,13 +62,13 @@ const OutingDay = ({
 
             if (!hasSlots) {
                 return <div
-                    className={segmentClass + ' unavailable'}
+                    className={`${segmentClass} unavailable`}
                     key={format(segmentStart, 'dd-HH-mm')}
                 />
             }
             if (!inAnyInterval(segmentStart, slotsIntervals)) {
                 return <div
-                    className={segmentClass + ' unavailable'}
+                    className={`${segmentClass} unavailable`}
                     key={format(segmentStart, 'dd-HH-mm')}
                 />
             }
