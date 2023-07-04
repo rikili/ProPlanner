@@ -6,6 +6,7 @@ function Option({option, poll, setSelectedOption}) {
 
     const polls = useSelector((state) => Object.values(state.poll.polls))
     const currPoll = polls.find((p) => p.pollId === poll.pollId);
+    const currPollOptions = Object.values(currPoll.options)
 
     const currUser = 'User A'; // TODO: fetch current user
 
@@ -40,11 +41,11 @@ function Option({option, poll, setSelectedOption}) {
                         />
                     </Col>
                     <Col className="d-flex justify-content-end">
-                        {currPoll.options.find((o) => o.optionId === option.optionId).voteCount}
+                        {currPollOptions.find((o) => o.optionId === option.optionId).voteCount}
                     </Col>
                     <Col>
                         <ProgressBar
-                            now={currPoll.options.find((o) => o.optionId === option.optionId).voteCount}
+                            now={currPollOptions.find((o) => o.optionId === option.optionId).voteCount}
                         />
                     </Col>
                 </Row>

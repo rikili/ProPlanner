@@ -17,7 +17,7 @@ function AddPollForm() {
     let formResult = {
         pollId: uuidv4(),
         question: newQuestion,
-        options: [],
+        options: {},
         votedUsers: []
     }
 
