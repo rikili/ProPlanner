@@ -5,10 +5,12 @@ import {Form} from "react-bootstrap";
 
 function Options({poll, setSelectedOption, selectedOption}) {
 
+    const options = Object.values(poll.options)
+
     return (
         <>
             <Form>
-                {poll.options.map((option) =>
+                {options.map((option) =>
                     <Option option={option}
                             key={option.optionId}
                             poll={poll}

@@ -24,20 +24,19 @@ const pollSlice = createSlice({
                 voteCount: input.voteCount
             }
             const poll = state.polls[input.pollId];
-            poll.options.push(newOption);
+            poll.options[input.optionId] = newOption;
         },
         voteOption: (state, action) => {
             const input = action.payload;
             const poll = state.polls[input.pollId];
             const votedUser = poll.votedUsers.find((u) => u.user === input.user);
             if (votedUser) {
-                // user already voted before
-                poll.options.find((o) => o.optionId === votedUser.votedOptionId).voteCount--
-                votedUser.votedOptionId = input.selectedOption;
-                poll.options.find((o) => o.optionId === input.selectedOption).voteCount++
+                poll.options[votedUser.votedOptionId].voteCount-- // decrement previous voted option count
+                votedUser.votedOptionId = input.selectedOption; // update voted option
+                poll.options[input.selectedOption].voteCount++ // increment current voted option count
             } else {
                 poll.votedUsers.push({user: input.user, votedOptionId: input.selectedOption});
-                poll.options.find((o) => o.optionId === input.selectedOption).voteCount++
+                poll.options[input.selectedOption].voteCount++
             }
         },
     }

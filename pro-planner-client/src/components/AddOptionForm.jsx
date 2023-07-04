@@ -22,6 +22,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
     const handleAddOption = (e) => {
         e.preventDefault();
         const formattedNewOption = newOption.trim();
+        const options = Object.values(poll.options)
 
         if (formattedNewOption.length === 0) {
             dispatch(setError({
@@ -40,7 +41,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
             return;
         }
 
-        if (poll.options.find(option => option.option === newOption)) {
+        if (options.find(option => option.option === newOption)) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
                 disableControl: true,
