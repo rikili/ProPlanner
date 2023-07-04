@@ -4,9 +4,9 @@ import {useSelector} from 'react-redux';
 
 function Option({option, poll, setSelectedOption}) {
 
-    const currPoll = useSelector((state) =>
-        state.poll.polls.find((p) => p.pollId === poll.pollId)
-    );
+    const polls = useSelector((state) => Object.values(state.poll.polls))
+    const currPoll = polls.find((p) => p.pollId === poll.pollId);
+
     const currUser = 'User A'; // TODO: fetch current user
 
     const handleRadioChange = (e) => {
