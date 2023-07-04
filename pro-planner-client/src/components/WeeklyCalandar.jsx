@@ -5,7 +5,7 @@
 // conditional className references https://stackoverflow.com/questions/30533171/react-js-conditionally-applying-class-attributes
 
 import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     isAfter,
     subWeeks,
@@ -18,8 +18,10 @@ import {
     format,
     isSameDay,
 } from 'date-fns';
-import { generateSlots, getMonthIndex, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay } from '../helpers/Outing';
 import { Row, Col, Container } from 'react-bootstrap';
+import { generateSlots, getMonthIndex, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay } from '../helpers/Outing';
+import { setUserSelections } from '../redux/calendarSlice';
+
 import OutingDay from './OutingDay';
 import OutingHourLabels from './OutingHourLabels';
 import Button from 'react-bootstrap/Button';
@@ -197,8 +199,13 @@ function WeeklyCalandar() {
     const [isAdding, setIsAdding] = useState(true);
     const [selectCursor, setCursor] = useState(null);
     const [selectAnchor, setAnchor] = useState(null);
-    const [currentSelects, setCurrSelects] = useState(JSON.parse(JSON.stringify(selections[currentUser])));
+    const [currentSelects, setCurrSelects] = useState(
+        !!selections[currentUser]
+            ? JSON.parse(JSON.stringify(selections[currentUser]))
+            : {}
+    );
     const [isEditing, setEditing] = useState(false);
+    const dispatch = useDispatch();
 
     let slots = useMemo(() => generateSlots(params), [params]);
 
@@ -212,6 +219,7 @@ function WeeklyCalandar() {
         if (isEditing) {
             setAnchor(null);
             setCursor(null);
+            dispatch(setUserSelections({user: currentUser, selections: currentSelects}));
             setIsSelecting(false);
         }
         setEditing(!isEditing);
