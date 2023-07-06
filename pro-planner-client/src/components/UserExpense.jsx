@@ -1,9 +1,10 @@
 import React from 'react';
-import {Card, Col, ListGroup, Row} from "react-bootstrap";
+import {Button, Card, Col, ListGroup, Row} from "react-bootstrap";
 
 const UserExpense = ({user}) => {
 
     const expenses = Object.values(user.expenses);
+    const totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
 
     return (
         <>
@@ -12,17 +13,27 @@ const UserExpense = ({user}) => {
                 <Card.Header as="h5">
                     <Row>
                         <Col>{user.userName}</Col>
-                        <Col style={{textAlign: 'right'}}>{`$100`}</Col>
+                        <Col style={{textAlign: 'right'}}>{`$${totalAmount}`}</Col>
                     </Row>
                 </Card.Header>
                 <Card.Body>
-                    <ListGroup>
-                        {expenses.map((expense) =>
-                            <ListGroup.Item>
-                                {expense.item}
-                            </ListGroup.Item>
-                        )}
-                    </ListGroup>
+                    {expenses.map((expense) =>
+                        <Row>
+                            <Col sm={9}>
+                                <ListGroup className='mt-1'>
+                                    <ListGroup.Item>
+                                        <Row>
+                                            <Col>{expense.item}</Col>
+                                            <Col style={{textAlign: 'right'}}>{`$${expense.amount}`}</Col>
+                                        </Row>
+                                    </ListGroup.Item>
+                                </ListGroup>
+                            </Col>
+                            <Col className="d-flex align-items-center">
+                                <Button variant="danger" style={{marginLeft: 'auto'}}>Remove</Button>
+                            </Col>
+                        </Row>
+                    )}
                 </Card.Body>
             </Card>
         </>
