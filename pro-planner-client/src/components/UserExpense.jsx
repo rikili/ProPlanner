@@ -28,9 +28,9 @@ const UserExpense = ({user}) => {
                 </Card.Header>
                 <Card.Body>
                     {expenses.map((expense) =>
-                        <Row className="d-flex align-items-center">
+                        <Row className="d-flex align-items-center mt-1">
                             <Col className="pe-0" sm={10}>
-                                <ListGroup className='mt-1'>
+                                <ListGroup>
                                     <ListGroup.Item>
                                         <Row>
                                             <Col>{expense.item}</Col>
@@ -39,7 +39,7 @@ const UserExpense = ({user}) => {
                                     </ListGroup.Item>
                                 </ListGroup>
                             </Col>
-                            <Col>
+                            <Col style={{textAlign: 'right'}}>
                                 <Button>
                                     <FaMinus style={{margin: 'auto'}}/>
                                 </Button>
@@ -47,21 +47,21 @@ const UserExpense = ({user}) => {
                         </Row>
                     )}
                     {isAddingExpenseDisplay && (
-                        <Row className="d-flex align-items-center mt-3 mb-3">
+                        <Row className="d-flex align-items-center mt-4 mb-3">
                             <Col className="pe-0" sm={7}>
-                                <InputGroup className="mt-1">
+                                <InputGroup>
                                     <Form.Control placeholder="Item"
                                                   type="text"
                                                   style={{marginRight: '10px'}}/>
                                 </InputGroup>
                             </Col>
                             <Col className="ps-0 pe-0" sm={3}>
-                                <InputGroup className="mt-1">
+                                <InputGroup>
                                     <Form.Control placeholder="Amount"
                                                   type="number"/>
                                 </InputGroup>
                             </Col>
-                            <Col>
+                            <Col style={{textAlign: 'right'}}>
                                 <Button>
                                     <FaPlus style={{margin: 'auto'}}/>
                                 </Button>
