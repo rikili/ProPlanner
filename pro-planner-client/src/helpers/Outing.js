@@ -9,9 +9,9 @@ import {
     endOfDay,
     parseISO,
     isSameDay,
-    subDays,
     subMinutes,
     set,
+    subWeeks,
 } from 'date-fns';
 
 export const SEGMENT_TIME = 30;
@@ -132,7 +132,7 @@ export function generateSlots(params) {
         weekdayIndex++;
         if (weekdayIndex >= params.dayOffset.length) weekdayIndex = 0;
         if (currMonth !== iterDate.getMonth()) {
-            months[getMonthIndex(subDays(iterDate, 1))] = monthTrack;
+            months[getMonthIndex(subWeeks(iterDate, 1))] = monthTrack;
             monthTrack = {};
             currMonth = iterDate.getMonth();
         }

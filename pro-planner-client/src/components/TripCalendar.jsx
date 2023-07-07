@@ -18,16 +18,18 @@ import {
 	startOfWeek,
 	endOfWeek,
 	set,
+	startOfDay,
+	endOfMonth,
 } from 'date-fns';
 import { setUserSelections } from '../redux/calendarSlice';
+import { getMonthIndex } from '../helpers/Outing';
 
 const FIRST_HALF_HOUR = 6;
-const SECOND_HALF_HOUR = 18;
+const SECOND_HALF_HOUR = 18
 
 const getHalfDate = (date, isFirstHalf) => set(new Date(date), {hours: isFirstHalf ? FIRST_HALF_HOUR : SECOND_HALF_HOUR})
 const isFirstHalf = (dateHalf) => dateHalf.getHours() === FIRST_HALF_HOUR;
 
-const makeMonthIndex = (date) => `${date.getMonth()}-${date.getFullYear()}`;
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
 	if (!destArr[dayIndex].length) {
 		destArr[dayIndex].push([]);
@@ -60,55 +62,55 @@ const TripCalendar = () => {
 	const [monthsToUpdate, setUpdateMonths] = useState([]);
 
 	// What is the top-left first day of calendar
-	const calendarStart = startOfWeek(setDate(currDateStart, 1));
-	const calendarEnd = endOfWeek(addWeeks(calendarStart, 5));
+	const calendarStart = useMemo(() => startOfWeek(setDate(currDateStart, 1)), [currDateStart]);
+	const calendarEnd = useMemo(() => endOfWeek(addWeeks(calendarStart, 5)), [calendarStart]);
 
 	const dispatch = useDispatch();
-
 	const combinedSelections = useMemo(() => {
-		// TODO: run through each user and ensure concerned months are there
-		
-
 		const result = {};
 		Object.entries(calendar).forEach(([username, monthSelects], index) => {
 			if (!isSameMonth(calendarStart, currDateStart)) {
-				const prevMonthOffset = currDateStart.getDay()
-				const prevMonth = monthSelects[makeMonthIndex(calendarStart)];
-				const indexOfCalFirst = prevMonth.length - prevMonthOffset;
-				const leadingDiff = prevMonth.length - indexOfCalFirst;
-				const prevMonthIndex = makeMonthIndex(calendarStart);
+				const daysFromPrevious = startOfMonth(currDateStart).getDay();
+				const prevMonthIndex = getMonthIndex(calendarStart);
 				if (!index) {
 					result[prevMonthIndex] = [];
-					new Array(leadingDiff).fill(0).forEach(() => result[prevMonthIndex].push([]));
+					Array(daysFromPrevious).fill(0).forEach(() => result[prevMonthIndex].push([[], []]));
 				}
-				prevMonth.slice(indexOfCalFirst, prevMonth.length)
-					.forEach((fullDay, dayIndex) => {
-						addNameToDay(fullDay, result[prevMonthIndex], dayIndex, username);
-					});
+				const prevMonth = monthSelects[getMonthIndex(calendarStart)];
+				if (prevMonth) { 
+					prevMonth.slice(calendarStart.getDate(), endOfMonth(calendarStart).getDate())
+						.forEach((fullDay, dayIndex) => {
+							addNameToDay(fullDay, result[prevMonthIndex], dayIndex, username);
+						});
+				}
 			}
 
-			const currMonthIndex = makeMonthIndex(currDateStart);
+			const currMonthIndex = getMonthIndex(currDateStart);
 			const currMonth = monthSelects[currMonthIndex];
+			const daysInMonth = endOfMonth(currDateStart).getDate();
 			if (!index) {
 				result[currMonthIndex] = [];
-				new Array(currMonth.length).fill(0).forEach(() => result[currMonthIndex].push([]));
+				new Array(daysInMonth).fill(0).forEach(() => result[currMonthIndex].push([[],[]]));
 			}
-			currMonth.forEach((fullDay, dayIndex) => addNameToDay(fullDay, result[currMonthIndex], dayIndex, username));
+			if (currMonth) {
+				currMonth.forEach((fullDay, dayIndex) => addNameToDay(fullDay, result[currMonthIndex], dayIndex, username));
+			}
 
 			if (!isSameMonth(calendarEnd, currDateStart)) {
 				const nextMonthOffset = calendarEnd.getDate();
-				const nextMonth = monthSelects[makeMonthIndex(calendarEnd)];
-				const nextMonthIndex = makeMonthIndex(calendarEnd);
+				const nextMonth = monthSelects[getMonthIndex(calendarEnd)];
+				const nextMonthIndex = getMonthIndex(calendarEnd);
 				if (!index) {
 					result[nextMonthIndex] = [];
-					new Array(nextMonthOffset).fill(0).forEach(() => result[nextMonthIndex].push([]));
+					new Array(nextMonthOffset).fill(0).forEach(() => result[nextMonthIndex].push([[],[]]));
 				}
-				nextMonth.slice(0, nextMonthOffset).forEach((fullDay, dayIndex) => addNameToDay(fullDay, result[nextMonthIndex], dayIndex, username));
+				if (nextMonth) {
+					nextMonth.slice(0, nextMonthOffset).forEach((fullDay, dayIndex) => addNameToDay(fullDay, result[nextMonthIndex], dayIndex, username));
+				}
 			}
 		});
 		return result;
 	}, [currDateStart, calendar, calendarStart, calendarEnd]);
-	console.log(combinedSelections);
 
 	// States for Selection Logic
 
@@ -125,7 +127,21 @@ const TripCalendar = () => {
 	const [selectStart, setSelectStart] = useState(null);
 	const [selectCursor, setSelectCursor] = useState(null);
 
-	const isValidSelect = (date) => plan.availableDays.includes(getDay(date)) && date >= startDate && date <= endDate;
+	const validDOWs = useMemo(() => {
+		const startDay = startOfDay(new Date(plan.dateTimeRange[0]));
+		let result = [startDay.getDay()];
+		let iterDate = new Date(startDay);
+		const limitDate = addWeeks(startDay, 1);
+		let count = 0;
+		while (iterDate < limitDate && count < plan.dayOffset.length) {
+			iterDate = addDays(iterDate, plan.dayOffset[count]);
+			result.push(iterDate.getDay());
+			count++;
+		}
+		return result;
+	}, [plan]);
+
+	const isValidSelect = (date) => validDOWs.includes(getDay(date)) && date >= startDate && date <= endDate;
 	const isInPreview = (dateHalf) => dateHalf <= selectCursor && dateHalf >= selectStart;
 	
 	const resetSelecting = () => {
@@ -154,7 +170,7 @@ const TripCalendar = () => {
 	}
 
 	const checkSelected = (dateHalf) => {
-		return dateSelections[makeMonthIndex(dateHalf)][dateHalf.getDate() - 1][isFirstHalf(dateHalf) ? 0 : 1];
+		return dateSelections[getMonthIndex(dateHalf)][dateHalf.getDate() - 1][isFirstHalf(dateHalf) ? 0 : 1];
 	}
 
 	const updateSelections = () => {
@@ -166,11 +182,11 @@ const TripCalendar = () => {
 			if (isValidSelect(iterHalfDate)) {
 				if (!monthsToUpdate.includes(iterHalfDate.getMonth())) setUpdateMonths([...monthsToUpdate, iterHalfDate.getMonth()]);
 				if (onFirstHalf) {
-					newSelections[makeMonthIndex(iterHalfDate)][iterHalfDate.getDate() - 1][0] = isAddingSelect;
+					newSelections[getMonthIndex(iterHalfDate)][iterHalfDate.getDate() - 1][0] = isAddingSelect;
 					iterHalfDate = getHalfDate(iterHalfDate, false);
 					onFirstHalf = false;
 				} else {
-					newSelections[makeMonthIndex(iterHalfDate)][iterHalfDate.getDate() - 1][1] = isAddingSelect;
+					newSelections[getMonthIndex(iterHalfDate)][iterHalfDate.getDate() - 1][1] = isAddingSelect;
 					onFirstHalf = true;
 					iterHalfDate = getHalfDate(addDays(iterHalfDate, 1), true);
 				}
@@ -213,7 +229,7 @@ const TripCalendar = () => {
 	let iterDate = new Date(calendarStart);
 	let dayIndex = 0;
 	let weekIndex = 0;
-	let monthIndex = makeMonthIndex(iterDate);
+	let monthIndex = getMonthIndex(iterDate);
 	let selectionArr = combinedSelections[monthIndex];
 	let userSelectionArr = dateSelections[monthIndex];
 	let noEditInMonth = !userSelectionArr;
@@ -243,6 +259,7 @@ const TripCalendar = () => {
 					padding: '0px',
 					height: '100px',
 				}}
+				key={`day-${dayArr.length}-container`}
 			>
 				<TripHalfDay
 					date={new Date(firstHalfDate)}
@@ -255,7 +272,7 @@ const TripCalendar = () => {
 					isValid={isValidSelect(firstHalfDate)}
 					isPreviewed={isInPreview(firstHalfDate)}
 					style={{backgroundColor: 'yellow', height: '50%'}}
-					key={`${format(iterDate, 'yyyy-MM-dd')}-first`}
+					key={`day-${dayArr.length}-first`}
 				/>
 				<TripHalfDay
 					date={new Date(secHalfDate)}
@@ -268,7 +285,7 @@ const TripCalendar = () => {
 					isValid={isValidSelect(secHalfDate)}
 					isPreviewed={isInPreview(secHalfDate)}
 					style={{backgroundColor: 'orange', height: '50%'}}
-					key={`${format(iterDate, 'yyyy-MM-dd')}-second`}
+					key={`day-${dayArr.length}-second`}
 				/>
 			</Col>
 		);
@@ -285,7 +302,7 @@ const TripCalendar = () => {
 
 		if (dayIndex > indexLimit) {
 			dayIndex = 0;
-			let monthIndex = makeMonthIndex(iterDate);
+			let monthIndex = getMonthIndex(iterDate);
 			selectionArr = combinedSelections[monthIndex];
 			userSelectionArr = dateSelections[monthIndex];
 		 	noEditInMonth = !userSelectionArr;
