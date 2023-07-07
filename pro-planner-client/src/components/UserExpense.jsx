@@ -1,10 +1,20 @@
-import React from 'react';
-import {Button, Card, Col, ListGroup, Row} from "react-bootstrap";
+import React, {useState} from 'react';
+import {FaMinus, FaPlus} from "react-icons/fa6";
+import {CiSquarePlus} from "react-icons/ci";
+import {Form, Button, Card, Col, InputGroup, ListGroup, Row} from "react-bootstrap";
 
 const UserExpense = ({user}) => {
 
     const expenses = Object.values(user.expenses);
     const totalAmount = expenses.reduce((total, expense) => total + expense.amount, 0);
+    const [isAddingExpenseDisplay, setIsAddingExpenseDisplay] = useState(false);
+    const handleOpenInputClick = () => {
+        if (!isAddingExpenseDisplay) {
+            setIsAddingExpenseDisplay(true);
+        } else {
+            setIsAddingExpenseDisplay(false);
+        }
+    }
 
     return (
         <>
@@ -18,8 +28,8 @@ const UserExpense = ({user}) => {
                 </Card.Header>
                 <Card.Body>
                     {expenses.map((expense) =>
-                        <Row>
-                            <Col sm={9}>
+                        <Row className="d-flex align-items-center">
+                            <Col className="pe-0" sm={10}>
                                 <ListGroup className='mt-1'>
                                     <ListGroup.Item>
                                         <Row>
@@ -29,11 +39,45 @@ const UserExpense = ({user}) => {
                                     </ListGroup.Item>
                                 </ListGroup>
                             </Col>
-                            <Col className="d-flex align-items-center">
-                                <Button variant="danger" style={{marginLeft: 'auto'}}>Remove</Button>
+                            <Col>
+                                <Button>
+                                    <FaMinus style={{margin: 'auto'}}/>
+                                </Button>
                             </Col>
                         </Row>
                     )}
+                    {isAddingExpenseDisplay && (
+                        <Row className="d-flex align-items-center mt-3 mb-3">
+                            <Col className="pe-0" sm={7}>
+                                <InputGroup className="mt-1">
+                                    <Form.Control placeholder="Item"
+                                                  type="text"
+                                                  style={{marginRight: '10px'}}/>
+                                </InputGroup>
+                            </Col>
+                            <Col className="ps-0 pe-0" sm={3}>
+                                <InputGroup className="mt-1">
+                                    <Form.Control placeholder="Amount"
+                                                  type="number"/>
+                                </InputGroup>
+                            </Col>
+                            <Col>
+                                <Button>
+                                    <FaPlus style={{margin: 'auto'}}/>
+                                </Button>
+                            </Col>
+                        </Row>
+                    )}
+                    <Row>
+                        <Col className="d-grid align-items-center mt-2">
+                            <Button className="d-flex align-items-center"
+                                    variant="outline-secondary"
+                                    onClick={handleOpenInputClick}>
+                                <CiSquarePlus style={{margin: 'auto'}} size={25}/>
+                            </Button>
+                        </Col>
+                    </Row>
+
                 </Card.Body>
             </Card>
         </>
