@@ -10,7 +10,8 @@ const planParamSlice = createSlice({
         dateTimeRange: [],
         dayOffset: [],
         isAllDay: false,
-        location: null
+        location: null,
+        budget: 1000
     },
     reducers: {
         // payload should be a string of either 'Trip' or 'Outing'
