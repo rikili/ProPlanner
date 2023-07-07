@@ -3,6 +3,20 @@ import {createSlice} from "@reduxjs/toolkit";
 const costSlice = createSlice({
     name: 'cost',
     initialState: {
+        /*
+            // Here is a suggestion for storing the state:
+            user1: {
+                userName: 'User 1',
+                expenses: [
+                    ["Go Kart Tickets", 120],
+                    ["Movies", 80]
+                ]
+            }, 
+            user2: {
+                ...
+            }
+                
+        */
         users: {
             user1: {
                 userName: 'User 1',
