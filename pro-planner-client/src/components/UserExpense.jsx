@@ -49,7 +49,6 @@ const UserExpense = ({user, userId}) => {
             userId: userId,
             expenseId: expenseId,
         }
-        console.log(target);
         dispatch(removeExpense(target));
     }
 
