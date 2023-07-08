@@ -5,16 +5,18 @@ import UserExpense from "./UserExpense";
 
 function TripExpense() {
 
-    const users = useSelector((state) => Object.values(state.cost.users));
+    const users = useSelector((state) => state.cost);
 
 
     return (
         <>
             <Container className='d-flex flex-column justify-content-center align-items-center mt-4'>
-                {users.map((user) =>
-                <UserExpense
-                    user={user}
-                />
+                {Object.entries(users).map(([key, user]) =>
+                    <UserExpense
+                        user={user}
+                        userId={key}
+                        key={key}
+                    />
                 )}
             </Container>
         </>
