@@ -11,7 +11,7 @@ const ExpenseSplit = () => {
     const getSpentAmount = () => {
         let spendings = 0;
         // console.log(cost.users)
-        Object.values(cost.users).forEach(user => {
+        Object.values(cost).forEach(user => {
             Object.values(user.expenses).forEach(expense => {
                 spendings += Object.values(expense)[1];
             });
