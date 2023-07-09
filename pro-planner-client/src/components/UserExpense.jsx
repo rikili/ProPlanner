@@ -8,6 +8,8 @@ import {v4 as uuidv4} from "uuid";
 import {setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
+const MAX_ITEM_LIMIT = 40;
+
 const UserExpense = ({user, userId}) => {
 
     const expenses = Object.values(user.expenses);
@@ -43,6 +45,8 @@ const UserExpense = ({user, userId}) => {
             newItemAmount: newItemAmount,
         }
 
+        const formattedNewItem = newItem.trim();
+
         if (!formResult.newItem) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
@@ -55,6 +59,14 @@ const UserExpense = ({user, userId}) => {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
                 message: 'Amount is missing. Please enter an amount.'
+            }))
+            return null;
+        }
+
+        if (formattedNewItem.length > MAX_ITEM_LIMIT) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: `Item is invalid. Item must not exceed ${MAX_ITEM_LIMIT} characters.`
             }))
             return null;
         }
@@ -151,7 +163,8 @@ const UserExpense = ({user, userId}) => {
                             <Button className="d-flex align-items-center"
                                     variant="outline-secondary"
                                     type='submit'
-                                    onClick={handleOpenAddExpenseForm}>
+                                    onClick={handleOpenAddExpenseForm}
+                                    >
                                 <CiSquarePlus style={{margin: 'auto'}} size={25}/>
                             </Button>
                         </Col>
