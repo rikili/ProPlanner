@@ -97,22 +97,28 @@ const ExpenseSplit = () => {
                     </ListGroup>
                 </Card.Body>
                 <Card.Footer>
-                    <Row style={{marginLeft: "8px", marginRight: "8px"}}> 
-                        <Col as="h5"> Budget </Col>
-                        <Col as="h5" className="text-end"> ${ budget } </Col>
-                    </Row>
+                    {
+                        budget &&
+                        <Row style={{marginLeft: "8px", marginRight: "8px"}}> 
+                            <Col as="h5"> Budget </Col>
+                            <Col as="h5" className="text-end"> ${ budget } </Col>
+                        </Row>
+                    }
                     <Row style={{marginLeft: "10px", marginRight: "8px"}}> 
                         <Col as="h5"> Spent </Col>
                         <Col as="h5" className="text-end"> ${ totalSpendings } </Col>
                     </Row>
-                    <Row style={{marginLeft: "8px", marginRight: "8px"}}> 
-                        <Col as="h5"> Availble </Col>
-                        <Col as="h5" className="text-end"> ${ budget - totalSpendings } </Col>
-                    </Row>
-                    <ProgressBar 
-                        style={{transform: 'scaleY(1.8)', margin: '8px'}}
-                        striped variant={ calcVariant() }
-                        now={spentToAvailableRatio} label={`${spentToAvailableRatio}%`} />
+                    {   
+                        budget && <>
+                            <Row style={{marginLeft: "8px", marginRight: "8px"}}> 
+                                <Col as="h5"> Availble </Col>
+                                <Col as="h5" className="text-end"> ${ budget - totalSpendings } </Col>
+                            </Row>
+                            <ProgressBar 
+                                style={{transform: 'scaleY(1.8)', margin: '8px'}}
+                                striped variant={ calcVariant() }
+                                now={spentToAvailableRatio} label={`${spentToAvailableRatio}%`} /> </>
+                    }
                 </Card.Footer>
             </Card>
         </div>
