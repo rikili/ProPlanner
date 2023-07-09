@@ -1,5 +1,5 @@
 import { eachMinuteOfInterval, format, isAfter, isWithinInterval, startOfDay, subMinutes, endOfDay } from "date-fns";
-import { selectToInterval, getEndOfSegment, SEGMENT_TIME } from '../helpers/Outing';
+import { selectToInterval, getEndOfSegment, SEGMENT_TIME } from '../helpers/OutingCalendar';
 import { assembleClass } from '../helpers/Utils';
 
 import './OutingDay.scss';
