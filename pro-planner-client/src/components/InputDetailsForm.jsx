@@ -34,6 +34,7 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
                 return {
                     name: formRef.current.formPlanName.value,
                     location: formRef.current.formPlanLoc.value,
+                    budget: formRef.current.formPlanBudget.value,
                     dateRange: [
                         reformatDateString(formRef.current.formPlanStartDate.value),
                         reformatDateString(formRef.current.formPlanEndDate.value)
@@ -65,6 +66,11 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
                 <Form.Group controlId="formPlanLoc" className="mb-2">
                     <Form.Label>Location </Form.Label>
                     <Form.Control type="text" placeholder="Name your destination" />
+                </Form.Group>
+
+                <Form.Group controlId="formPlanBudget" className="mb-2">
+                    <Form.Label>Budget </Form.Label>
+                    <Form.Control type="number" placeholder="Choose your budget" />
                 </Form.Group>
 
                 <Row className="d-flex flex-row">

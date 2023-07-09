@@ -105,6 +105,7 @@ const PlanCreator = ({ title = <><b>Plan Setup</b></> }) => {
         let formResult = {
             name: detailResults.name,
             location: detailResults.location,
+            budget: detailResults.budget,
             isAllDay: true,
             dateTimeRange: [],
             dayOffset: [],
