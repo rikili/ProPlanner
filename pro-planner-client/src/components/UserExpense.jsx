@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import {FaMinus, FaPlus} from "react-icons/fa6";
 import {CiSquarePlus} from "react-icons/ci";
-import {Form, Button, Card, Col, InputGroup, ListGroup, Row} from "react-bootstrap";
+import {Form, Button, Card, Col, InputGroup, ListGroup, Row, Modal} from "react-bootstrap";
 import {useDispatch} from "react-redux";
 import {addExpense, removeExpense} from "../redux/costSlice";
 import {v4 as uuidv4} from "uuid";
+import {setError} from "../redux/errorSlice";
+import {ERR_TYPE} from "../constants";
 
 const UserExpense = ({user, userId}) => {
 
@@ -13,7 +15,11 @@ const UserExpense = ({user, userId}) => {
     const [isAddingExpenseDisplay, setIsAddingExpenseDisplay] = useState(false);
     const [newItem, setNewItem] = useState('');
     const [newItemAmount, setNewItemAmount] = useState(0);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [deleteExpenseId, setDeleteExpenseId] = useState(null);
     const dispatch = useDispatch();
+
+    const handleClose = () => setShowDeleteConfirmation(false);
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
@@ -37,6 +43,22 @@ const UserExpense = ({user, userId}) => {
             newItemAmount: newItemAmount,
         }
 
+        if (!formResult.newItem) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Item is missing. Please enter an item.'
+            }))
+            return null;
+        }
+
+        if (formResult.newItemAmount === 0) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Amount is missing. Please enter an amount.'
+            }))
+            return null;
+        }
+
         dispatch(addExpense(formResult));
         setNewItem('');
         setNewItemAmount(0);
@@ -44,12 +66,21 @@ const UserExpense = ({user, userId}) => {
     }
 
 
-    const handleRemoveExpense = (expenseId) => {
-        let target = {
-            userId: userId,
-            expenseId: expenseId,
+    const handleConfirmationModal = (expenseID) => {
+        setDeleteExpenseId(expenseID);
+        setShowDeleteConfirmation(true);
+    }
+
+    const handleDeleteExpense = () => {
+        if (deleteExpenseId) {
+            let target = {
+                userId: userId,
+                expenseId: deleteExpenseId,
+            }
+            dispatch(removeExpense(target));
         }
-        dispatch(removeExpense(target));
+        setDeleteExpenseId(null);
+        setShowDeleteConfirmation(false);
     }
 
     const handleOpenAddExpenseForm = () => {
@@ -83,7 +114,7 @@ const UserExpense = ({user, userId}) => {
                                 </ListGroup>
                             </Col>
                             <Col style={{textAlign: 'right'}}>
-                                <Button onClick={() => handleRemoveExpense(key)}>
+                                <Button onClick={() => handleConfirmationModal(key)}>
                                     <FaMinus style={{margin: 'auto'}}/>
                                 </Button>
                             </Col>
@@ -127,6 +158,17 @@ const UserExpense = ({user, userId}) => {
                     </Row>
                 </Card.Body>
             </Card>
+            <Modal show={showDeleteConfirmation} onHide={handleClose}>
+                <Modal.Body>Do you want to delete the expense?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleDeleteExpense}>
+                        Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 }
