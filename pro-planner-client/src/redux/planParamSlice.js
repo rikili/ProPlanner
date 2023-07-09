@@ -35,6 +35,7 @@ const planParamSlice = createSlice({
             state.dayOffset = input.dayOffset;
             state.isAllDay = input.isAllDay;
             state.location = input.location;
+            state.budget = input.budget;
             state.dateTimeRange = input.dateTimeRange;
         }
     },

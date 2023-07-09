@@ -1,5 +1,3 @@
-
-
 import {Card, Col, ListGroup, Row, ProgressBar} from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { FcAdvance } from "react-icons/fc";
