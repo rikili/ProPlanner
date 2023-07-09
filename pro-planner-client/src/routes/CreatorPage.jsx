@@ -127,6 +127,14 @@ const PlanCreator = ({ title = <><b>Plan Setup</b></> }) => {
             return;
         }
 
+        if (formResult.budget < 0) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: 'Budget cannot be negative. Please try again.',
+            }));
+            return;
+        }
+
         const convStart = new Date(detailResults.dateRange[0]);
         const convEnd = new Date(detailResults.dateRange[1]);
 
