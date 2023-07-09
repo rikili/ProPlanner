@@ -48,7 +48,7 @@ router.put('/:id', async (req, res) => {
   if (selectionMonths.length > 1) {
     const offset = timezone.getOffset(userTimezone);
 
-    let currPrevNextMonth = await getMonth(tripId, userId, selectionMonths[1]);
+    let currPrevNextMonth = await getMonth(tripId, userId, [`$userInfo.${userId}.${selectionMonths[1]}`]);
     currPrevNextMonth = currPrevNextMonth.toJSON();
     if (currPrevNextMonth.month[0] !== null) {
       if (offset >= 6) {
@@ -58,12 +58,15 @@ router.put('/:id', async (req, res) => {
           userSelection[selectionMonths[1]][userSelection[selectionMonths[1]].length - 1][1];
       }
       userSelection[selectionMonths[1]] = currPrevNextMonth.month[0];
+
       // swapping order for convertCalendarLocal() to work
-      const swapOrder = {
-        [selectionMonths[1]]: null,
-        [selectionMonths[0]]: null,
-      };
-      userSelection = Object.assign(swapOrder, userSelection);
+      if (offset <= -6) {
+        const swapOrder = {
+          [selectionMonths[1]]: null,
+          [selectionMonths[0]]: null,
+        };
+        userSelection = Object.assign(swapOrder, userSelection);
+      }
     }
   }
 
@@ -89,12 +92,7 @@ router.get('/:id/:userId', async (req, res) => {
   } else if (offset <= -6) {
     monthProjection.unshift(`$userInfo.${userId}.${parseInt(prevMonth[0])}-${prevMonth[1]}`);
   }
-  let requestedMonth = await trip.findOne(
-    { _id: new ObjectId(req.params.id), [`userInfo.${userId}`]: { $exists: true } },
-    {
-      month: monthProjection,
-    }
-  );
+  let requestedMonth = await getMonth(req.params.id, userId, monthProjection);
   requestedMonth = requestedMonth.toJSON();
   if (requestedMonth.month.length > 1) {
     // can only be -1, 0, or 1
@@ -109,7 +107,7 @@ router.get('/:id/:userId', async (req, res) => {
     const updatedMonth = timezone.convertCalendarLocal(requestedMonth.month, offset);
     res.status(200).send({ month: updatedMonth });
   } else {
-    if (!requestedMonth.month) {
+    if (!requestedMonth.month[0]) {
       const newMonth = timezone.createMonth(new Date(`${parseInt(monthQuery.split('-')[0]) + 1}-2-${monthQuery.split('-')[1]}`));
       res.status(200).send({ month: newMonth });
     } else {
@@ -164,7 +162,7 @@ const getMonth = async (id, userId, month) => {
   let dbMonth = await trip.findOne(
     { _id: new ObjectId(id), [`userInfo.${userId}`]: { $exists: true } },
     {
-      month: [`$userInfo.${userId}.${month}`],
+      month: month,
     }
   );
   return dbMonth;
