@@ -6,6 +6,7 @@ import UserExpense from "./UserExpense";
 function TripExpense() {
 
     const users = useSelector((state) => state.cost);
+    const currUserId = 'user2'; // TODO: fetch current user
 
 
     return (
@@ -14,6 +15,7 @@ function TripExpense() {
                 {Object.entries(users).map(([key, user]) =>
                     <UserExpense
                         user={user}
+                        currUserId={currUserId}
                         userId={key}
                         key={key}
                     />
