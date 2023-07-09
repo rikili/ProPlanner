@@ -22,7 +22,7 @@ import {
 	endOfMonth,
 } from 'date-fns';
 import { setUserSelections } from '../redux/calendarSlice';
-import { getMonthIndex } from '../helpers/Outing';
+import { getMonthIndex } from '../helpers/Calendar';
 
 const FIRST_HALF_HOUR = 6;
 const SECOND_HALF_HOUR = 18

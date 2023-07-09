@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 
-import WeeklyCalendar from '../components/WeeklyCalandar';
+import OutingCalendar from '../components/OutingCalendar';
 import TripCalendar from "../components/TripCalendar";
 import { ERR_TYPE, PLAN_TYPE } from '../constants';
 import { setError } from "../redux/errorSlice";
@@ -25,7 +25,7 @@ const SchedulePage = () => {
 
     return <div>
         {planParams.name && (planParams.planType === PLAN_TYPE.OUTING)
-        ? <WeeklyCalendar />
+        ? <OutingCalendar />
         : <TripCalendar />}
     </div>
 };

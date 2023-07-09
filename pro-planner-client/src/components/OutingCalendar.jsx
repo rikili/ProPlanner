@@ -19,7 +19,8 @@ import {
     isSameDay,
 } from 'date-fns';
 import { Row, Col, Container } from 'react-bootstrap';
-import { generateSlots, getMonthIndex, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay } from '../helpers/Outing';
+import { getMonthIndex } from '../helpers/Calendar';
+import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay } from '../helpers/OutingCalendar';
 import { setUserSelections } from '../redux/calendarSlice';
 
 import OutingDay from './OutingDay';
@@ -185,7 +186,7 @@ const checkAnyAvailable = (weekStart, weekEnd, dates, endBoundary) => {
     return result;
 };
 
-function WeeklyCalandar() {
+function OutingCalendar() {
     const params = useSelector(state => state.planParameters);
     const endDay = new Date(params.dateTimeRange[1]);
 
@@ -317,4 +318,4 @@ function WeeklyCalandar() {
     </Container>
 }
 
-export default WeeklyCalandar;
+export default OutingCalendar;

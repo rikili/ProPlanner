@@ -13,6 +13,7 @@ import {
     set,
     subWeeks,
 } from 'date-fns';
+import { getMonthIndex } from './Calendar';
 
 export const SEGMENT_TIME = 30;
 
@@ -27,8 +28,6 @@ const processTime = (timeString) => {
     const results = timeString.match(/[0-9]+/g);
     return {hours: results[0], minutes: results[1]}
 };
-
-export const getMonthIndex = (date) => format(date, "MM-yyyy");
 
 // turn selectInterval (eg. ["00:00", "01:00"]) to a date-fns interval
 export const selectToInterval = (date, [start, end]) => {
