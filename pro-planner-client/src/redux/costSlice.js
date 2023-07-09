@@ -25,11 +25,20 @@ const costSlice = createSlice({
             expenses: {
                 expense1: {
                     item: "PNE tickets",
-                    amount: 220
+                    amount: 200
                 },
                 expense2: {
                     item: "Coffee",
                     amount: 10
+                }
+            },
+        },
+        user4: {
+            userName: 'User 4',
+            expenses: {
+                expense1: {
+                    item: "Parking",
+                    amount: 30
                 }
             },
         }
