@@ -10,7 +10,7 @@ import {ERR_TYPE} from "../constants";
 
 const MAX_ITEM_LIMIT = 40;
 
-const UserExpense = ({user, userId}) => {
+const UserExpense = ({user, userId, currUserId}) => {
 
     const expenses = Object.values(user.expenses);
     const totalExpense = expenses.reduce((total, expense) => total + expense.amount, 0);
@@ -103,6 +103,8 @@ const UserExpense = ({user, userId}) => {
         }
     }
 
+    const isDisabled = userId !== currUserId
+
     return (
         <>
             <Card className='mt-2' style={{width: '500px'}}>
@@ -126,7 +128,8 @@ const UserExpense = ({user, userId}) => {
                                 </ListGroup>
                             </Col>
                             <Col style={{textAlign: 'right'}}>
-                                <Button onClick={() => handleConfirmationModal(key)}>
+                                <Button onClick={() => handleConfirmationModal(key)}
+                                        disabled={isDisabled}>
                                     <FaMinus style={{margin: 'auto'}}/>
                                 </Button>
                             </Col>
@@ -164,7 +167,8 @@ const UserExpense = ({user, userId}) => {
                                     variant="outline-secondary"
                                     type='submit'
                                     onClick={handleOpenAddExpenseForm}
-                                    >
+                                    disabled={isDisabled}
+                            >
                                 <CiSquarePlus style={{margin: 'auto'}} size={25}/>
                             </Button>
                         </Col>
