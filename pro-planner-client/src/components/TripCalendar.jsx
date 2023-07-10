@@ -43,9 +43,14 @@ const TripCalendar = () => {
 	const plan = useSelector(state => state.planParameters);
 	const startDate = parseISO(plan.dateTimeRange[0]);
 	const endDate = parseISO(plan.dateTimeRange[1]);
-	// const currUser = useSelector(state => state.user.selectedUser);
+	const currUser = useSelector(state => state.user.selectedUser);
 	const calendar = useSelector(state => state.tripSelections);
-	const userCalendar = calendar['user1']; // TODO: remove hard-coding
+	let userCalendar;
+	if (calendar[currUser]) {
+		userCalendar = calendar[currUser];
+	} else {
+		userCalendar = {};
+	}
 
 	// States for calendar logic
 	// First day of month (used for tracking which month is our target)
@@ -121,7 +126,7 @@ const TripCalendar = () => {
 	const [isAddingSelect, setIsAdding] = useState(true);
 
 	// stores user's date range selections (which later gets pushed into store when user submits/adds the changes)
-	const [dateSelections, setSelections] = useState(JSON.parse(JSON.stringify(userCalendar))); // TODO: initial state needs to be the correct user (currently hard-coded to user1)
+	const [dateSelections, setSelections] = useState(JSON.parse(JSON.stringify(userCalendar)));
 	
 	// tracks selection range (start/end)
 	const [selectStart, setSelectStart] = useState(null);
@@ -157,7 +162,7 @@ const TripCalendar = () => {
 	}
 
 	const confirmEdits = () => {
-		dispatch(setUserSelections({user: 'user1', selections: dateSelections})); //TODO: change user
+		dispatch(setUserSelections({user: currUser, selections: dateSelections}));
 		setUpdateMonths([]);
 		resetSelecting();
 		toggleEdit();
@@ -170,6 +175,7 @@ const TripCalendar = () => {
 	}
 
 	const checkSelected = (dateHalf) => {
+		if (!dateSelections[getMonthIndex(dateHalf)]) return false;
 		return dateSelections[getMonthIndex(dateHalf)][dateHalf.getDate() - 1][isFirstHalf(dateHalf) ? 0 : 1];
 	}
 
@@ -181,6 +187,12 @@ const TripCalendar = () => {
 		while(selectCursor >= iterHalfDate) {
 			if (isValidSelect(iterHalfDate)) {
 				if (!monthsToUpdate.includes(iterHalfDate.getMonth())) setUpdateMonths([...monthsToUpdate, iterHalfDate.getMonth()]);
+
+				if (!newSelections[getMonthIndex(iterHalfDate)]) {
+					newSelections[getMonthIndex(iterHalfDate)] = Array(endOfMonth(iterHalfDate).getDate()).fill(0).map(day => [false, false]);
+					console.log(newSelections);
+				}
+
 				if (onFirstHalf) {
 					newSelections[getMonthIndex(iterHalfDate)][iterHalfDate.getDate() - 1][0] = isAddingSelect;
 					iterHalfDate = getHalfDate(iterHalfDate, false);
