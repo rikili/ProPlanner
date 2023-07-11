@@ -21,7 +21,7 @@ import {
 	startOfDay,
 	endOfMonth,
 } from 'date-fns';
-import { setUserSelections } from '../redux/calendarSlice';
+import { setUserSelections } from '../redux/tripSlice';
 import { getMonthIndex } from '../helpers/Calendar';
 
 const FIRST_HALF_HOUR = 6;

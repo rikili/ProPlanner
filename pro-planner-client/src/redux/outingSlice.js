@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const calendarSlice = createSlice({
+const outingSlice = createSlice({
 	name: 'calendar',
 	initialState: {
         user1: {
@@ -31,6 +31,5 @@ const calendarSlice = createSlice({
 	},
 });
 
-// export const { changePlanType, updatePlan } = calendarSlice.actions;
-export const { setUserSelections } = calendarSlice.actions;
-export default calendarSlice.reducer;
+export const { setUserSelections } = outingSlice.actions;
+export default outingSlice.reducer;
