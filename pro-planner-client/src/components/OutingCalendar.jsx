@@ -21,7 +21,7 @@ import {
 import { Row, Col, Container } from 'react-bootstrap';
 import { getMonthIndex } from '../helpers/Calendar';
 import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay } from '../helpers/OutingCalendar';
-import { setUserSelections } from '../redux/calendarSlice';
+import { setUserSelections } from '../redux/outingSlice';
 
 import OutingDay from './OutingDay';
 import OutingHourLabels from './OutingHourLabels';

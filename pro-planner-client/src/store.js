@@ -5,7 +5,7 @@ import userSlice from './redux/userSlice';
 import pollSlice from "./redux/pollSlice";
 import costSlice from "./redux/costSlice";
 import errorSlice from './redux/errorSlice';
-import calendarSlice from './redux/calendarSlice';
+import outingSlice from './redux/outingSlice';
 import tripSlice from './redux/tripSlice';
 
 export default configureStore({
@@ -14,7 +14,7 @@ export default configureStore({
         user: userSlice,
         error: errorSlice,
         poll: pollSlice,
-        outingSelections: calendarSlice,
+        outingSelections: outingSlice,
         tripSelections: tripSlice,
     }),
 });
