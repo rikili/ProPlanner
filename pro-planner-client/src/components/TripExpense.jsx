@@ -1,12 +1,27 @@
-import React from 'react';
-import {useSelector} from "react-redux";
+import React, {useEffect} from 'react';
+import {useSelector, useDispatch} from "react-redux";
 import {Container} from "react-bootstrap";
 import UserExpense from "./UserExpense";
+import {addUser} from "../redux/costSlice";
 
 function TripExpense() {
 
     const users = useSelector((state) => state.cost);
-    const currUserId = 'user2'; // TODO: fetch current user
+    const currUser = "user2" //TODO: fetch selectedUser
+    const dispatch = useDispatch();
+    const userExists = (currUserId) => {
+        return currUserId in users;
+    }
+
+    useEffect(() => {
+        if (!userExists(currUser)) {
+            let userInfo = {
+                id: currUser, //TODO: replace with mongo id
+                name: currUser
+            }
+            dispatch(addUser(userInfo));
+        }
+    }, [currUser])
 
 
     return (
@@ -15,7 +30,7 @@ function TripExpense() {
                 {Object.entries(users).map(([key, user]) =>
                     <UserExpense
                         user={user}
-                        currUserId={currUserId}
+                        currUserId={currUser}
                         userId={key}
                         key={key}
                     />
