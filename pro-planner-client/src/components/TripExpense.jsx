@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from "react-redux";
 import {Container} from "react-bootstrap";
 import UserExpense from "./UserExpense";
@@ -7,11 +7,26 @@ import {addUser} from "../redux/costSlice";
 function TripExpense() {
 
     const users = useSelector((state) => state.cost);
-    const currUser = "user2" //TODO: fetch selectedUser
+    const currUser = useSelector((state) => state.user.selectedUser);
+    const [currUserId, setCurrUserId] = useState(null);
     const dispatch = useDispatch();
-    const userExists = (currUserId) => {
-        return currUserId in users;
-    }
+    const userExists = (currUser) => {
+        for (const key in users) {
+            if (users[key].userName === currUser) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const findUserId = (userName) => {
+        for (const key in users) {
+            if (users[key].userName === userName) {
+                return key;
+            }
+        }
+        return null;
+    };
 
     useEffect(() => {
         if (!userExists(currUser)) {
@@ -20,6 +35,9 @@ function TripExpense() {
                 name: currUser
             }
             dispatch(addUser(userInfo));
+            setCurrUserId(userInfo.id)
+        } else {
+            setCurrUserId(findUserId(currUser))
         }
     }, [currUser])
 
@@ -30,7 +48,7 @@ function TripExpense() {
                 {Object.entries(users).map(([key, user]) =>
                     <UserExpense
                         user={user}
-                        currUserId={currUser}
+                        currUserId={currUserId}
                         userId={key}
                         key={key}
                     />
