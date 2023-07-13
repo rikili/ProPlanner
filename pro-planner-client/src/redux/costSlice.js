@@ -55,9 +55,17 @@ const costSlice = createSlice({
         removeExpense: (state, action) => {
             const input = action.payload;
             delete state[input.userId].expenses[input.expenseId];
+        },
+        addUser: (state, action) => {
+            const input = action.payload
+            const newUser = {
+                userName: input.name,
+                expenses: {}
+            }
+            state[input.id] = newUser
         }
     }
 })
 
-export const {addExpense, removeExpense} = costSlice.actions;
+export const {addExpense, removeExpense, addUser} = costSlice.actions;
 export default costSlice.reducer;
