@@ -1,5 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { PLAN_TYPE } from '../constants';
+import axios from 'axios';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { buildServerRoute } from '../helpers/Utils';
+import { PLAN_TYPE, LOAD_STATUS } from '../constants';
+
+export const setupParams = createAsyncThunk('parameters/get', async (tripId) => {
+    const response = await axios.get(buildServerRoute('trip',tripId));
+    return response.data;
+});
 
 const planParamSlice = createSlice({
     name: 'parameters',
@@ -10,7 +17,9 @@ const planParamSlice = createSlice({
         dayOffset: [],
         isAllDay: false,
         location: null,
-        budget: null
+        budget: null,
+        paramStatus: null,
+        isInitialized: false,
     },
     reducers: {
         // payload should be a string of either 'Trip' or 'Outing'
@@ -28,16 +37,36 @@ const planParamSlice = createSlice({
         },
 
         // payload contains complete set of values to update -- should be complete even if values don't change
-        updatePlan(state, action) {
-            const input = action.payload;
-            state.name = input.name;
-            state.dayOffset = input.dayOffset;
-            state.isAllDay = input.isAllDay;
-            state.location = input.location;
-            state.budget = input.budget;
-            state.dateTimeRange = input.dateTimeRange;
+        updatePlan(state, { payload }) {
+            state.name = payload.name;
+            state.dayOffset = payload.dayOffset;
+            state.isAllDay = payload.isAllDay;
+            state.location = payload.location;
+            state.budget = payload.budget;
+            state.dateTimeRange = payload.dateTimeRange;
+            state.planType = payload.planType;
+            state.isInitialized = true;
         }
     },
+    extraReducers: (builder) => {
+        builder.addCase(setupParams.pending, (state) => {
+            state.paramStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(setupParams.rejected, (state) => {
+            state.paramStatus = LOAD_STATUS.FAILED;
+        });
+        builder.addCase(setupParams.fulfilled, (state, action) =>  {
+            const params = action.payload;
+            state.name = params.name;
+            state.planType = params.planType;
+            state.dateTimeRange = params.dateTimeRange;
+            state.dayOffset = params.dayOffset;
+            state.isAllDay = params.isAllDay;
+            state.location = params.location;
+            state.paramStatus = LOAD_STATUS.SUCCESS;
+            state.isInitialized = true;
+        });
+    }
 });
 
 export const { changePlanType, updatePlan } = planParamSlice.actions;

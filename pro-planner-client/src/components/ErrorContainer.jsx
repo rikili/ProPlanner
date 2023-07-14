@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useSelector } from "react-redux";
-import { Outlet } from 'react-router-dom';
 import ErrorToast from './ErrorToast';
 
 const handleOverlayClick = (event) => {
@@ -35,11 +34,9 @@ const ErrorContainer = () => {
                 <div
                     onClick={handleOverlayClick}
                     style={{ pointerEvents: 'none' }}
-                >
-                    <Outlet />
-                </div>
+                />
             </>
-            : <Outlet />
+            : null
         }
         {showErr && <div className="position-absolute bottom-0 end-0"><ErrorToast ref={closeButton}/></div>}
     </>

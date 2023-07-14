@@ -1,1 +1,1 @@
-export const getMonthIndex = (date) => `${date.getMonth() < 10 ? ('0' + String(date.getMonth())) : date.getMonth()}-${date.getFullYear()}`;
+export const getMonthIndex = (date) => `${date.getMonth()}-${date.getFullYear()}`;

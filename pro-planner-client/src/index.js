@@ -14,61 +14,52 @@ import ErrorPage from './routes/ErrorPage';
 import store from './store';
 import HomePage from './routes/HomePage';
 import UserSelectionPage from './routes/UserSelectionPage';
-import ErrorContainer from './components/ErrorContainer';
+import './index.scss';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <ErrorContainer />,
+        element: <LandingPage />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: 'create',
+        element: <CreatorPage />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: 'user/:tripId',
+        loader: ({ params }) => params.tripId,
+        element: <UserSelectionPage />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: '/:tripId/',
+        loader: ({ params }) => params.tripId, // TODO: can be made to cause an API call to fetch ID, passing it for now
+        element: <HomePage />,
         errorElement: <ErrorPage />,
         children: [
             {
                 path: '',
-                element: <LandingPage />,
-                errorElement: <ErrorPage />,
+                element: <SchedulePage />
             },
             {
-                path: 'create',
-                element: <CreatorPage />,
-                errorElement: <ErrorPage />,
+                path: 'vote',
+                element: <VotePage />
             },
             {
-                path: 'user/:tripId',
-                loader: ({ params }) => params.tripId,
-                element: <UserSelectionPage />,
-                errorElement: <ErrorPage />,
+                path: 'cost',
+                element: <CostPage />
             },
-            {
-                path: '/:tripId/',
-                loader: ({ params }) => params.tripId, // TODO: can be made to cause an API call to fetch ID, passing it for now
-                element: <HomePage />,
-                errorElement: <ErrorPage />,
-                children: [
-                    {
-                        path: '',
-                        element: <SchedulePage />
-                    },
-                    {
-                        path: 'vote',
-                        element: <VotePage />
-                    },
-                    {
-                        path: 'cost',
-                        element: <CostPage />
-                    },
-                ]
-            }
         ]
-    },
+    }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
         <Provider store={store}>
             <RouterProvider router={router} />
         </Provider>
-    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
