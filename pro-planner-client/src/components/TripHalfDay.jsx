@@ -1,29 +1,48 @@
 import React from 'react';
 import { format } from 'date-fns';
+import { assembleClass } from '../helpers/Utils';
+import './TripCalendar.scss';
 
 const TripHalfDay = ({
-	date,
-	editable,
-	onMouseEnter,
-	onClick,
-	selections,
-	maxUsers,
-	isSelected,
-	isValid,
-	isPreviewed,
-	style
+    topHalf,
+    date,
+    editable,
+    onMouseEnter,
+    onClick,
+    selections,
+    maxUsers,
+    isSelected,
+    isValid,
+    isPreviewed,
+    className,
+    style,
 }) => {
-	return <div
-		style={isValid ? (isPreviewed ? {...style, backgroundColor: 'blue'} : style) : {backgroundColor: 'grey', height: '50%'}}
-		onClick={editable ? onClick : ()=>{}}
-		onMouseEnter={editable ? onMouseEnter : ()=>{}}
-	>
-		{isValid && <>
-			<div style={{fontSize: '12px'}}>{selections === null ? (isSelected ? 'edit' : 'X') : (selections.length ? 'sel' : 'X')}</div>
-			<div style={{fontSize: '12px'}}>{format(date, 'MM-dd')}</div>
-			<div style={{fontSize: '12px'}}>{!editable ? `${selections?.length}/${maxUsers}` : ''}</div>
-		</>}
-	</div>
+    let classState;
+    if (editable) {
+        classState = assembleClass(
+			isPreviewed && 'trip-preview',
+			isSelected && 'trip-edit-selected'
+		);
+    } else {
+        classState = selections.length
+            ? 'trip-prev-selected'
+            : '';
+    }
+
+    const compiledClass = assembleClass(
+        className,
+        isValid && classState + ' valid',
+        !isValid && 'trip-invalid'
+    );
+
+    return (
+        <div onClick={editable ? onClick : () => {}}
+             onMouseEnter={editable ? onMouseEnter : () => {}}
+             className={compiledClass}
+        >
+            {topHalf && <div className="ms-1">{format(date, 'd')}</div>}
+        </div>
+    );
 };
 
 export default TripHalfDay;

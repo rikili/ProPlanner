@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'react-bootstrap';
@@ -11,6 +12,7 @@ import TimeRangeForm from '../components/TimeRangeForm';
 import { updatePlan } from '../redux/planParamSlice';
 import { setError, resetError } from '../redux/errorSlice';
 import { ERR_TYPE, PLAN_TYPE } from '../constants';
+import { buildServerRoute } from '../helpers/Utils';
 
 const isProperSubmission = (formData, isOuting) => {
     if (!(formData.name && formData.location)) return false;
@@ -100,7 +102,7 @@ const PlanCreator = ({ title = <><b>Plan Setup</b></> }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleFormSubmission = () => {
+    const handleFormSubmission = async () => {
         const detailResults = detailForm.current.retrieveData();
         let formResult = {
             name: detailResults.name,
@@ -252,9 +254,19 @@ const PlanCreator = ({ title = <><b>Plan Setup</b></> }) => {
             return;
         }
 
-        dispatch(updatePlan(formResult));
-        dispatch(resetError());
-        navigate(`/user/${tripId}`); // TODO: ID should be generated on confirm -- get from backend
+        const postPromise = axios.post(buildServerRoute('trip'), formResult)
+            .then((result) => {
+                dispatch(updatePlan(formResult));
+                dispatch(resetError());
+                navigate(`/user/${result.data}`);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        // dispatch(updatePlan(formResult));
+        // dispatch(resetError());
+        // navigate(`/user/${postPromise}`); // TODO: ID should be generated on confirm -- get from backend
     }
 
     return <div className="w-50 mx-auto mt-5">

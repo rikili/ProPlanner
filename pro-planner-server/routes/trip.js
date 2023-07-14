@@ -50,7 +50,7 @@ router.put('/:id', async (req, res) => {
   const userTimezone = req.body.timezone;
   const tripId = req.params.id;
   const userId = req.body.userId;
-  let userSelection = timezone.makeAvailabilityDates(req.body.selection, userTimezone);
+  let userSelection = timezone.makeAvailabilityDates(req.body.selections, userTimezone);
   const selectionMonths = Object.keys(userSelection);
 
   if (selectionMonths.length > 1) {
