@@ -34,7 +34,7 @@ const ExpenseSplit = () => {
         const results = [];
 
         while (leftIndex < rightIndex) {
-            let leftUserOwes = costPerUser - userSpendings[leftIndex][1];
+            let leftUserOwes = (costPerUser - userSpendings[leftIndex][1]).toFixed(2);
             let rightUserAmount = userSpendings[rightIndex][1];
             let key = 0;
 
@@ -45,10 +45,10 @@ const ExpenseSplit = () => {
                 userSpendings[rightIndex][1] -= leftUserOwes;
                 results.push(
                     <ListGroup.Item as="h5" key={key} style={{textAlign: "center"}}>
-                        <Row>
+                        <Row style={{textAlign: "left"}}>
                             <Col>{userSpendings[leftIndex][0]} :</Col>
                             <Col>${leftUserOwes}</Col>
-                            <Col><FcAdvance style={{ transform: 'scale(2.2)', margin: "0px 1em 0.1em 1em"}}/></Col>
+                            <Col lg={2}><FcAdvance style={{ transform: 'scale(2.2)'}}/></Col>
                             <Col>{userSpendings[rightIndex][0]}</Col>
                         </Row>
                     </ListGroup.Item>
@@ -60,10 +60,10 @@ const ExpenseSplit = () => {
                 userSpendings[rightIndex][1] -= leftUserPaysRightUser;
                 results.push(
                     <ListGroup.Item as="h5" key={key} style={{textAlign: "center"}}>
-                        <Row>
+                        <Row style={{textAlign: "left"}}>
                             <Col> {userSpendings[leftIndex][0]} :</Col>
                             <Col>${leftUserPaysRightUser}</Col>
-                            <Col><FcAdvance style={{ transform: 'scale(2.2)', margin: "0px 1em 0.1em 1em"}}/></Col>
+                            <Col lg={2}><FcAdvance style={{ transform: 'scale(2.2)'}}/></Col>
                             <Col>{userSpendings[rightIndex][0]}</Col>
                         </Row>
                     </ListGroup.Item>
@@ -87,7 +87,7 @@ const ExpenseSplit = () => {
 
     return (
         <div className="d-flex flex-column justify-content-center align-items-center mt-4">
-            <Card className='mt-2' style={{width: '450px'}}>
+            <Card className='mt-2' style={{width: '500px'}}>
                 <Card.Header as="h4" className="text-center" >
                 Cost Split Calculations
                 </Card.Header>
@@ -115,7 +115,7 @@ const ExpenseSplit = () => {
                                 <Col as="h5" className="text-end"> ${ budget - totalSpendings } </Col>
                             </Row>
                             <ProgressBar 
-                                style={{transform: 'scaleY(1.8)', margin: '9px'}}
+                                style={{margin: '9px'}}
                                 striped variant={ calcVariant() }
                                 now={spentToAvailableRatio} label={`${spentToAvailableRatio}%`} /> </>
                     }
