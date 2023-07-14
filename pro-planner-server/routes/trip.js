@@ -21,28 +21,36 @@ const { ObjectId } = require('mongodb');
 router.post('/', async (req, res) => {
   // const userId = new ObjectId(req.body.userId);
   // temp userId
-  const userId = new ObjectId('649009f3cf33190dacb27a77');
-  const userSelections = timezone.makeAvailabilityDates(req.body.selections, req.body.timezone);
+  
+  // const userId = req.body.userId;
+  // const userSelections = timezone.makeAvailabilityDates(req.body.selections, req.body.timezone);
   const tripModel = new trip({
     planParameters: {
       name: req.body.name,
       planType: req.body.planType,
-      availableDays: req.body.availableDays,
+      dayOffset: req.body.dayOffset,
       isAllDay: req.body.isAllDay,
       location: req.body.location,
       dateTimeRange: req.body.dateTimeRange,
     },
-    userInfo: { [userId]: userSelections },
+    userInfo: { }, // mock data for now
   });
   let savedData = await tripModel.save();
-  res.status(200).json(savedData);
+
+  // MOCK DATA for demo
+  await trip.updateOne({ _id: savedData._id }, { $set: { 'userInfo.user1': {
+    '6-2023': [[true, false], [true, false], [true, false], [false, true], [true, false], [false, true], [true, true], [false, true], [true, false], [false, false], [false, true], [true, false], [false, false], [true, false], [true, true], [false, true], [true, true], [true, false], [false, true], [true, true], [true, false], [true, false], [true, false], [false, false], [true, false], [true, false], [true, true], [false, false], [false, false], [true, false], [false, true]],
+    '7-2023': [[false, true], [true, true], [true, false], [false, false], [true, false], [true, true], [false, true], [false, false], [true, false], [false, false], [false, true], [true, false], [true, true], [true, true], [true, false], [true, true], [false, false], [true, false], [false, true], [false, false], [false, true], [true, false], [false, false], [true, false], [true, false], [true, true], [true, true], [false, false], [false, false], [false, false], [false, false]],
+  }}});
+
+  res.status(200).send(savedData._id);
 });
 
 router.put('/:id', async (req, res) => {
   const userTimezone = req.body.timezone;
   const tripId = req.params.id;
   const userId = req.body.userId;
-  let userSelection = timezone.makeAvailabilityDates(req.body.selection, userTimezone);
+  let userSelection = timezone.makeAvailabilityDates(req.body.selections, userTimezone);
   const selectionMonths = Object.keys(userSelection);
 
   if (selectionMonths.length > 1) {
@@ -59,14 +67,15 @@ router.put('/:id', async (req, res) => {
             userSelection[selectionMonths[1]][userSelection[selectionMonths[1]].length - 1][1];
         }
         userSelection[selectionMonths[1]] = currPrevNextMonth.month[0];
-      }
-      // swapping order for convertCalendarLocal() to work
-      if (offset <= -6) {
-        const swapOrder = {
-          [selectionMonths[1]]: null,
-          [selectionMonths[0]]: null,
-        };
-        userSelection = Object.assign(swapOrder, userSelection);
+  
+        // swapping order for convertCalendarLocal() to work
+        if (offset <= -6) {
+          const swapOrder = {
+            [selectionMonths[1]]: null,
+            [selectionMonths[0]]: null,
+          };
+          userSelection = Object.assign(swapOrder, userSelection);
+        }
       }
     }
   }
@@ -83,19 +92,20 @@ router.get('/:id', async (req, res) => {
   try {
     new ObjectId(req.params.id);
   } catch (e) {
-    res.status(404).send('Invalid plan ID');
+    res.status(404).send("Invalid plan ID");
     return;
   }
   if (findParams(req.params.id)) {
     const fetchedParams = await getParams(req.params.id);
-
+    
     if (fetchedParams) {
       const params = fetchedParams.planParameters.toObject();
       res.status(200).send(params);
       return;
     }
   }
-  res.status(404).send('Invalid plan ID');
+
+  res.status(404).send("Invalid plan ID");
 });
 
 router.get('/:id/:userId', async (req, res) => {
@@ -116,7 +126,7 @@ router.get('/:id/:userId', async (req, res) => {
   requestedMonth = requestedMonth.toJSON();
   if (requestedMonth.month.length > 1) {
     let updatedMonth;
-    if (requestedMonth.month[0] === null && requestedMonth.month[1] === null) {
+    if (requestedMonth.month[0] === null && requestedMonth.month[1]===null) {
       const splitDate = monthQuery.split('-');
       const month = splitDate[0];
       const year = splitDate[1];
@@ -197,11 +207,16 @@ const getMonth = async (id, userId, month) => {
 };
 
 const findParams = async (id) => {
-  return !!(await trip.findOne({ _id: new ObjectId(id) }));
-};
+  return !!(await trip.findOne(
+    { _id: new ObjectId(id) },
+  ));
+}
 
 const getParams = async (id) => {
-  return await trip.findOne({ _id: new ObjectId(id), ['planParameters']: { $exists: true } }, ['planParameters']);
-};
-
+  return await trip.findOne(
+    { _id: new ObjectId(id), ['planParameters']: { $exists: true } },
+    ['planParameters']
+  );
+}
+ 
 module.exports = router;

@@ -1,6 +1,7 @@
 import './TripCalendar.scss';
 import TripHalfDay from './TripHalfDay';
-import { useState, useMemo } from 'react';
+import axios from 'axios';
+import { useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, Button } from 'react-bootstrap';
 import {
@@ -20,9 +21,11 @@ import {
 	set,
 	startOfDay,
 	endOfMonth,
+	eachMonthOfInterval
 } from 'date-fns';
-import { setUserSelections } from '../redux/tripSlice';
+import { setUserSelectionsAsync, setUserSelections, setLoading, completeInit } from '../redux/tripSlice';
 import { getMonthIndex } from '../helpers/Calendar';
+import { buildServerRoute, getTimezone } from '../helpers/Utils';
 
 const FIRST_HALF_HOUR = 6;
 const SECOND_HALF_HOUR = 18
@@ -39,12 +42,16 @@ const addNameToDay = (fullDay, destArr, dayIndex, username) => {
 	if (fullDay[1]) destArr[dayIndex][1].push(username);
 }
 
-const TripCalendar = () => {
+const TripCalendar = ({ tripId }) => {
 	const plan = useSelector(state => state.planParameters);
 	const startDate = parseISO(plan.dateTimeRange[0]);
 	const endDate = parseISO(plan.dateTimeRange[1]);
+	const users = useSelector(state => state.user.userList);
 	const currUser = useSelector(state => state.user.selectedUser);
-	const calendar = useSelector(state => state.tripSelections);
+	const calendar = useSelector(state => state.tripSelections.selections);
+	const isLoading = useSelector(state => state.tripSelections.isLoading);
+	const isInitDone = useSelector(state => state.tripSelections.isInitDone);
+
 	let userCalendar;
 	if (calendar[currUser]) {
 		userCalendar = calendar[currUser];
@@ -71,6 +78,46 @@ const TripCalendar = () => {
 	const calendarEnd = useMemo(() => endOfWeek(addWeeks(calendarStart, 5)), [calendarStart]);
 
 	const dispatch = useDispatch();
+	useEffect(() => {
+		const controller = new AbortController();
+		const promiseTrack = [];
+
+		dispatch(setLoading(true));
+		for (let user of users) {
+			eachMonthOfInterval({start: calendarStart, end: calendarEnd}).forEach((month) => {
+				const monthIndex = getMonthIndex(month);
+				console.log(monthIndex);
+				console.log(getTimezone());
+				console.log(`request for ${user} ${monthIndex} ${getTimezone()}`);
+				const userReq = axios.get(buildServerRoute('trip', tripId, user), {
+					params: {
+						month: monthIndex,
+						timezone: getTimezone(),
+					},
+					signal: controller.signal,
+				});
+				userReq.then((result) => {
+					console.log(result);
+					dispatch(setUserSelections({
+						userId: user,
+						monthIndex: monthIndex,
+						data: result.data.month
+					}));
+				})
+				.catch((e) => console.log(e));
+				promiseTrack.push(userReq);
+			});
+		}
+
+		Promise.allSettled(promiseTrack).then((resultArr) => {
+			dispatch(setLoading(false));
+			dispatch(completeInit());
+		});
+		return () => {
+			controller.abort();
+		}
+	}, [calendarEnd, calendarStart, dispatch, tripId, users]);
+
 	const combinedSelections = useMemo(() => {
 		const result = {};
 		Object.entries(calendar).forEach(([username, monthSelects], index) => {
@@ -162,7 +209,10 @@ const TripCalendar = () => {
 	}
 
 	const confirmEdits = () => {
-		dispatch(setUserSelections({user: currUser, selections: dateSelections}));
+		// dispatch(setUserSelections({user: currUser, selections: dateSelections})); //TODO: loop over changes
+		for (let monthIndex of monthsToUpdate) {
+			dispatch(setUserSelectionsAsync({tripId, userId: currUser, newSelections: dateSelections[monthIndex], monthIndex}));
+		}
 		setUpdateMonths([]);
 		resetSelecting();
 		toggleEdit();
@@ -186,7 +236,7 @@ const TripCalendar = () => {
 		
 		while(selectCursor >= iterHalfDate) {
 			if (isValidSelect(iterHalfDate)) {
-				if (!monthsToUpdate.includes(iterHalfDate.getMonth())) setUpdateMonths([...monthsToUpdate, iterHalfDate.getMonth()]);
+				if (!monthsToUpdate.includes(getMonthIndex(iterHalfDate))) setUpdateMonths([...monthsToUpdate, getMonthIndex(iterHalfDate)]);
 
 				if (!newSelections[getMonthIndex(iterHalfDate)]) {
 					newSelections[getMonthIndex(iterHalfDate)] = Array(endOfMonth(iterHalfDate).getDate()).fill(0).map(day => [false, false]);
@@ -206,6 +256,7 @@ const TripCalendar = () => {
 				iterHalfDate = getHalfDate(addDays(iterHalfDate, 1), true);
 			}
 		}
+
 		setSelections(newSelections);
 	}
 
@@ -253,8 +304,15 @@ const TripCalendar = () => {
 		const firstHalfDate = getHalfDate(iterDate, true);
 		const secHalfDate = getHalfDate(iterDate, false);
 		
-		let firstSelects = selectionArr[dayIndex][0];
-		let secondSelects = selectionArr[dayIndex][1];
+		let firstSelects;
+		let secondSelects;
+		if (selectionArr) {
+			firstSelects = selectionArr[dayIndex][0];
+			secondSelects = selectionArr[dayIndex][1];
+		} else {
+			firstSelects = [];
+			secondSelects = [];
+		}
 
 		let firstEdit = false;
 		let secondEdit = false;
@@ -322,41 +380,43 @@ const TripCalendar = () => {
 		}
 	};
 
-	return <Col className="w-50 m-auto">
-		<Row className="w-100">
-			<Button onClick={toggleEdit}>
-				Edit
-			</Button>
-		</Row>
-		<Row>
-			<button
-				onClick={() => handleChangeMonth(false)}
-				style={{ background: 'inherit', border: 'none' }}
-				className={isLeftEnd ? 'col highlighted' : 'col'}
-			>
-				{'<'}
-			</button>
-			{currDateStart.getFullYear() + ' ' + format(currDateStart, 'MMMM')}
-			<button
-				onClick={() => handleChangeMonth(true)}
-				style={{ background: 'inherit', border: 'none' }}
-				className={isRightEnd ? 'col highlighted' : 'col'}
-			>
-				{'>'}
-			</button>
-		</Row>
-		<Row>
-			{weekArr.map((week, index) => {
-				return <Row key={`week-${index}`}>
-					{week.map((day) => day)}
-				</Row>
-			})}
-		</Row>
-		<Row>
-			<Button onClick={confirmEdits}>
-				Confirm
-			</Button>
-		</Row>
-	</Col>
+	return <>
+		{isInitDone && <Col className="w-50 m-auto">
+			<Row className="w-100">
+				<Button onClick={toggleEdit}>
+					Edit
+				</Button>
+			</Row>
+			<Row>
+				<button
+					onClick={() => handleChangeMonth(false)}
+					style={{ background: 'inherit', border: 'none' }}
+					className={isLeftEnd ? 'col highlighted' : 'col'}
+				>
+					{'<'}
+				</button>
+				{currDateStart.getFullYear() + ' ' + format(currDateStart, 'MMMM')}
+				<button
+					onClick={() => handleChangeMonth(true)}
+					style={{ background: 'inherit', border: 'none' }}
+					className={isRightEnd ? 'col highlighted' : 'col'}
+				>
+					{'>'}
+				</button>
+			</Row>
+			<Row>
+				{weekArr.map((week, index) => {
+					return <Row key={`week-${index}`}>
+						{week.map((day) => day)}
+					</Row>
+				})}
+			</Row>
+			<Row>
+				<Button onClick={confirmEdits}>
+					Confirm
+				</Button>
+			</Row>
+		</Col>}
+	</>
 };
 export default TripCalendar;

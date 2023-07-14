@@ -7,12 +7,12 @@ const tripSchema = new Schema(
     planParameters: {
       name: Schema.Types.String,
       planType: Schema.Types.String,
-      availableDays: Schema.Types.Array,
+      dayOffset: Schema.Types.Array,
       isAllDay: Schema.Types.Boolean,
       location: Schema.Types.String,
       dateTimeRange: Schema.Types.Array,
     },
-    userInfo: Schema.Types.Mixed,
+    userInfo: Schema.Types.Mixed
   },
   {
     collection: 'Trip',
