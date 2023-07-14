@@ -49,16 +49,17 @@ router.put('/:id', async (req, res) => {
     const offset = timezone.getOffset(userTimezone);
 
     let currPrevNextMonth = await getMonth(tripId, userId, [`$userInfo.${userId}.${selectionMonths[1]}`]);
-    currPrevNextMonth = currPrevNextMonth.toJSON();
-    if (currPrevNextMonth.month[0] !== null) {
-      if (offset >= 6) {
-        currPrevNextMonth.month[0][0][0] = userSelection[selectionMonths[1]][0][0];
-      } else {
-        currPrevNextMonth.month[0][currPrevNextMonth.month[0].length - 1][1] =
-          userSelection[selectionMonths[1]][userSelection[selectionMonths[1]].length - 1][1];
+    if (currPrevNextMonth !== null) {
+      currPrevNextMonth = currPrevNextMonth.toJSON();
+      if (currPrevNextMonth.month[0] !== null) {
+        if (offset >= 6) {
+          currPrevNextMonth.month[0][0][0] = userSelection[selectionMonths[1]][0][0];
+        } else {
+          currPrevNextMonth.month[0][currPrevNextMonth.month[0].length - 1][1] =
+            userSelection[selectionMonths[1]][userSelection[selectionMonths[1]].length - 1][1];
+        }
+        userSelection[selectionMonths[1]] = currPrevNextMonth.month[0];
       }
-      userSelection[selectionMonths[1]] = currPrevNextMonth.month[0];
-
       // swapping order for convertCalendarLocal() to work
       if (offset <= -6) {
         const swapOrder = {
@@ -78,6 +79,25 @@ router.put('/:id', async (req, res) => {
   res.status(200).send({ month: addedNewUserInfo.month });
 });
 
+router.get('/:id', async (req, res) => {
+  try {
+    new ObjectId(req.params.id);
+  } catch (e) {
+    res.status(404).send('Invalid plan ID');
+    return;
+  }
+  if (findParams(req.params.id)) {
+    const fetchedParams = await getParams(req.params.id);
+
+    if (fetchedParams) {
+      const params = fetchedParams.planParameters.toObject();
+      res.status(200).send(params);
+      return;
+    }
+  }
+  res.status(404).send('Invalid plan ID');
+});
+
 router.get('/:id/:userId', async (req, res) => {
   const monthQuery = req.query.month;
   const userId = req.params.userId;
@@ -95,16 +115,24 @@ router.get('/:id/:userId', async (req, res) => {
   let requestedMonth = await getMonth(req.params.id, userId, monthProjection);
   requestedMonth = requestedMonth.toJSON();
   if (requestedMonth.month.length > 1) {
-    // can only be -1, 0, or 1
-    const nullCheckIndex = requestedMonth.month.indexOf(null);
-    if (nullCheckIndex !== -1) {
-      const monthAfterOrBefore = nullCheckIndex
-        ? `${parseInt(nextMonth[0]) + 1}-2-${nextMonth[1]}`
-        : `${parseInt(prevMonth[0]) + 1}-2-${prevMonth[1]}`;
-      const tempMonth = timezone.createMonth(new Date(monthAfterOrBefore));
-      requestedMonth.month[nullCheckIndex] = tempMonth;
+    let updatedMonth;
+    if (requestedMonth.month[0] === null && requestedMonth.month[1] === null) {
+      const splitDate = monthQuery.split('-');
+      const month = splitDate[0];
+      const year = splitDate[1];
+      updatedMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
+    } else {
+      // can only be -1, 0, or 1
+      const nullCheckIndex = requestedMonth.month.indexOf(null);
+      if (nullCheckIndex !== -1) {
+        const monthAfterOrBefore = nullCheckIndex
+          ? `${parseInt(nextMonth[0]) + 1}-2-${nextMonth[1]}`
+          : `${parseInt(prevMonth[0]) + 1}-2-${prevMonth[1]}`;
+        const tempMonth = timezone.createMonth(new Date(monthAfterOrBefore));
+        requestedMonth.month[nullCheckIndex] = tempMonth;
+      }
+      updatedMonth = timezone.convertCalendarLocal(requestedMonth.month, offset);
     }
-    const updatedMonth = timezone.convertCalendarLocal(requestedMonth.month, offset);
     res.status(200).send({ month: updatedMonth });
   } else {
     if (!requestedMonth.month[0]) {
@@ -166,6 +194,14 @@ const getMonth = async (id, userId, month) => {
     }
   );
   return dbMonth;
+};
+
+const findParams = async (id) => {
+  return !!(await trip.findOne({ _id: new ObjectId(id) }));
+};
+
+const getParams = async (id) => {
+  return await trip.findOne({ _id: new ObjectId(id), ['planParameters']: { $exists: true } }, ['planParameters']);
 };
 
 module.exports = router;
