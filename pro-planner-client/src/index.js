@@ -14,6 +14,7 @@ import ErrorPage from './routes/ErrorPage';
 import store from './store';
 import HomePage from './routes/HomePage';
 import UserSelectionPage from './routes/UserSelectionPage';
+import './index.scss';
 
 const router = createBrowserRouter([
     {

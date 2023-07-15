@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
       location: req.body.location,
       dateTimeRange: req.body.dateTimeRange,
     },
-    userInfo: { }, // mock data for now
+    userInfo: { },
   });
   let savedData = await tripModel.save();
 
@@ -68,14 +68,14 @@ router.put('/:id', async (req, res) => {
         }
         userSelection[selectionMonths[1]] = currPrevNextMonth.month[0];
   
-        // swapping order for convertCalendarLocal() to work
-        if (offset <= -6) {
-          const swapOrder = {
-            [selectionMonths[1]]: null,
-            [selectionMonths[0]]: null,
-          };
-          userSelection = Object.assign(swapOrder, userSelection);
-        }
+      }
+      // swapping order for convertCalendarLocal() to work
+      if (offset <= -6) {
+        const swapOrder = {
+          [selectionMonths[1]]: null,
+          [selectionMonths[0]]: null,
+        };
+        userSelection = Object.assign(swapOrder, userSelection);
       }
     }
   }

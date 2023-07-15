@@ -10,6 +10,7 @@ import { Outlet, useNavigate } from "react-router";
 
 import axios from 'axios';
 import { buildServerRoute } from '../helpers/Utils';
+import './HomePage.scss';
 
 const isDateTimeValid = (planType, dateTimeRange) => {
     if (planType === PLAN_TYPE.OUTING) {
@@ -85,8 +86,12 @@ const HomePage = () => {
 
 	return <>
 		<ErrorContainer />
-		<NavigationBar />
-		{ isParamsInit && <Outlet />}
+		<div className='home-page'>
+			<NavigationBar />
+			<div className='page-content'>
+				{ isParamsInit && <Outlet />}
+			</div>
+		</div>
 	</>;
 };
 
