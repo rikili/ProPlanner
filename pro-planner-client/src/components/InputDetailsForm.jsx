@@ -28,13 +28,13 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
 
 
     const [selectedDays, setSelectedDays] = useState({
-        'Su': false,
-        'Mo': false,
-        'Tu': false,
-        'We': false,
-        'Th': false,
-        'Fr': false,
-        'Sa': false,
+        'Su': true,
+        'Mo': true,
+        'Tu': true,
+        'We': true,
+        'Th': true,
+        'Fr': true,
+        'Sa': true,
     });
     const formRef = useRef(null);
 
@@ -48,17 +48,23 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
         return result;
     }
 
+    const reformatDateString = (inpString) =>  {
+        const splits = inpString.match(/[0-9]+/g);
+        return `${splits[1]}-${splits[2]}-${splits[0]}`;
+    }
+
     useImperativeHandle(ref, () => {
         return {
             retrieveData: () => {
                 return {
                     name: formRef.current.formPlanName.value,
                     location: formRef.current.formPlanLoc.value,
+                    budget: formRef.current.formPlanBudget.value,
                     dateRange: [
-                        formRef.current.formPlanStartDate.value,
-                        formRef.current.formPlanEndDate.value
+                        reformatDateString(formRef.current.formPlanStartDate.value),
+                        reformatDateString(formRef.current.formPlanEndDate.value)
                     ],
-                    availableDays: formatSelectedDays(),
+                    selectedDaysOfWeek: formatSelectedDays(),
                 };
             }
         }
@@ -84,7 +90,7 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
             <h2>{title}</h2>
         </Card.Title>}
         <Card.Body className="ps-5 pe-5">
-            <h6><b>Plan Details</b></h6>
+            <h6><b>Details</b></h6>
             <Form className="d-flex flex-column" ref={formRef} onSubmit={e => e.preventDefault()}>
                 <Form.Group controlId="formPlanName" className="mb-2">
                     <Form.Label>Plan Name </Form.Label>
@@ -96,6 +102,11 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
                     <Autocomplete>
                         <Form.Control type="text" placeholder="Name your destination"/>
                     </Autocomplete>
+                </Form.Group>
+
+                <Form.Group controlId="formPlanBudget" className="mb-2">
+                    <Form.Label>Budget </Form.Label>
+                    <Form.Control type="number" placeholder="Choose your budget" />
                 </Form.Group>
 
                 <Row className="d-flex flex-row">

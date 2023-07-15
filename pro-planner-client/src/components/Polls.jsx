@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux';
 
 function Polls() {
 
-    const pollList = useSelector((state) => state.poll.polls);
+    const pollList = useSelector((state) => Object.values(state.poll.polls));
 
     return (
         <>
@@ -20,3 +20,4 @@ function Polls() {
 }
 
 export default Polls;
+

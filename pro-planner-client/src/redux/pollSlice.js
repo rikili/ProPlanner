@@ -3,8 +3,7 @@ import {createSlice} from "@reduxjs/toolkit";
 const pollSlice = createSlice({
     name: 'poll',
     initialState: {
-        polls: [],
-        votedUsers: {}
+        polls: {},
     },
     reducers: {
         addPoll: (state, action) => {
@@ -15,7 +14,7 @@ const pollSlice = createSlice({
                 options: input.options,
                 votedUsers: input.votedUsers
             };
-            state.polls.push(newPoll);
+            state.polls[input.pollId] = newPoll;
         },
         addOption: (state, action) => {
             const input = action.payload;
@@ -24,26 +23,25 @@ const pollSlice = createSlice({
                 option: input.option,
                 voteCount: input.voteCount
             }
-            const poll = state.polls.find((p) => p.pollId === input.pollId);
-            poll.options.push(newOption);
+            const poll = state.polls[input.pollId];
+            poll.options[input.optionId] = newOption;
         },
         voteOption: (state, action) => {
             const input = action.payload;
-
-            const poll = state.polls.find((p) => p.pollId === input.pollId);
-            // const userVoted = poll.votedUsers[input.userId]; TODO... implement after userId is set
-
-            // if (!userVoted) { TODO... implement after userId is set
-                input.selectedOptions.forEach((optionId) => {
-                    poll.options.find((o) => o.optionId === optionId).voteCount++
-                })
-            //}
-
-            // poll.votedUsers[input.userId] = true; TODO... implement after userId is set
-
+            const poll = state.polls[input.pollId];
+            const votedUser = poll.votedUsers.find((u) => u.user === input.user);
+            if (votedUser) {
+                poll.options[votedUser.votedOptionId].voteCount-- // decrement previous voted option count
+                votedUser.votedOptionId = input.selectedOption; // update voted option
+                poll.options[input.selectedOption].voteCount++ // increment current voted option count
+            } else {
+                poll.votedUsers.push({user: input.user, votedOptionId: input.selectedOption});
+                poll.options[input.selectedOption].voteCount++
+            }
         },
     }
 })
 
 export const {addPoll, addOption, voteOption} = pollSlice.actions;
 export default pollSlice.reducer;
+

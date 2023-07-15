@@ -3,7 +3,7 @@ import { Card, Form, Button, Row, Col } from 'react-bootstrap';
 
 const roundingSteps = [0, 15, 30, 45, 60];
 
-const TimeRangeForm = forwardRef((props, ref) => {
+const TimeRangeForm = forwardRef((_, ref) => {
     const [isAllDay, setAllDay] = useState(false);
     const timeForm = useRef(null);
 
@@ -24,7 +24,6 @@ const TimeRangeForm = forwardRef((props, ref) => {
             },
         }
     });
-
 
     const handleTimeBlur = (event) => {
         const strVal = event.target.value;

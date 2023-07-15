@@ -1,0 +1,28 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.half-day {
+	border: 1px solid rgb(229, 209, 209);
+	height: 50%;
+}
+
+.valid:hover {
+	background-color: rgba(71, 174, 215, 0.964);
+	transform: scale(1.2);
+	transition: transform 0.3s ease;
+}
+.valid {
+	font-weight: bold;
+}
+
+.invalid {
+	color: rgb(178, 178, 178);
+}
+
+.active {
+	background-color: rgba(71, 174, 215, 0.964);
+	color: white;
+}

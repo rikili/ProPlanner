@@ -6,6 +6,8 @@ import {v4 as uuidv4} from 'uuid';
 import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
+const MAX_OPTION_LIMIT = 70;
+
 function AddOptionForm({poll, showModal, setShowModal}) {
     const [newOption, setNewOption] = useState("")
     const dispatch = useDispatch();
@@ -20,6 +22,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
     const handleAddOption = (e) => {
         e.preventDefault();
         const formattedNewOption = newOption.trim();
+        const options = Object.values(poll.options)
 
         if (formattedNewOption.length === 0) {
             dispatch(setError({
@@ -30,7 +33,15 @@ function AddOptionForm({poll, showModal, setShowModal}) {
             return;
         }
 
-        if (poll.options.find(option => option.option === newOption)) {
+        if (formattedNewOption.length > MAX_OPTION_LIMIT) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: `Option is invalid. Option must not exceed ${MAX_OPTION_LIMIT} characters.`,
+            }));
+            return;
+        }
+
+        if (options.find(option => option.option === newOption)) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
                 disableControl: true,
@@ -57,7 +68,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
     return (
         <Modal show={showModal} onHide={handleCloseModal}>
             <Modal.Header closeButton>
-                <Modal.Title>Add New Option</Modal.Title>
+                <Modal.Title>Add Option</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form.Group>
@@ -72,7 +83,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
             <Modal.Footer>
                 <Button type='submit'
                         onClick={handleAddOption}>
-                    Add Option
+                    Add
                 </Button>
             </Modal.Footer>
         </Modal>
@@ -80,3 +91,4 @@ function AddOptionForm({poll, showModal, setShowModal}) {
 }
 
 export default AddOptionForm;
+

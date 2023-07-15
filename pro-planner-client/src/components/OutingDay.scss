@@ -1,4 +1,8 @@
-.segment {
+.week-calendar {
+    width: 100%;
+}
+
+.first-segment {
     width: 100%;
     height: 1em;
     background-color: lightgrey;
@@ -6,7 +10,7 @@
     border-right: 1px solid;
 }
 
-.sub-segment {
+.second-segment {
     width: 100%;
     height: 1em;
     background-color: lightgrey;
@@ -24,4 +28,24 @@
 
 .selectable {
     background-color: white;
+}
+
+.unavail {
+    background-color: grey;
+}
+
+.available {
+    background-color: white;
+}
+
+.selected {
+    background-color: green;
+}
+
+.hovered {
+    background-color: blue;
+}
+
+.editable {
+    cursor: pointer;
 }

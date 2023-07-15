@@ -1,10 +1,10 @@
-import {forwardRef} from 'react';
-import {Toast} from 'react-bootstrap';
-import {useSelector, useDispatch} from 'react-redux';
-import {IoWarning} from 'react-icons/io5';
-import {MdDangerous} from 'react-icons/md';
-import {BsInfoCircleFill} from 'react-icons/bs';
-import {CgClose} from 'react-icons/cg';
+import { forwardRef } from 'react';
+import { Toast } from 'react-bootstrap';
+import { useSelector, useDispatch } from 'react-redux';
+import { IoWarning } from 'react-icons/io5';
+import { MdDangerous } from 'react-icons/md';
+import { BsInfoCircleFill } from 'react-icons/bs';
+import { CgClose } from 'react-icons/cg';
 
 import {resetError} from '../redux/errorSlice';
 import {ERR_TYPE} from '../constants';

@@ -3,17 +3,19 @@ import Option from "./Option";
 import {Form} from "react-bootstrap";
 
 
-function Options({poll, setSelectedOptions, selectedOptions}) {
+function Options({poll, setSelectedOption, selectedOption}) {
+
+    const options = Object.values(poll.options)
 
     return (
         <>
             <Form>
-                {poll.options.map((option) =>
+                {options.map((option) =>
                     <Option option={option}
                             key={option.optionId}
                             poll={poll}
-                            setSelectedOptions={setSelectedOptions}
-                            selectedOptions={selectedOptions}
+                            setSelectedOption={setSelectedOption}
+                            selectedOption={selectedOption}
                     />)}
             </Form>
         </>
@@ -21,3 +23,4 @@ function Options({poll, setSelectedOptions, selectedOptions}) {
 }
 
 export default Options;
+

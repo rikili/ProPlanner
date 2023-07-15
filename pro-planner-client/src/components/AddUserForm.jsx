@@ -27,7 +27,6 @@ const AddUserForm = () => {
     const handleNewUserSubmit = (e) => {
         e.preventDefault();
         const formattedName = userName.trim();
-        console.log(formattedName);
         if (formattedName.length === 0) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
