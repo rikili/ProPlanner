@@ -9,8 +9,6 @@ Google Maps Places Autocomplete API Docs: https://developers.google.com/maps/doc
 import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Card, Form, Row, ButtonGroup, Button, Col } from 'react-bootstrap';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
-// require('dotenv').config()
-
 
 
 
@@ -21,11 +19,6 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
 
 		libraries: ['places'],
 	});
-
-    console.log(process.env);
-    // console.log(process.env.API_KEY);
-
-
 
     const [selectedDays, setSelectedDays] = useState({
         'Su': true,
@@ -74,7 +67,6 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
         const newSelection = {...selectedDays};
         newSelection[dayLabel] = !selectedDays[dayLabel]
         setSelectedDays(newSelection);
-        // const results = getLatLng(formRef.current.formPlanLoc.value);
     }
     
     

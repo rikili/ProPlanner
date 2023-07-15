@@ -1,13 +1,13 @@
 
 
 import React from 'react'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerF as Marker } from '@react-google-maps/api';
 import { useSelector } from 'react-redux';
 
 const containerStyle = {
-  width: '400px',
-  height: '400px'
+  width: '500px',
+  height: '500px'
 };
 
 
@@ -21,8 +21,6 @@ const getLatLng = address => {
             .then(data => {
                 if (data.results.length > 0) {
                     const { lat, lng } = data.results[0].geometry.location;
-                    // console.log('Latitude:', lat);
-                    // console.log('Longitude:', lng);
                     resolve({ lat, lng })
                 } else {
                     console.log('No results found.');
@@ -38,7 +36,6 @@ const getLatLng = address => {
 
 const Map = () => {
     const { isLoaded } = useJsApiLoader({
-        //NOTE: manually insert API KEY. .env file not working right now.
         googleMapsApiKey: apiKey,
         libraries: ['places'],
     });
@@ -53,7 +50,7 @@ const Map = () => {
 
     
     return (
-    <div style={{ display: 'flex', justifyContent: 'center'}}>
+    <div className="d-flex justify-content-center mt-5">
         { !isLoaded ? (
         <h1>Loading...</h1>
         ) : (
