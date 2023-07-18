@@ -26,6 +26,7 @@ import { setUserSelections } from '../redux/outingSlice';
 import OutingDay from './OutingDay';
 import OutingHourLabels from './OutingHourLabels';
 import Button from 'react-bootstrap/Button';
+import UserSideBar from './UserSideBar';
 
 // Update working selections for current user
 const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding) => {
@@ -314,6 +315,9 @@ function OutingCalendar() {
                     </Row>
                 })}
             </Col>
+            <Col className="d-flex flex-row w-25 m-auto" sm={2}>
+					<UserSideBar isEditing={isEditing} />
+			</Col>
         </Row>
     </Container>
 }
