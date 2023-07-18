@@ -16,5 +16,6 @@ export default configureStore({
         poll: pollSlice,
         outingSelections: outingSlice,
         tripSelections: tripSlice,
+        cost: costSlice,
     }),
 });
