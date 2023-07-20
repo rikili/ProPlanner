@@ -316,7 +316,7 @@ function OutingCalendar() {
 		if (selectedUser && !(selectedUser in selections)) {
 			dispatch(
 				setError({
-					errType: ERR_TYPE.ERR,
+					errType: ERR_TYPE.WARN,
 					message: 'This user does not exist in the current Redux store.',
 				})
 			);
