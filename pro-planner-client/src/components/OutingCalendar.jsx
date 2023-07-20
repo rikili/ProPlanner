@@ -33,8 +33,8 @@ import OutingDay from './OutingDay';
 import OutingHourLabels from './OutingHourLabels';
 import Button from 'react-bootstrap/Button';
 import UserSideBar from './UserSideBar';
-import { useEffect } from 'react';
-
+import { setError } from '../redux/errorSlice';
+import { ERR_TYPE } from '../constants';
 // Update working selections for current user
 const updateSelections = (
 	currSelects,
@@ -312,8 +312,16 @@ function OutingCalendar() {
 
 	const selectsInDay = (date, selections) => {
 		const result = {};
-		if (selectedUser) {
-			// console.log(selections[selectedUser]);
+		console.log(selections);
+		if (selectedUser && !(selectedUser in selections)) {
+			dispatch(
+				setError({
+					errType: ERR_TYPE.ERR,
+					message: 'This user does not exist in the current Redux store.',
+				})
+			);
+		} else if (selectedUser) {
+			console.log(selections);
 			result[selectedUser] = getDayRanges(date, selections[selectedUser]);
 		} else {
 			Object.entries(selections).forEach(([user, userSelects]) => {
