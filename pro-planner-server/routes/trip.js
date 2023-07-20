@@ -15,6 +15,7 @@
 const express = require('express');
 const router = express.Router();
 const trip = require('../models/trip');
+const poll = require('../models/poll');
 const timezone = require('../helpers/timezone');
 const { ObjectId } = require('mongodb');
 
@@ -35,6 +36,13 @@ router.post('/', async (req, res) => {
     userInfo: { [userId]: userSelections },
   });
   let savedData = await tripModel.save();
+
+  const pollModel = new poll({
+    eventId: new ObjectId(savedData._id),
+    polls: {},
+  });
+  await pollModel.save();
+
   res.status(200).json(savedData);
 });
 
