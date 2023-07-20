@@ -2,11 +2,11 @@ import { Spinner } from "react-bootstrap";
 
 import './LoadingDisplay.scss';
 
-const LoadingDisplay = () => {
+const LoadingDisplay = ({ label = true, className }) => {
     return (
-        <div className='loading-display'>
+        <div className={`${className} loading-display`}>
             <Spinner />
-            <p>Loading...</p>
+            {label && <p>Loading...</p>}
         </div>
     );
 };

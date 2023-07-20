@@ -1,11 +1,9 @@
 import './TripCalendar.scss';
-import TripHalfDay from './TripHalfDay';
 import axios from 'axios';
 import { useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Row, Col, Button, Container } from 'react-bootstrap';
+import { Col, Button, Container, Card } from 'react-bootstrap';
 import {
-    format,
     getDay,
     startOfMonth,
     addMonths,
@@ -18,27 +16,21 @@ import {
     isAfter,
     startOfWeek,
     endOfWeek,
-    set,
     startOfDay,
     endOfMonth,
     eachMonthOfInterval,
 } from 'date-fns';
-import { setUserSelectionsAsync, setUserSelections, setLoading, completeInit } from '../redux/tripSlice';
+import { setUserSelectionsAsync, setUserSelections, setLoading, completeInit, setDetailedDay, setDetailedUsers } from '../redux/tripSlice';
 import { getMonthIndex } from '../helpers/Calendar';
+import { getHalfDate, isFirstHalf } from '../helpers/TripCalendar';
 import { buildServerRoute, getTimezone } from '../helpers/Utils';
 import { setError } from '../redux/errorSlice';
-import { ERR_TYPE } from '../constants';
-import LoadingDisplay from './LoadingDisplay';
+import { ERR_TYPE, LOAD_STATUS } from '../constants';
 import './TripCalendar.scss';
-
-const FIRST_HALF_HOUR = 6;
-const SECOND_HALF_HOUR = 18;
-
-const getHalfDate = (date, isFirstHalf) =>
-    set(new Date(date), {
-        hours: isFirstHalf ? FIRST_HALF_HOUR : SECOND_HALF_HOUR,
-    });
-const isFirstHalf = (dateHalf) => dateHalf.getHours() === FIRST_HALF_HOUR;
+import TripDay from './TripDay';
+import TripCalendarLabel from './TripCalendarLabel';
+import TripCalendarEdit from './TripCalendarEdit';
+import TripWeekDayLabels from './TripWeekDayLabels';
 
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
     if (!destArr[dayIndex].length) {
@@ -58,6 +50,7 @@ const TripCalendar = ({ tripId }) => {
     const calendar = useSelector((state) => state.tripSelections.selections);
     const isLoading = useSelector((state) => state.tripSelections.isLoading);
     const isInitDone = useSelector((state) => state.tripSelections.isInitDone);
+    const hasUpdateFailed = useSelector((state) => state.tripSelections.updateStatus) === LOAD_STATUS.FAILED;
 
     let userCalendar;
     if (calendar[currUser]) {
@@ -113,22 +106,28 @@ const TripCalendar = ({ tripId }) => {
                             })
                         );
                     })
-                    .catch((e) => {
-                        dispatch(setError({
-                        	errType: ERR_TYPE.ERR,
-                        	message: 'Month information could not be fetched, please try again later. Close this notification to be redirected to the landing page.',
-                        	redirect: '/',
-                        	disableControl: true
-                        }));
-                    });
+                    .catch(() => {});
                 promiseTrack.push(userReq);
             });
         }
 
-        Promise.allSettled(promiseTrack).then((resultArr) => {
-            dispatch(setLoading(false));
-            dispatch(completeInit());
-        });
+        Promise.all(promiseTrack)
+            .then(() => {
+                dispatch(setLoading(false));
+                dispatch(completeInit());
+            })
+            .catch((e) => {
+                if (e.request.status === 0) return;
+                dispatch(
+                    setError({
+                        errType: ERR_TYPE.ERR,
+                        message:
+                            'Month information could not be fetched, please try again later. Close this notification to be redirected to the landing page.',
+                        redirect: '/',
+                        disableControl: true,
+                    })
+                );
+            });
         return () => {
             controller.abort();
         };
@@ -218,8 +217,8 @@ const TripCalendar = ({ tripId }) => {
         return result;
     }, [plan]);
 
-    const isValidSelect = (date) => validDOWs.includes(getDay(date)) && date >= startDate && date <= endDate;
-    const isInPreview = (dateHalf) => dateHalf <= selectCursor && dateHalf >= selectStart;
+    const isDateValid = (date) => validDOWs.includes(getDay(date)) && date >= startDate && date <= endDate;
+    const isDateInPreview = (date) => date <= selectCursor && date >= selectStart;
 
     const resetSelecting = () => {
         setSelectStart(null);
@@ -228,13 +227,17 @@ const TripCalendar = ({ tripId }) => {
     };
 
     const toggleEdit = () => {
+        if (!isEditMode) { // entering edit
+            setSelections(JSON.parse(JSON.stringify(userCalendar)));
+            dispatch(setDetailedDay(null));
+            dispatch(setDetailedUsers([]));
+        } else {
+            resetSelecting();
+        }
         setIsEditMode(!isEditMode);
-        setSelections(JSON.parse(JSON.stringify(userCalendar)));
-        resetSelecting();
     };
 
     const confirmEdits = () => {
-        // dispatch(setUserSelections({user: currUser, selections: dateSelections})); //TODO: loop over changes
         for (let monthIndex of monthsToUpdate) {
             dispatch(
                 setUserSelectionsAsync({
@@ -268,7 +271,7 @@ const TripCalendar = ({ tripId }) => {
         const editedMonths = [];
 
         while (selectCursor >= iterHalfDate) {
-            if (isValidSelect(iterHalfDate)) {
+            if (isDateValid(iterHalfDate)) {
                 if (
                     !monthsToUpdate.includes(getMonthIndex(iterHalfDate)) &&
                     !editedMonths.includes(getMonthIndex(iterHalfDate))
@@ -327,7 +330,18 @@ const TripCalendar = ({ tripId }) => {
         }
     };
 
-    if (!(isInitDone && Object.values(combinedSelections).length)) return <div></div>;
+    if (hasUpdateFailed) {
+        dispatch(
+            setError({
+                errType: ERR_TYPE.ERR,
+                message:
+                    'Updating of selections has failed. Please try again.',
+                disableControl: false,
+            })
+        );
+    }
+
+    if (!(isInitDone && Object.values(combinedSelections).length && !hasUpdateFailed)) return <div></div>;
 
     const maxUsers = Object.keys(calendar).length;
     let iterDate = new Date(calendarStart);
@@ -342,57 +356,26 @@ const TripCalendar = ({ tripId }) => {
     const weekArr = [];
 
     while (isAfter(calendarEnd, iterDate)) {
-        const firstHalfDate = getHalfDate(iterDate, true);
-        const secHalfDate = getHalfDate(iterDate, false);
-
-        let firstSelects;
-        let secondSelects;
-        if (selectionArr) {
-            firstSelects = selectionArr[dayIndex][0];
-            secondSelects = selectionArr[dayIndex][1];
-        } else {
-            firstSelects = [];
-            secondSelects = [];
-        }
-
-        let firstEdit = false;
-        let secondEdit = false;
+        const editSelections = { first: false, second: false };
         if (editsInMonth) {
-            const editDate = userSelectionArr[iterDate.getDate() - 1];
-            firstEdit = editDate[0];
-            secondEdit = editDate[1];
+            editSelections.first = userSelectionArr[iterDate.getDate() - 1][0];
+            editSelections.second = userSelectionArr[iterDate.getDate() - 1][1];
         }
 
         dayArr.push(
-            <Col className="trip-half-container" key={`day-${dayArr.length}-container`}>
-                <TripHalfDay
-                    topHalf={true}
-                    date={new Date(firstHalfDate)}
-                    editable={isEditMode}
-                    onMouseEnter={() => updateSelectionPrev(firstHalfDate)}
-                    onClick={() => handleSelection(firstHalfDate)}
-                    selections={isEditMode ? null : firstSelects}
-                    maxUsers={maxUsers}
-                    isSelected={isEditMode ? firstEdit : null}
-                    isValid={isValidSelect(firstHalfDate)}
-                    isPreviewed={isInPreview(firstHalfDate)}
-                    className="half-day"
-                    key={`day-${dayArr.length}-first`}
-                />
-                <TripHalfDay
-                    date={new Date(secHalfDate)}
-                    editable={isEditMode}
-                    onMouseEnter={() => updateSelectionPrev(secHalfDate)}
-                    onClick={() => handleSelection(secHalfDate)}
-                    selections={isEditMode ? null : secondSelects}
-                    maxUsers={maxUsers}
-                    isSelected={isEditMode ? secondEdit : null}
-                    isValid={isValidSelect(secHalfDate)}
-                    isPreviewed={isInPreview(secHalfDate)}
-                    className="half-day"
-                    key={`day-${dayArr.length}-second`}
-                />
-            </Col>
+            <TripDay
+                date={new Date(iterDate)}
+                selections={selectionArr[dayIndex]}
+                editable={isEditMode}
+                onMouseEnter={updateSelectionPrev}
+                onClick={handleSelection}
+                maxUsers={maxUsers}
+                isSelected={editSelections}
+                checkValid={isDateValid}
+                checkPreview={isDateInPreview}
+                className="half-day"
+                key={`day-${dayArr.length}`}
+            />
         );
 
         dayIndex++;
@@ -418,51 +401,35 @@ const TripCalendar = ({ tripId }) => {
     return (
         <>
             {isInitDone && (
-                <Col className="trip-calendar">
-                    <Row>
-                        <button
-                            onClick={() => handleChangeMonth(false)}
-                            style={{ background: 'inherit', border: 'none' }}
-                            className={isLeftEnd ? 'col highlighted' : 'col'}
-                        >
-                            {'<'}
-                        </button>
-                        {currDateStart.getFullYear() + ' ' + format(currDateStart, 'MMMM')}
-                        <button
-                            onClick={() => handleChangeMonth(true)}
-                            style={{ background: 'inherit', border: 'none' }}
-                            className={isRightEnd ? 'col highlighted' : 'col'}
-                        >
-                            {'>'}
-                        </button>
-                    </Row>
-                    <Container className="trip-week-container">
-                        {isLoading ? (
-                            <LoadingDisplay />
-                        ) : (
-                            weekArr.map((week, index) => {
-                                return (
-                                    <Container key={`week-${index}`} className="trip-day-container">
-                                        {week.map((day) => day)}
-                                    </Container>
-                                );
-                            })
-                        )}
-                    </Container>
-                    {!isEditMode && (
-                        <Container className="mt-2">
-                            <Button onClick={toggleEdit}>Edit</Button>
-                        </Container>
-                    )}
-                    {isEditMode && (
-                        <Container className="mt-2">
-                            <Button onClick={confirmEdits} className="me-1">
-                                Confirm
-                            </Button>
-                            <Button onClick={toggleEdit}>Cancel</Button>
-                        </Container>
-                    )}
-                </Col>
+                <Card className='calendar-card'>
+                    <Card.Body>
+                        <Col className="trip-calendar">
+                            <TripCalendarLabel date={currDateStart} onClick={handleChangeMonth}/>
+                            <TripWeekDayLabels />
+                            <Container className="trip-calendar-container">
+                                <Container className='trip-border' />
+                                {isLoading ? (
+                                    Array(6).fill(0).map((_, index) => {
+                                        return (
+                                            <Container key={`week-${index}`} className="trip-day-container">
+                                                {Array(6).fill(0).map((_, index) => <TripDay fake className='trip-half-container' key={`load-day-${index}`}/>)}
+                                            </Container>
+                                        )
+                                    })
+                                ) : (
+                                    weekArr.map((week, index) => {
+                                        return (
+                                            <Container key={`week-${index}`} className="trip-day-container">
+                                                {week.map((day) => day)}
+                                            </Container>
+                                        );
+                                    })
+                                )}
+                            </Container>
+                            <TripCalendarEdit toggleEdit={toggleEdit} editing={isEditMode} confirmEdit={confirmEdits}/>
+                        </Col>
+                    </Card.Body>
+                </Card>
             )}
         </>
     );

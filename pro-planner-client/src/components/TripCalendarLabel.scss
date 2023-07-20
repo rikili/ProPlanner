@@ -1,0 +1,43 @@
+.calendar-month-control {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	padding: 0.5em 0;
+
+	& > span {
+		display: flex;
+		justify-content: center;
+	}
+}
+
+.calendar-month-labels {
+	display: flex;
+	flex-flow: column nowrap;
+}
+
+.month-nav {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	border-width: 0;
+	padding: 0 0.5em;
+	border-radius: 0.3em;
+
+	&:hover {
+		background-color: rgb(190, 190, 190);
+	}
+}
+
+.calendar-label {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	font-size: 18px;
+	padding: 0 1em;
+	width: 10em;
+}
+
+.calendar-label-year {
+	width: 100%;
+	font-size: 13px;
+}
