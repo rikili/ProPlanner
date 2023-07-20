@@ -1,0 +1,46 @@
+.trip-edit-controls {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 0.5em 0 0 0;
+	gap: 0.3em;
+}
+
+.edit-calendar-button {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-items: center;
+	height: 1.5em;
+	width: 2em;
+	background-color: rgb(202, 202, 202);
+	border-radius: 0.3em;
+	color: rgb(71, 71, 71);
+	&:hover {
+		background-color: rgb(150, 150, 150);
+	}
+
+	&.confirm {
+		background-color: rgb(124, 194, 124);
+		color: rgb(31, 68, 31);
+		&:hover {
+			background-color: rgb(94, 172, 94);
+		}
+	}
+
+	&.close {
+		background-color: rgb(241, 204, 204);
+		color: rgb(95, 22, 22);
+		&:hover {
+			background-color: rgb(211, 147, 147);
+		}
+	}
+}
+
+.edit-prompt {
+	margin: 0;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	color: rgb(199, 199, 199);
+}

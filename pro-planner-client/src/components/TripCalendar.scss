@@ -1,72 +1,206 @@
+$day-font-size: 13px;
+
+$calendar-borders: rgb(192, 192, 192);
+
+$selected-day-full-dark: rgb(108, 160, 114);
+$selected-day-step-4: rgb(140, 195, 146);
+$selected-day-step-3: rgba(136, 198, 149, 0.75);
+$selected-day-step-2: rgb(147, 207, 160, 0.65);
+$selected-day-step-1: rgb(166, 239, 182, 0.55);
+$selected-day-label: rgb(81, 115, 81);
+
+$preview-day: rgb(133, 171, 228);
+$preview-day-dark: rgb(104, 143, 201);
+$preview-day-label: rgb(82, 118, 171);
+
+$detailed-day: rgb(180, 240, 232);
+
+$edit-day: rgb(151, 137, 235);
+$edit-day-label: rgb(97, 82, 185);
+
+$invalid-day: rgb(217, 217, 217);
+$invalid-day-label: rgb(113, 113, 113);
+
+$half-line-default: rgb(203, 203, 203);
+$half-line-selected: rgb(94, 141, 103);
+$half-line-preview: rgb(88, 116, 159);
+$half-line-edit: rgb(105, 97, 190);
+
+
+.calendar-card {
+	& > .card-body {
+		display: flex;
+		flex-flow: column nowrap;
+		justify-content: center;
+		align-items: center;
+		padding: 0 1em 1em 1em;
+	}
+}
+
 .trip-calendar {
 	display: flex;
 	flex-direction: column;
-	width: 60%;
-	margin: auto;
-	height: 80%;
+	min-width: 50em;
+	min-height: 36em;
 }
 
-.trip-week-container {
+.trip-border {
+	position: absolute;
+	height: 100%;
+	border: 1px solid $calendar-borders;
+	border-radius: 1em;
+	background: none;
+	pointer-events: none;
+	padding: 0;
+	margin: 0;
+}
+
+.trip-loading-container {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+	height: 100%;
+}
+
+.trip-calendar-container {
+	padding: 0;
+	position: relative;
 	display: flex;
 	flex-direction: column;
-	height: 100%;
+	border-radius: 1em;
+	clip-path: inset(0% 0% round 1em);
+	max-height: 36em;
 	flex: 1;
+}
+
+.fake-day {
+	background-color: rgb(230, 230, 230);
 }
 
 .trip-day-container {
 	display: flex;
-	border-top: 1px solid black;
+	border-bottom: 1px solid $calendar-borders;
 	padding: 0;
 	flex: 1;
-}
+	
 
-.trip-day-container:last-child {
-	border-bottom: 1px solid black;
+	&:nth-child(2) {
+		border-radius: 1em 1em 0 0;
+
+		& > .trip-half-container:first-child {
+			border-radius: 1em 0 0 0;
+			& > .half-day:first-child {
+				border-radius: 1em 0 0 0;
+			}
+		}
+
+		& > .trip-half-container:last-child {
+			border-radius: 0 1em 0 0;
+			& > .half-day:first-child {
+				border-radius: 0 1em 0 0;
+			}
+		}
+	}
+
+	&:last-child {
+		border-bottom: 0;
+		border-radius: 0 0 1em 1em;
+
+		& > .trip-half-container:first-child {
+			border-radius: 0 0 0 1em;
+			& > .half-day:last-child {
+				border-radius: 0 0 0 1em;
+			}
+		}
+
+		& > .trip-half-container:last-child {
+			border-radius: 0 0 1em 0;
+			& > .half-day:last-child {
+				border-radius: 0 0 1em 0;
+			}
+		}
+	}
 }
 
 .trip-half-container {
-	border-left: 1px solid black;
+	border-right: 1px solid $calendar-borders;
 	padding: 0;
 	flex: 1;
-}
 
-.trip-half-container:last-child {
-	border-right: 1px solid black;
+	&:last-child {
+		border-right: 0;
+	}
 }
 
 .half-day {
-	font-size: 14px;
+	cursor: pointer;
+	font-size: $day-font-size;
 	flex: 1;
 	height: 50%;
-}
 
-.half-day:last-child {
-	&.valid {
-		border-top: 1px dashed rgb(87, 87, 87);
+	&:first-child {
+		&.trip-selected {
+			color: $selected-day-label;
+		}
 	}
 
-	&.trip-preview {
-		border-top: 1px dashed rgb(102, 145, 209);
+	&:last-child {
+		&.valid {
+			border-top: 1px dashed $half-line-default;
+		}
+
+		&.trip-selected {
+			border-top: 1px dashed $half-line-selected;
+		}
+	
+		&.trip-preview {
+			border-top: 1px dashed $half-line-preview;
+		}
+
+		&.trip-edit {
+			border-top: 1px dashed $half-line-edit;
+		}
 	}
 }
 
-.trip-prev-selected {
-	background-color: rgb(121, 192, 121);
+.trip-half-label {
+	margin-left: 0.5em;
 }
 
-.trip-edit-selected {
-	background-color: rgb(151, 197, 191);
+.trip-selected {
+	color: $selected-day-label;
+}
+.trip-selected-4 {
+	background-color: $selected-day-step-4;
+}
+.trip-selected-3 {
+	background-color: $selected-day-step-3;
+}
+.trip-selected-2 {
+	background-color: $selected-day-step-2;
+}
+.trip-selected-1 {
+	background-color: $selected-day-step-1;
+}
+
+.trip-detailed {
+	background-color: $detailed-day;
+}
+
+.trip-edit {
+	background-color: $edit-day;
+	color: $edit-day-label;
 }
 
 .trip-preview {
-	&.trip-edit-selected {
-		background-color: rgb(60, 133, 192);
+	&.trip-edit {
+		background-color: $preview-day-dark;
 	}
-	color: rgb(39, 99, 189);
-	background-color: rgb(80, 163, 231);
+	color: $preview-day-label;
+	background-color: $preview-day;
 }
 
 .trip-invalid {
-	color: rgb(168, 169, 173);
-	background-color: rgb(133, 133, 139)
+	color: $invalid-day-label;
+	background-color: $invalid-day;
 }
