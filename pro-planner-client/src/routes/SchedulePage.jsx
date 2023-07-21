@@ -2,8 +2,8 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 
 import OutingCalendar from '../components/OutingCalendar';
-import TripCalendar from "../components/TripCalendar";
 import { PLAN_TYPE } from '../constants';
+import TripGroup from "../components/TripGroup";
 
 const SchedulePage = () => {
     const tripId = useLocation().pathname.slice(1);
@@ -12,7 +12,7 @@ const SchedulePage = () => {
     return <div>
         {(planParams.planType === PLAN_TYPE.OUTING)
             ? <OutingCalendar tripId={tripId} />
-            : <TripCalendar tripId={tripId} />
+            : <TripGroup tripId={tripId} />
         }
     </div>
 };
