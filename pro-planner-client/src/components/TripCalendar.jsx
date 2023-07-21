@@ -31,6 +31,7 @@ import TripDay from './TripDay';
 import TripCalendarLabel from './TripCalendarLabel';
 import TripCalendarEdit from './TripCalendarEdit';
 import TripWeekDayLabels from './TripWeekDayLabels';
+import TripMonthSelector from './TripMonthSelector';
 
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
     if (!destArr[dayIndex].length) {
@@ -404,7 +405,16 @@ const TripCalendar = ({ tripId }) => {
                 <Card className='calendar-card'>
                     <Card.Body>
                         <Col className="trip-calendar">
-                            <TripCalendarLabel date={currDateStart} onClick={handleChangeMonth}/>
+                            <TripCalendarLabel date={currDateStart}
+                                               onClick={handleChangeMonth}
+                                               startRange={startDate}
+                                               endRange={endDate}
+                            />
+                            <TripMonthSelector selectedMonth={currDateStart}
+                                               setSelectedMonth={setCurrDateStart}
+                                               rangeStart={startDate}
+                                               rangeEnd={endDate}
+                            />
                             <TripWeekDayLabels />
                             <Container className="trip-calendar-container">
                                 <Container className='trip-border' />
