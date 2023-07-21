@@ -13,7 +13,7 @@ const NavigationBar = () => {
                 <Navbar.Brand>ProPlanner</Navbar.Brand>
                 <Navbar.Collapse className="d-flex justify-content-between">
                     <Nav className="d-flex gap-3">
-                        <Link to={`/${tripId}/`} className="nav-link">
+                        <Link to={`/${tripId}`} className="nav-link">
                             <Nav.Item>Scheduling</Nav.Item>
                         </Link>
                         <Link to={`vote`} className="nav-link">
