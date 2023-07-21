@@ -42,14 +42,15 @@ const TripMonthSelector = ({ selectedMonth, setSelectedMonth, rangeStart, rangeE
             </div>
             <Container className="trip-month-list">
                 {eachMonthOfInterval({ start: startOfYear(viewYear), end: endOfYear(viewYear) }).map((month) => {
+                    const monthInRange = inRange(month);
                     const buttonClass = assembleClass(
                         'trip-month-button',
-                        inRange(month) ? 'trip-month-button-valid' : 'trip-month-button-invalid',
+                        monthInRange ? 'trip-month-button-valid' : 'trip-month-button-invalid',
                         isSameMonth(month, selectedMonth) && 'trip-month-button-selected'
                     );
 
                     return (
-                        <div className={buttonClass} onClick={() => setSelectedMonth(month)} key={`month-selector-${format(month, 'MMMM')}`}>
+                        <div className={buttonClass} onClick={monthInRange ? () => setSelectedMonth(month) : null} key={`month-selector-${format(month, 'MMMM')}`}>
                             {format(month, 'MMM')}
                         </div>
                     );

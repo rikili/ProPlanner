@@ -14,7 +14,7 @@ const TripDetailList = () => {
                 <div className="trip-detail-list">
                     {!!isDetailSelected ? (
                         <>
-                            {selectedList.map((user, index) => {
+                            {selectedList.toSorted().map((user, index) => {
                                 return (
                                     <div
                                         key={`user-selected-detail-${index}`}
@@ -24,7 +24,7 @@ const TripDetailList = () => {
                                     </div>
                                 );
                             })}
-                            {userList
+                            {userList.toSorted()
                                 .filter((user) => !selectedList.includes(user))
                                 .map((user, index) => {
                                     return (
