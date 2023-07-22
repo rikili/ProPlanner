@@ -1,4 +1,18 @@
-import {createSlice} from "@reduxjs/toolkit";
+import axios from 'axios';
+import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import {buildServerRoute} from "../helpers/Utils";
+
+export const addPollAsync = createAsyncThunk(
+    'poll/add',
+    async ({newQuestion}) => {
+        const response = await axios.put(buildServerRoute('poll'), {
+            question: newQuestion,
+            options: {},
+            votedUsers: []
+        });
+        return response.data;
+    });
+
 
 const pollSlice = createSlice({
     name: 'poll',
@@ -39,6 +53,10 @@ const pollSlice = createSlice({
                 poll.options[input.selectedOption].voteCount++
             }
         },
+    },
+    extraReducers: (builders) => {
+        // builder.addCase(addPollAsync.fulfilled, (state) => {
+        // })
     }
 })
 
