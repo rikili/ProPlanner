@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {InputGroup, Button, Form, Card, Container} from "react-bootstrap";
-import {v4 as uuidv4} from 'uuid';
 import {useDispatch, useSelector} from 'react-redux';
-import {addPoll} from "../redux/pollSlice";
+import {addPoll, addPollAsync} from "../redux/pollSlice";
 import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
@@ -12,14 +11,6 @@ function AddPollForm() {
     const [newQuestion, setNewQuestion] = useState('')
     const polls = useSelector((state) => Object.values(state.poll.polls))
     const dispatch = useDispatch();
-
-
-    let formResult = {
-        pollId: uuidv4(),
-        question: newQuestion,
-        options: {},
-        votedUsers: []
-    }
 
     const handleAddPoll = (e) => {
         e.preventDefault();
@@ -50,7 +41,7 @@ function AddPollForm() {
         }
 
         dispatch(resetError());
-        dispatch(addPoll(formResult))
+        dispatch(addPollAsync({newQuestion}))
         setNewQuestion('')
     }
 
