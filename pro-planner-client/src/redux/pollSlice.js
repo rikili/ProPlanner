@@ -1,15 +1,45 @@
 import axios from 'axios';
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
-import {buildServerRoute} from "../helpers/Utils";
+
+export const getPollAsync = createAsyncThunk(
+    'poll/get',
+    async ({tripId}) => {
+        const response = await axios.get(`http://localhost:5001/poll/${tripId}`);
+        return response.data;
+    });
 
 export const addPollAsync = createAsyncThunk(
     'poll/add',
-    async ({newQuestion}) => {
-        const response = await axios.put(buildServerRoute('poll'), {
-            question: newQuestion,
-            options: {},
-            votedUsers: []
-        });
+    async ({newQuestion, pollDocumentId}) => {
+        const response = await axios.put(
+            `http://localhost:5001/poll/${pollDocumentId}`,
+            {
+                question: newQuestion
+            });
+        return response.data;
+    });
+
+export const addOptionAsync = createAsyncThunk(
+    'poll/option/add',
+    async ({newOption, pollDocumentId, pollId}) => {
+        const response = await axios.put(
+            `http://localhost:5001/poll/option/${pollDocumentId}/${pollId}`,
+            {
+                option: newOption
+            });
+        return response.data;
+    });
+
+export const voteOptionAsync = createAsyncThunk(
+    'poll/option/vote',
+    async ({currUser, votedOptionId, newVotedOptionId, pollDocumentId, pollId}) => {
+        const response = await axios.patch(
+            `http://localhost:5001/poll/vote/${pollDocumentId}/${pollId}`,
+            {
+                user: currUser,
+                votedOptionId: votedOptionId,
+                newVotedOptionId: newVotedOptionId
+            });
         return response.data;
     });
 
@@ -54,9 +84,13 @@ const pollSlice = createSlice({
             }
         },
     },
-    extraReducers: (builders) => {
-        // builder.addCase(addPollAsync.fulfilled, (state) => {
-        // })
+    extraReducers: (builder) => {
+        builder.addCase(getPollAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+        });
+        builder.addCase(getPollAsync.rejected, (state, action) => {
+            console.log('rejected')
+        })
     }
 })
 
