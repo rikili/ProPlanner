@@ -1,11 +1,17 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Poll from "./Poll";
 import {Container} from "react-bootstrap";
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getPollAsync} from "../redux/pollSlice";
 
-function Polls() {
+function Polls({tripId}) {
 
     const pollList = useSelector((state) => Object.values(state.poll.polls));
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getPollAsync({tripId}))
+    }, [dispatch])
 
     return (
         <>
