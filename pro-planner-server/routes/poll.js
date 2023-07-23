@@ -13,8 +13,6 @@ const {ObjectId} = require('mongodb');
 // gets the entire poll document, needs the eventId (id of trip/outing)
 router.get('/:eventId', async (req, res) => {
     try {
-        // const eventId = '64b832038c2ec130a6ce3ec4';
-        // const polls = await poll.findOne({eventId: eventId}, {__v: false}); // testing purpose
         const polls = await poll.findOne({eventId: new Object(req.params.eventId)}, {__v: false});
         res.status(200).json(polls);
     } catch (error) {
@@ -65,6 +63,7 @@ router.put('/option/:id/:pollId', async (req, res) => {
             voteCount: 0,
         };
 
+
         const addedPoll = await poll.findOneAndUpdate(
             {_id: new ObjectId(req.params.id)},
             {
@@ -102,7 +101,7 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
         const newVotedOptionId = req.body.newVotedOptionId;
 
         // decrements prev user vote in options
-        if (votedOptionId) {
+        if (votedOptionId || votedOptionId !== null) {
             await poll.updateOne(
                 {_id: new ObjectId(id)},
                 {

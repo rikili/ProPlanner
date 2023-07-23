@@ -1,6 +1,9 @@
 import axios from 'axios';
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import {LOAD_STATUS} from '../constants';
 
+
+// TODO: remove hardcoded server URL with .env
 export const getPollAsync = createAsyncThunk(
     'poll/get',
     async ({tripId}) => {
@@ -27,7 +30,7 @@ export const addOptionAsync = createAsyncThunk(
             {
                 option: newOption
             });
-        return response.data;
+        return response.data
     });
 
 export const voteOptionAsync = createAsyncThunk(
@@ -47,7 +50,9 @@ export const voteOptionAsync = createAsyncThunk(
 const pollSlice = createSlice({
     name: 'poll',
     initialState: {
+        pollsId: null, // poll document Id
         polls: {},
+        pollStatus: null,
     },
     reducers: {
         addPoll: (state, action) => {
@@ -85,12 +90,52 @@ const pollSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder.addCase(getPollAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
         builder.addCase(getPollAsync.fulfilled, (state, action) => {
             state.polls = action.payload.polls;
+            state.pollsId = action.payload._id;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
         });
-        builder.addCase(getPollAsync.rejected, (state, action) => {
-            console.log('rejected')
-        })
+        builder.addCase(getPollAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+
+        builder.addCase(addPollAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(addPollAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            console.log(state.polls)
+            state.pollsId = action.payload._id;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(addPollAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+
+        builder.addCase(addOptionAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(addOptionAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(addOptionAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+
+        builder.addCase(voteOptionAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(voteOptionAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(voteOptionAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
     }
 })
 
