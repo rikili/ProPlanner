@@ -1,24 +1,19 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Poll from "./Poll";
 import {Container} from "react-bootstrap";
-import {useDispatch, useSelector} from 'react-redux';
-import {getPollAsync} from "../redux/pollSlice";
+import {useSelector} from 'react-redux';
 
-function Polls({tripId}) {
+function Polls() {
 
-    const pollList = useSelector((state) => Object.values(state.poll.polls));
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(getPollAsync({tripId}))
-    }, [dispatch])
+    const polls = useSelector((state) => state.poll.polls);
 
     return (
         <>
             <Container className='d-flex flex-column justify-content-center align-items-center'>
-                {pollList.map((poll) =>
+                {Object.entries(polls).map(([key, poll]) =>
                     <Poll poll={poll}
-                          key={poll.pollId}
+                          pollId={key}
+                          key={key}
                     />)}
             </Container>
         </>

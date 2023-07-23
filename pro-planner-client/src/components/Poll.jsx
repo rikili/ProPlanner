@@ -3,29 +3,23 @@ import Options from "./Options";
 import {Button, Accordion} from "react-bootstrap";
 import {useState} from 'react';
 import AddOptionForm from "./AddOptionForm";
-import {useDispatch} from 'react-redux';
-import {voteOption} from "../redux/pollSlice";
+import {useDispatch, useSelector} from 'react-redux';
+import {voteOptionAsync} from "../redux/pollSlice";
 import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
 
-function Poll({poll}) {
+function Poll({poll, pollId}) {
 
+    const currUser = 'user 2'; // TODO: fetch current user
     const [showModal, setShowModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
     const dispatch = useDispatch();
+    const pollDocumentId = useSelector((state) => state.poll.pollsId);
 
     const handleAddOption = () => {
         setShowModal(true);
     };
-
-    const currUser = 'User A'; // TODO: fetch current user
-
-    let formResult = {
-        pollId: poll.pollId,
-        selectedOption: selectedOption, // selected option ID
-        user: currUser,
-    }
 
     const handleVote = () => {
         if (selectedOption.length === 0) {
@@ -37,7 +31,26 @@ function Poll({poll}) {
         }
 
         dispatch(resetError());
-        dispatch(voteOption(formResult))
+
+        const votedUser = poll.votedUsers.find((u) => u.user === currUser);
+
+        if (votedUser === undefined) {
+            dispatch(voteOptionAsync({
+                currUser: currUser,
+                votedOptionId: null,
+                newVotedOptionId: selectedOption,
+                pollDocumentId: pollDocumentId,
+                pollId: pollId
+            }))
+        } else {
+            dispatch(voteOptionAsync({
+                currUser: currUser,
+                votedOptionId: votedUser.votedOptionId,
+                newVotedOptionId: selectedOption,
+                pollDocumentId: pollDocumentId,
+                pollId: pollId
+            }))
+        }
     }
 
     return (
@@ -49,6 +62,8 @@ function Poll({poll}) {
                     <Accordion.Body>
                         <Options style={{marginTop: '10px'}}
                                  poll={poll}
+                                 pollId={pollId}
+                                 currUser={currUser}
                                  setSelectedOption={setSelectedOption}
                                  selectedOption={selectedOption}
                         />
@@ -68,6 +83,7 @@ function Poll({poll}) {
                 </Accordion.Item>
             </Accordion>
             <AddOptionForm poll={poll}
+                           pollId={pollId}
                            showModal={showModal}
                            setShowModal={setShowModal}
             />
