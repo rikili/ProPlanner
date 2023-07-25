@@ -9,8 +9,8 @@ const TripSummaryList = () => {
 
     return (
         <Card className="details-card summary-list">
+            <Card.Header className="summary-body"><b>Users Selected</b></Card.Header>
             <Card.Body className="summary-body">
-                <b>Users Selected</b>
                 <div className="trip-summary-list">
                     {!!isDetailSelected ? (
                         <>

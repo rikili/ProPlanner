@@ -4,6 +4,17 @@
     align-items: center;
 }
 
+.decision-footer {
+    padding: 0.3em;
+    margin: 0;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.decision-clear-button {
+    margin: 0;
+}
+
 .decision-content {
     font-size: 13px;
 }
