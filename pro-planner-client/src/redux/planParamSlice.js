@@ -18,6 +18,9 @@ const planParamSlice = createSlice({
         isAllDay: false,
         location: null,
         budget: null,
+        
+        decisionRange: [],
+
         paramStatus: null,
         isInitialized: false,
     },
@@ -46,6 +49,10 @@ const planParamSlice = createSlice({
             state.dateTimeRange = payload.dateTimeRange;
             state.planType = payload.planType;
             state.isInitialized = true;
+        },
+
+        setDecisionRange(state, { payload }) {
+            state.decisionRange = payload;
         }
     },
     extraReducers: (builder) => {
@@ -69,5 +76,5 @@ const planParamSlice = createSlice({
     }
 });
 
-export const { changePlanType, updatePlan } = planParamSlice.actions;
+export const { changePlanType, updatePlan, setDecisionRange } = planParamSlice.actions;
 export default planParamSlice.reducer;

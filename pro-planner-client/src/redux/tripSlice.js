@@ -34,8 +34,6 @@ const tripSlice = createSlice({
         isInitDone: false,    // inital loading finished for user fetching
         updateStatus: null,
         selections: { },
-        detailedDay: null,
-        detailUsers: [],
 	},
 	reducers: {
         setUserSelections(state, action) {
@@ -51,12 +49,6 @@ const tripSlice = createSlice({
         completeInit(state) {
             state.isInitDone = true;
         },
-        setDetailedDay(state, action) {
-            state.detailedDay = action.payload;
-        },
-        setDetailedUsers(state, action) {
-            state.detailUsers = action.payload;
-        }
     },
     extraReducers: (builder) => {
         builder.addCase(setUserSelectionsAsync.pending, (state, action) => {
@@ -73,5 +65,5 @@ const tripSlice = createSlice({
     }
 });
 
-export const { setUserSelections, setLoading, completeInit, setDetailedDay, setDetailedUsers } = tripSlice.actions;
+export const { setUserSelections, setLoading, completeInit } = tripSlice.actions;
 export default tripSlice.reducer;

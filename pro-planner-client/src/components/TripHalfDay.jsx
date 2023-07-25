@@ -3,46 +3,50 @@ import { format, isEqual } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 import { assembleClass } from '../helpers/Utils';
 import './TripCalendar.scss';
-import { setDetailedUsers, setDetailedDay } from '../redux/tripSlice';
+import { setDetailedUsers, setDetailedDay } from '../redux/tripSummarySlice';
 
 const stepArr = [[0, 0.25], [0.26, 0.5], [0.51, 0.75], [0.76, 1]];
 
 const TripHalfDay = ({
     topHalf,
     date,
-    editable,
+    editing,
+    deciding,
+    isDecisionSelect,
     onMouseEnter,
     onClick,
     selections,
     maxUsers,
+    isDecided,
     isSelected,
     isValid,
     isPreviewed,
     className,
 }) => {
     const dispatch = useDispatch();
-    const detailedDay = useSelector(state => state.tripSelections.detailedDay);
+    const detailedDay = useSelector(state => state.tripSummary.detailedDay);
     let isDetailedDay = false;
     if (detailedDay) {
-        isDetailedDay = isEqual(new Date(detailedDay.date), date) && (detailedDay.topHalf === topHalf);
+        isDetailedDay = isEqual(new Date(detailedDay), date);
     }
 
     const handleClick = () => {
-        if (editable) {
+        if (editing || deciding) {
             onClick();
+            return;
+        }
+        if (isDetailedDay) {
+            console.log('clear select');
+            dispatch(setDetailedDay(null));
+            dispatch(setDetailedUsers([]));
         } else {
-            if (isDetailedDay) {
-                dispatch(setDetailedDay(null));
-                dispatch(setDetailedUsers([]));
-            } else {
-                dispatch(setDetailedDay({date: date.toISOString(), topHalf}));
-                dispatch(setDetailedUsers(selections));
-            }
+            dispatch(setDetailedDay(date.toISOString()));
+            dispatch(setDetailedUsers(selections));
         }
     }
 
     let step;
-    if (!editable) {
+    if (!editing) {
         const ratio = selections.length / maxUsers;
         step = stepArr.reduce((acc, [lower, upper], index) => {
             if (acc === null) {
@@ -55,23 +59,26 @@ const TripHalfDay = ({
     }
 
     let classState;
-    if (editable) {
+    if (editing) {
         classState = assembleClass(isPreviewed && 'trip-preview', isSelected && 'trip-edit');
     } else {
-        classState = selections.length ? `trip-selected trip-selected-${step}` : '';
+        classState = assembleClass(
+            selections.length && `trip-selected trip-selected-${step}`,
+            (isDecided || isDecisionSelect) && `trip-decided-${step}`,
+        );
     }
 
     const compiledClass = assembleClass(
         className,
         isValid && classState + ' valid',
         !isValid && 'trip-invalid',
-        isDetailedDay && 'trip-detailed'
+        (isDetailedDay && !deciding) ? 'trip-detailed' : (deciding && isPreviewed && 'trip-decided-preview'),
         );
 
     return (
         <div
             onClick={handleClick}
-            onMouseEnter={editable ? onMouseEnter : null}
+            onMouseEnter={(editing || deciding) ? onMouseEnter : null}
             className={compiledClass}
         >
             {topHalf && <div className='trip-half-label'>{format(date, 'd')}</div>}

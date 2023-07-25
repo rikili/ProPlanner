@@ -1,11 +1,14 @@
-.trip-detail-card {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    width: 10em;
+.summary-list {
+    flex-grow: 5 !important;
 }
 
-.trip-detail-list {
+.summary-body {
+    display: flex;
+    align-items: center;
+    flex-flow: column nowrap;
+}
+
+.trip-summary-list {
     display: flex;
     margin-top: 0.5em;
     flex-flow: column nowrap;
@@ -16,14 +19,14 @@
     font-size: 13px;
 }
 
-.trip-detail-label {
+.trip-summary-label {
     color: rgb(167, 167, 167);
-    &.trip-detail-selected {
+    &.trip-summary-selected {
         color: black
     }
 }
 
-.trip-detail-instruct {
+.trip-summary-instruct {
     display: flex;
     height: 100%;
     margin-top: 5em;

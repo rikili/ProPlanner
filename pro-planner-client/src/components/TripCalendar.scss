@@ -18,6 +18,12 @@ $detailed-day: rgb(180, 240, 232);
 $edit-day: rgb(173, 162, 233);
 $edit-day-label: rgb(97, 82, 185);
 
+$decided-day-4: rgb(255, 165, 0);
+$decided-day-3: rgb(255, 191, 71);
+$decided-day-2: rgb(255, 187, 86);
+$decided-day-1: rgb(255, 205, 139);
+$decided-day-preview: rgb(255, 216, 145);
+
 $invalid-day: rgb(217, 217, 217);
 $invalid-day-label: rgb(113, 113, 113);
 
@@ -70,7 +76,8 @@ $half-line-edit: rgb(149, 144, 204);
 	flex-direction: column;
 	border-radius: 1em;
 	clip-path: inset(0% 0% round 1em);
-	max-height: 36em;
+	min-height: 30em;
+	max-height: 30em;
 	flex: 1;
 }
 
@@ -184,8 +191,25 @@ $half-line-edit: rgb(149, 144, 204);
 	background-color: $selected-day-step-1;
 }
 
+.trip-decided-4 {
+	background-color: $decided-day-4;
+}
+.trip-decided-3 {
+	background-color: $decided-day-3;
+}
+.trip-decided-2 {
+	background-color: $decided-day-2;
+}
+.trip-decided-1 {
+	background-color: $decided-day-1;
+}
+
 .trip-detailed {
 	background-color: $detailed-day;
+}
+
+.trip-decided-preview {
+	background-color: $decided-day-preview;
 }
 
 .trip-edit {
