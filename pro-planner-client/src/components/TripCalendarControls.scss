@@ -1,4 +1,4 @@
-.trip-edit-controls {
+.trip-controls {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
@@ -6,7 +6,19 @@
 	gap: 0.3em;
 }
 
-.edit-calendar-button {
+.control-container {
+	display: flex;
+	flex-flow: column nowrap;
+	gap: 0.3em;
+}
+
+.control-layer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.3em;
+}
+
+.control-button {
 	display: flex;
 	flex-flow: column nowrap;
 	justify-content: center;
@@ -35,9 +47,16 @@
 			background-color: rgb(211, 147, 147);
 		}
 	}
+
+	&.decision {
+		background-color: rgb(255, 179, 107);
+		&:hover {
+			background-color: rgb(214, 130, 52);
+		}
+	}
 }
 
-.edit-prompt {
+.control-label {
 	margin: 0;
 	font-size: 12px;
 	display: flex;

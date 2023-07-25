@@ -7,3 +7,15 @@
     display: flex;
     gap: 1em;
 }
+
+.details-stack {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 0.5em;
+    width: 10em;
+}
+
+.details-card {
+    display: flex;
+    flex: 1;
+}

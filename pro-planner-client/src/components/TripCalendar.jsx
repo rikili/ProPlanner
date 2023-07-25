@@ -20,7 +20,13 @@ import {
     endOfMonth,
     eachMonthOfInterval,
 } from 'date-fns';
-import { setUserSelectionsAsync, setUserSelections, setLoading, completeInit, setDetailedDay, setDetailedUsers } from '../redux/tripSlice';
+import {
+    setUserSelectionsAsync,
+    setUserSelections,
+    setLoading,
+    completeInit,
+} from '../redux/tripSlice';
+import { setDetailedDay, setDetailedUsers } from '../redux/tripSummarySlice';
 import { getMonthIndex } from '../helpers/Calendar';
 import { getHalfDate, isFirstHalf } from '../helpers/TripCalendar';
 import { buildServerRoute, getTimezone } from '../helpers/Utils';
@@ -29,9 +35,10 @@ import { ERR_TYPE, LOAD_STATUS } from '../constants';
 import './TripCalendar.scss';
 import TripDay from './TripDay';
 import TripCalendarLabel from './TripCalendarLabel';
-import TripCalendarEdit from './TripCalendarEdit';
+import TripCalendarControls from './TripCalendarControls';
 import TripWeekDayLabels from './TripWeekDayLabels';
 import TripMonthSelector from './TripMonthSelector';
+import { setDecisionRange } from '../redux/planParamSlice';
 
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
     if (!destArr[dayIndex].length) {
@@ -70,6 +77,12 @@ const TripCalendar = ({ tripId }) => {
 
     // Edit mode toggle
     const [isEditMode, setIsEditMode] = useState(false);
+
+    // Deciding mode toggle
+    const [isDeciding, setIsDeciding] = useState(false);
+    const [decisionStart, setDecisionStart] = useState(null);
+    const [decisionCursor, setDecisionCursor] = useState(null);
+    const [decisionEditRange, setDecisionEdit] = useState(null);
 
     // For backend, what months have been updated and are required to be sent to backend
     const [monthsToUpdate, setUpdateMonths] = useState([]);
@@ -136,6 +149,7 @@ const TripCalendar = ({ tripId }) => {
 
     const combinedSelections = useMemo(() => {
         const result = {};
+
         Object.entries(calendar).forEach(([username, monthSelects], index) => {
             if (!isSameMonth(calendarStart, currDateStart)) {
                 const daysFromPrevious = startOfMonth(currDateStart).getDay();
@@ -144,12 +158,12 @@ const TripCalendar = ({ tripId }) => {
                     result[prevMonthIndex] = [];
                     Array(daysFromPrevious)
                         .fill(0)
-                        .forEach(() => result[prevMonthIndex].push([[], []]));
+                        .forEach(() => result[prevMonthIndex].push([[], []])); 
                 }
                 const prevMonth = monthSelects[getMonthIndex(calendarStart)];
                 if (prevMonth) {
                     prevMonth
-                        .slice(calendarStart.getDate(), endOfMonth(calendarStart).getDate())
+                        .slice(calendarStart.getDate() - 1, endOfMonth(calendarStart).getDate())
                         .forEach((fullDay, dayIndex) => {
                             addNameToDay(fullDay, result[prevMonthIndex], dayIndex, username);
                         });
@@ -219,7 +233,12 @@ const TripCalendar = ({ tripId }) => {
     }, [plan]);
 
     const isDateValid = (date) => validDOWs.includes(getDay(date)) && date >= startDate && date <= endDate;
-    const isDateInPreview = (date) => date <= selectCursor && date >= selectStart;
+    const isDateInPreview = (date) => {
+        if (isDeciding) {
+            return decisionStart && decisionCursor ? (date <= decisionCursor && date >= decisionStart) : false;
+        }
+        return (date <= selectCursor && date >= selectStart)
+    }
 
     const resetSelecting = () => {
         setSelectStart(null);
@@ -228,7 +247,8 @@ const TripCalendar = ({ tripId }) => {
     };
 
     const toggleEdit = () => {
-        if (!isEditMode) { // entering edit
+        if (!isEditMode) {
+            // entering edit
             setSelections(JSON.parse(JSON.stringify(userCalendar)));
             dispatch(setDetailedDay(null));
             dispatch(setDetailedUsers([]));
@@ -255,6 +275,10 @@ const TripCalendar = ({ tripId }) => {
     };
 
     const updateSelectionPrev = (dateHalf) => {
+        if (isDeciding) {
+            setDecisionCursor(dateHalf);
+        }
+
         if (isSelectingDate) {
             setSelectCursor(dateHalf);
         }
@@ -283,7 +307,7 @@ const TripCalendar = ({ tripId }) => {
                 if (!newSelections[getMonthIndex(iterHalfDate)]) {
                     newSelections[getMonthIndex(iterHalfDate)] = Array(endOfMonth(iterHalfDate).getDate())
                         .fill(0)
-                        .map((day) => [false, false]);
+                        .map(() => [false, false]);
                 }
 
                 if (onFirstHalf) {
@@ -305,14 +329,25 @@ const TripCalendar = ({ tripId }) => {
     };
 
     const handleSelection = (dateHalf) => {
-        if (isSelectingDate) {
-            updateSelections();
-            resetSelecting();
+        if (isDeciding) {
+            if (decisionStart === null) {
+                setDecisionStart(dateHalf);
+                setDecisionCursor(dateHalf);
+            } else {
+                if (decisionStart <= decisionCursor) setDecisionEdit([new Date(decisionStart), new Date(decisionCursor)]);
+                setDecisionStart(null);
+                setDecisionCursor(null);
+            }
         } else {
-            setIsSelectingDate(true);
-            setIsAdding(!checkSelected(dateHalf));
-            setSelectStart(new Date(dateHalf));
-            setSelectCursor(new Date(dateHalf));
+            if (isSelectingDate) {
+                updateSelections();
+                resetSelecting();
+            } else {
+                setIsSelectingDate(true);
+                setIsAdding(!checkSelected(dateHalf));
+                setSelectStart(new Date(dateHalf));
+                setSelectCursor(new Date(dateHalf));
+            }
         }
     };
 
@@ -335,13 +370,13 @@ const TripCalendar = ({ tripId }) => {
         dispatch(
             setError({
                 errType: ERR_TYPE.ERR,
-                message:
-                    'Updating of selections has failed. Please try again.',
+                message: 'Updating of selections has failed. Please try again.',
                 disableControl: false,
             })
         );
     }
 
+    // Compile final renderings of calendar grid
     if (!(isInitDone && Object.values(combinedSelections).length && !hasUpdateFailed)) return <div></div>;
 
     const maxUsers = Object.keys(calendar).length;
@@ -367,7 +402,9 @@ const TripCalendar = ({ tripId }) => {
             <TripDay
                 date={new Date(iterDate)}
                 selections={selectionArr[dayIndex]}
-                editable={isEditMode}
+                editing={isEditMode}
+                deciding={isDeciding}
+                decisionSelect={decisionEditRange}
                 onMouseEnter={updateSelectionPrev}
                 onClick={handleSelection}
                 maxUsers={maxUsers}
@@ -399,44 +436,82 @@ const TripCalendar = ({ tripId }) => {
         }
     }
 
+    const toggleDecision = () => {
+        if (!isDeciding) {
+            setIsDeciding(true);
+            return;
+        }
+        setIsDeciding(false);
+        setDecisionStart(null);
+        setDecisionCursor(null);
+        setDecisionEdit(null);
+    }
+
+    const confirmDecision = () => {
+        if (decisionEditRange) {
+            dispatch(setDecisionRange([decisionEditRange[0].toISOString(), decisionEditRange[1].toISOString()]));
+            // TODO: fire async call for decision range
+        }
+        setDecisionStart(null);
+        setDecisionCursor(null);
+        setDecisionEdit(null);
+        setIsDeciding(false);
+    }
+
     return (
         <>
             {isInitDone && (
-                <Card className='calendar-card'>
+                <Card className="calendar-card">
                     <Card.Body>
                         <Col className="trip-calendar">
-                            <TripCalendarLabel date={currDateStart}
-                                               onClick={handleChangeMonth}
-                                               startRange={startDate}
-                                               endRange={endDate}
+                            <TripCalendarLabel
+                                date={currDateStart}
+                                onClick={handleChangeMonth}
+                                startRange={startDate}
+                                endRange={endDate}
                             />
-                            <TripMonthSelector selectedMonth={currDateStart}
-                                               setSelectedMonth={setCurrDateStart}
-                                               rangeStart={startDate}
-                                               rangeEnd={endDate}
+                            <TripMonthSelector
+                                selectedMonth={currDateStart}
+                                setSelectedMonth={setCurrDateStart}
+                                rangeStart={startDate}
+                                rangeEnd={endDate}
                             />
                             <TripWeekDayLabels />
                             <Container className="trip-calendar-container">
-                                <Container className='trip-border' />
-                                {isLoading ? (
-                                    Array(6).fill(0).map((_, index) => {
-                                        return (
-                                            <Container key={`week-${index}`} className="trip-day-container">
-                                                {Array(6).fill(0).map((_, index) => <TripDay fake className='trip-half-container' key={`load-day-${index}`}/>)}
-                                            </Container>
-                                        )
-                                    })
-                                ) : (
-                                    weekArr.map((week, index) => {
-                                        return (
-                                            <Container key={`week-${index}`} className="trip-day-container">
-                                                {week.map((day) => day)}
-                                            </Container>
-                                        );
-                                    })
-                                )}
+                                <Container className="trip-border" />
+                                {isLoading
+                                    ? Array(6)
+                                          .fill(0)
+                                          .map((_, index) => {
+                                              return (
+                                                  <Container key={`week-${index}`} className="trip-day-container">
+                                                      {Array(6)
+                                                          .fill(0)
+                                                          .map((_, index) => (
+                                                              <TripDay
+                                                                  fake
+                                                                  className="trip-half-container"
+                                                                  key={`load-day-${index}`}
+                                                              />
+                                                          ))}
+                                                  </Container>
+                                              );
+                                          })
+                                    : weekArr.map((week, index) => {
+                                          return (
+                                              <Container key={`week-${index}`} className="trip-day-container">
+                                                  {week.map((day) => day)}
+                                              </Container>
+                                          );
+                                      })}
                             </Container>
-                            <TripCalendarEdit toggleEdit={toggleEdit} editing={isEditMode} confirmEdit={confirmEdits}/>
+                            <TripCalendarControls toggleEdit={toggleEdit}
+                                                  editing={isEditMode}
+                                                  toggleDecision={toggleDecision}
+                                                  confirmDecisions={confirmDecision}
+                                                  deciding={isDeciding}
+                                                  confirmEdit={confirmEdits}
+                                                  />
                         </Col>
                     </Card.Body>
                 </Card>

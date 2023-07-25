@@ -1,24 +1,24 @@
 import { Card } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import './TripDetailList.scss';
+import './TripSummaryList.scss';
 
-const TripDetailList = () => {
-    const selectedList = useSelector((state) => state.tripSelections.detailUsers);
-    const isDetailSelected = useSelector((state) => state.tripSelections.detailedDay);
+const TripSummaryList = () => {
+    const selectedList = useSelector((state) => state.tripSummary.detailedUsers);
+    const isDetailSelected = useSelector((state) => state.tripSummary.detailedDay);
     const userList = useSelector((state) => state.user.userList);
 
     return (
-        <Card>
-            <Card.Body className="trip-detail-card">
+        <Card className="details-card summary-list">
+            <Card.Body className="summary-body">
                 <b>Users Selected</b>
-                <div className="trip-detail-list">
+                <div className="trip-summary-list">
                     {!!isDetailSelected ? (
                         <>
                             {selectedList.toSorted().map((user, index) => {
                                 return (
                                     <div
-                                        key={`user-selected-detail-${index}`}
-                                        className="trip-detail-label trip-detail-selected"
+                                        key={`user-selected-summary-${index}`}
+                                        className="trip-summary-label trip-summary-selected"
                                     >
                                         {user}
                                     </div>
@@ -28,14 +28,14 @@ const TripDetailList = () => {
                                 .filter((user) => !selectedList.includes(user))
                                 .map((user, index) => {
                                     return (
-                                        <div key={`user-detail-${index}`} className="trip-detail-label">
+                                        <div key={`user-summary-${index}`} className="trip-summary-label">
                                             {user}
                                         </div>
                                     );
                                 })}
                         </>
                     ) : (
-                        <p className="trip-detail-instruct">Click a segment to view selections for that section.</p>
+                        <p className="trip-summary-instruct">Click a segment to view selections for that section.</p>
                     )}
                 </div>
             </Card.Body>
@@ -43,4 +43,4 @@ const TripDetailList = () => {
     );
 };
 
-export default TripDetailList;
+export default TripSummaryList;
