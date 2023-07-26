@@ -13,10 +13,7 @@ const UserSideBar = ({ isEditMode, selectedUser, setSelectedUser }) => {
 				<b>Responders</b>
 			</Card.Header>
 			<Card.Body className="summary-body">
-				<ListGroup
-					variant="flush"
-					className="list-group-container"
-				>
+				<ListGroup variant="flush" className="list-group-container">
 					{isEditMode ? (
 						<>
 							<ListGroup.Item className="text-center" disabled as="h6">

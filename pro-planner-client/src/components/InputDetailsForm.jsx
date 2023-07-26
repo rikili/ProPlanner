@@ -1,11 +1,3 @@
-/* REFERENCES:
-
-Google Maps Geocoding API Docs: https://developers.google.com/maps/documentation/geocoding
-
-Google Maps Places Autocomplete API Docs: https://developers.google.com/maps/documentation/javascript/place-autocomplete
-
-*/
-
 import { useState, useRef, useEffect } from 'react';
 import { Card, Form, Row, ButtonGroup, Col } from 'react-bootstrap';
 import Button from './override/Button';
@@ -13,14 +5,13 @@ import { dayOffsetToDOW } from '../helpers/Calendar';
 import { PLAN_TYPE } from '../constants';
 import { format } from 'date-fns';
 import { BiArrowBack } from 'react-icons/bi';
-
+import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 import './InputDetailsForm.scss';
 import { useNavigate } from 'react-router-dom';
 
 const dateToInputValue = date => {
 	return format(date, 'yyyy-MM-dd');
 };
-import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 
 const InputDetailsForm = ({
 	title = false,
@@ -30,10 +21,8 @@ const InputDetailsForm = ({
 }) => {
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey: process.env.REACT_APP_API_KEY,
-
 		libraries: ['places'],
 	});
-
 	const [selectedDays, setSelectedDays] = useState({
 		Su: true,
 		Mo: true,
