@@ -3,74 +3,81 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { buildServerRoute } from '../helpers/Utils';
 import { PLAN_TYPE } from '../constants';
 
-export const setPlanDecision = createAsyncThunk('parameter/update/decision', async ({planId, planType, range}) => {
-    const response = await axios.put(buildServerRoute(planType, 'decision', planId), {
-        decision: range,
-    });
-    return response.data;
-})
+export const setPlanDecision = createAsyncThunk(
+	'parameter/update/decision',
+	async ({ planId, planType, range }) => {
+		const response = await axios.put(
+			buildServerRoute(planType, 'decision', planId),
+			{
+				decision: range,
+			}
+		);
+		return response.data;
+	}
+);
 
 const planParamSlice = createSlice({
-    name: 'parameters',
-    initialState: {
-        name: null,
-        planType: null,
-        dateTimeRange: [],
-        dayOffset: [],
-        isAllDay: false,
-        description: '',
-        location: null,
-        budget: null,
-        
-        decisionRange: [],
+	name: 'parameters',
+	initialState: {
+		name: null,
+		planType: null,
+		dateTimeRange: [],
+		dayOffset: [],
+		isAllDay: false,
+		description: '',
+		location: null,
+		budget: null,
 
-        isUploading: false,
-        isInitialized: false,
-        isEditing: false,
-    },
-    reducers: {
-        // payload should be a string of either 'Trip' or 'Outing'
-        changePlanType(state, action) {
-            switch(action.payload) {
-                case PLAN_TYPE.TRIP:
-                    state.planType = action.payload;
-                    break;
-                case PLAN_TYPE.OUTING:
-                    state.planType = action.payload;
-                    break;
-                default:
-                    console.error('Invalid plan type provided to state.'); // TODO: implement an error/alert system to users
-            }
-        },
+		decisionRange: [],
 
-        // payload contains complete set of values to update -- should be complete even if values don't change
-        updatePlan(state, { payload }) {
-            state.name = payload.name;
-            state.dayOffset = payload.dayOffset;
-            state.isAllDay = payload.isAllDay;
-            state.location = payload.location;
-            state.description = payload.description;
-            state.budget = payload.budget;
-            state.dateTimeRange = payload.dateTimeRange;
-            state.planType = payload.planType;
-            state.decisionRange = payload.decision ?? [];
-            state.isInitialized = true;
-        },
+		isUploading: false,
+		isInitialized: false,
+		isEditing: false,
+	},
+	reducers: {
+		// payload should be a string of either 'Trip' or 'Outing'
+		changePlanType(state, action) {
+			switch (action.payload) {
+				case PLAN_TYPE.TRIP:
+					state.planType = action.payload;
+					break;
+				case PLAN_TYPE.OUTING:
+					state.planType = action.payload;
+					break;
+				default:
+					console.error('Invalid plan type provided to state.'); // TODO: implement an error/alert system to users
+			}
+		},
 
-        setIsUploading(state, { payload }) {
-            state.isUploading = payload;
-        },
+		// payload contains complete set of values to update -- should be complete even if values don't change
+		updatePlan(state, { payload }) {
+			state.name = payload.name;
+			state.dayOffset = payload.dayOffset;
+			state.isAllDay = payload.isAllDay;
+			state.location = payload.location;
+			state.description = payload.description;
+			state.budget = payload.budget;
+			state.dateTimeRange = payload.dateTimeRange;
+			state.planType = payload.planType;
+			state.decisionRange = payload.decision ?? [];
+			state.isInitialized = true;
+		},
 
-        setIsEditing(state, { payload }) {
-            state.isEditing = payload;
-        },
-    },
-    extraReducers: (builder) => {
-        builder.addCase(setPlanDecision.fulfilled, (state, { payload }) => {
-            state.decisionRange = payload.decision;
-        });
-    }
+		setIsUploading(state, { payload }) {
+			state.isUploading = payload;
+		},
+
+		setIsEditing(state, { payload }) {
+			state.isEditing = payload;
+		},
+	},
+	extraReducers: builder => {
+		builder.addCase(setPlanDecision.fulfilled, (state, { payload }) => {
+			state.decisionRange = payload.decision;
+		});
+	},
 });
 
-export const { changePlanType, updatePlan, setIsUploading, setIsEditing } = planParamSlice.actions;
+export const { changePlanType, updatePlan, setIsUploading, setIsEditing } =
+	planParamSlice.actions;
 export default planParamSlice.reducer;
