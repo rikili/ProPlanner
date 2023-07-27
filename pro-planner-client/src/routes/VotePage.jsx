@@ -4,6 +4,8 @@ import Polls from "../components/Polls";
 import {getPollAsync} from "../redux/pollSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {LOAD_STATUS} from "../constants";
+import LoadingDisplay from "../components/LoadingDisplay";
+import {useLocation} from "react-router";
 
 const VotePage = () => {
 
