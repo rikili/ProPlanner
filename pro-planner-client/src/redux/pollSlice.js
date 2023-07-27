@@ -107,7 +107,6 @@ const pollSlice = createSlice({
         });
         builder.addCase(addPollAsync.fulfilled, (state, action) => {
             state.polls = action.payload.polls;
-            console.log(state.polls)
             state.pollsId = action.payload._id;
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
