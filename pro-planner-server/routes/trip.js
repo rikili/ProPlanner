@@ -20,20 +20,15 @@ const timezone = require('../helpers/timezone');
 const { ObjectId } = require('mongodb');
 
 router.post('/', async (req, res) => {
-  // const userId = new ObjectId(req.body.userId);
-  // temp userId
-  const userId = new ObjectId('649009f3cf33190dacb27a77');
-  const userSelections = timezone.makeAvailabilityDates(req.body.selections, req.body.timezone);
   const tripModel = new trip({
     planParameters: {
       name: req.body.name,
       planType: req.body.planType,
-      availableDays: req.body.availableDays,
+      dayOffset: req.body.dayOffset,
       isAllDay: req.body.isAllDay,
       location: req.body.location,
       dateTimeRange: req.body.dateTimeRange,
     },
-    userInfo: { [userId]: userSelections },
   });
   let savedData = await tripModel.save();
 
@@ -121,13 +116,14 @@ router.get('/:id/:userId', async (req, res) => {
     monthProjection.unshift(`$userInfo.${userId}.${parseInt(prevMonth[0])}-${prevMonth[1]}`);
   }
   let requestedMonth = await getMonth(req.params.id, userId, monthProjection);
+
+  const splitDate = monthQuery.split('-');
+  const month = splitDate[0];
+  const year = splitDate[1];
   requestedMonth = requestedMonth.toJSON();
   if (requestedMonth.month.length > 1) {
     let updatedMonth;
     if (requestedMonth.month[0] === null && requestedMonth.month[1] === null) {
-      const splitDate = monthQuery.split('-');
-      const month = splitDate[0];
-      const year = splitDate[1];
       updatedMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
     } else {
       // can only be -1, 0, or 1
@@ -144,7 +140,7 @@ router.get('/:id/:userId', async (req, res) => {
     res.status(200).send({ month: updatedMonth });
   } else {
     if (!requestedMonth.month[0]) {
-      const newMonth = timezone.createMonth(new Date(`${parseInt(monthQuery.split('-')[0]) + 1}-2-${monthQuery.split('-')[1]}`));
+      const newMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
       res.status(200).send({ month: newMonth });
     } else {
       res.status(200).send({ month: requestedMonth.month[0] });
