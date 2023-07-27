@@ -11,7 +11,7 @@ import {ERR_TYPE} from "../constants";
 
 function Poll({poll, pollId}) {
 
-    const currUser = 'user 2'; // TODO: fetch current user
+    const currUser = ((state) => state.user.selectedUser);
     const [showModal, setShowModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
     const dispatch = useDispatch();
@@ -34,23 +34,13 @@ function Poll({poll, pollId}) {
 
         const votedUser = poll.votedUsers.find((u) => u.user === currUser);
 
-        if (votedUser === undefined) {
-            dispatch(voteOptionAsync({
-                currUser: currUser,
-                votedOptionId: null,
-                newVotedOptionId: selectedOption,
-                pollDocumentId: pollDocumentId,
-                pollId: pollId
-            }))
-        } else {
-            dispatch(voteOptionAsync({
-                currUser: currUser,
-                votedOptionId: votedUser.votedOptionId,
-                newVotedOptionId: selectedOption,
-                pollDocumentId: pollDocumentId,
-                pollId: pollId
-            }))
-        }
+        dispatch(voteOptionAsync({
+            currUser: currUser,
+            votedOptionId: votedUser ? votedUser.votedOptionId : null,
+            newVotedOptionId: selectedOption,
+            pollDocumentId: pollDocumentId,
+            pollId: pollId
+        }))
     }
 
     return (

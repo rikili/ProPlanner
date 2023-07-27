@@ -7,9 +7,7 @@ import {LOAD_STATUS} from "../constants";
 
 const VotePage = () => {
 
-    // const tripId = useLocation().pathname.split('/')[1]; TODO...
-    const tripId = '64b832038c2ec130a6ce3ec4'; // testing purpose
-
+    const tripId = useLocation().pathname.split('/')[1];
     const loadingState = useSelector((state) => state.poll.pollStatus);
     const dispatch = useDispatch();
 
@@ -19,8 +17,7 @@ const VotePage = () => {
 
 
     return <>
-        {/*TODO: uncomment once the LoadingDisplay is merged.*/}
-        {/*{(loadingState === LOAD_STATUS.LOADING) && <LoadingDisplay/>}*/}
+        {(loadingState === LOAD_STATUS.LOADING) && <LoadingDisplay/>}
         <AddPollForm/>
         <Polls/>
     </>
