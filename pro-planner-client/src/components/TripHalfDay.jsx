@@ -3,7 +3,7 @@ import { format, isEqual } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 import { assembleClass } from '../helpers/Utils';
 import './TripCalendar.scss';
-import { setDetailedUsers, setDetailedDay } from '../redux/tripSummarySlice';
+import { setDetailedUsers, setDetailedDay } from '../redux/summarySlice';
 
 const stepArr = [
 	[0, 0.25],

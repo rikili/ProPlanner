@@ -1,10 +1,10 @@
 import { Card } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import './TripSummaryList.scss';
+import './SummaryList.scss';
 
-const TripSummaryList = () => {
-    const selectedList = useSelector((state) => state.tripSummary.detailedUsers);
-    const isDetailSelected = useSelector((state) => state.tripSummary.detailedDay);
+const SummaryList = () => {
+    const selectedList = useSelector((state) => state.summary.detailedUsers);
+    const isDetailSelected = useSelector((state) => state.summary.detailedDay);
     const userList = useSelector((state) => state.user.userList);
 
     return (
@@ -43,4 +43,4 @@ const TripSummaryList = () => {
     );
 };
 
-export default TripSummaryList;
+export default SummaryList;

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const tripSummarySlice = createSlice({
-    name: 'tripSummary',
+const summarySlice = createSlice({
+    name: 'summary',
     initialState: {
         detailedDay: null,
         detailedUsers: [],
@@ -16,5 +16,5 @@ const tripSummarySlice = createSlice({
     },
 });
 
-export const { setDetailedDay, setDetailedUsers } = tripSummarySlice.actions;
-export default tripSummarySlice.reducer;
+export const { setDetailedDay, setDetailedUsers } = summarySlice.actions;
+export default summarySlice.reducer;

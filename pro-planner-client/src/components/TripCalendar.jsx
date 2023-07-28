@@ -26,7 +26,7 @@ import {
 	setLoading,
 	completeInit,
 } from '../redux/tripSlice';
-import { setDetailedDay, setDetailedUsers } from '../redux/tripSummarySlice';
+import { setDetailedDay, setDetailedUsers } from '../redux/summarySlice';
 import { getMonthIndex } from '../helpers/Calendar';
 import { getHalfDate, isFirstHalf } from '../helpers/TripCalendar';
 import { buildServerRoute, getTimezone } from '../helpers/Utils';
@@ -35,11 +35,11 @@ import { ERR_TYPE, LOAD_STATUS } from '../constants';
 import './TripCalendar.scss';
 import TripDay from './TripDay';
 import TripCalendarLabel from './TripCalendarLabel';
-import TripCalendarControls from './TripCalendarControls';
 import TripWeekDayLabels from './TripWeekDayLabels';
 import TripMonthSelector from './TripMonthSelector';
 import { setDecisionRange } from '../redux/planParamSlice';
 import UserSideBar from './UserSideBar';
+import CalendarControls from './CalendarControls';
 
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
 	if (!destArr[dayIndex].length) {
@@ -504,72 +504,65 @@ const TripCalendar = ({ tripId, isEditMode, setIsEditMode, selectedUser }) => {
 		setIsDeciding(false);
 	};
 
-	return (
-		<>
-			{isInitDone && (
-				<Card className="calendar-card">
-					<Card.Body>
-						<Col className="trip-calendar">
-							<TripCalendarLabel
-								date={currDateStart}
-								onClick={handleChangeMonth}
-								startRange={startDate}
-								endRange={endDate}
-							/>
-							<TripMonthSelector
-								selectedMonth={currDateStart}
-								setSelectedMonth={setCurrDateStart}
-								rangeStart={startDate}
-								rangeEnd={endDate}
-							/>
-							<TripWeekDayLabels />
-							<Container className="trip-calendar-container">
-								<Container className="trip-border" />
-								{isLoading
-									? Array(6)
-											.fill(0)
-											.map((_, index) => {
-												return (
-													<Container
-														key={`week-${index}`}
-														className="trip-day-container"
-													>
-														{Array(6)
-															.fill(0)
-															.map((_, index) => (
-																<TripDay
-																	fake
-																	className="trip-half-container"
-																	key={`load-day-${index}`}
-																/>
-															))}
-													</Container>
-												);
-											})
-									: weekArr.map((week, index) => {
-											return (
-												<Container
-													key={`week-${index}`}
-													className="trip-day-container"
-												>
-													{week.map(day => day)}
-												</Container>
-											);
-									  })}
-							</Container>
-							<TripCalendarControls
-								toggleEdit={toggleEdit}
-								editing={isEditMode}
-								toggleDecision={toggleDecision}
-								confirmDecisions={confirmDecision}
-								deciding={isDeciding}
-								confirmEdit={confirmEdits}
-							/>
-						</Col>
-					</Card.Body>
-				</Card>
-			)}
-		</>
-	);
+    return (
+        <>
+            {isInitDone && (
+                <Card className="calendar-card">
+                    <Card.Body>
+                        <Col className="trip-calendar">
+                            <TripCalendarLabel
+                                date={currDateStart}
+                                onClick={handleChangeMonth}
+                                startRange={startDate}
+                                endRange={endDate}
+                            />
+                            <TripMonthSelector
+                                selectedMonth={currDateStart}
+                                setSelectedMonth={setCurrDateStart}
+                                rangeStart={startDate}
+                                rangeEnd={endDate}
+                            />
+                            <TripWeekDayLabels />
+                            <Container className="trip-calendar-container">
+                                <Container className="trip-border" />
+                                {isLoading
+                                    ? Array(6)
+                                          .fill(0)
+                                          .map((_, index) => {
+                                              return (
+                                                  <Container key={`week-${index}`} className="trip-day-container">
+                                                      {Array(6)
+                                                          .fill(0)
+                                                          .map((_, index) => (
+                                                              <TripDay
+                                                                  fake
+                                                                  className="trip-half-container"
+                                                                  key={`load-day-${index}`}
+                                                              />
+                                                          ))}
+                                                  </Container>
+                                              );
+                                          })
+                                    : weekArr.map((week, index) => {
+                                          return (
+                                              <Container key={`week-${index}`} className="trip-day-container">
+                                                  {week.map((day) => day)}
+                                              </Container>
+                                          );
+                                      })}
+                            </Container>
+                            <CalendarControls toggleEdit={toggleEdit}
+                                                  editing={isEditMode}
+                                                  toggleDecision={toggleDecision}
+                                                  confirmDecisions={confirmDecision}
+                                                  deciding={isDeciding}
+                                                  confirmEdit={confirmEdits}
+                                                  />
+                        </Col>
+                    </Card.Body>
+                </Card>
+            )}
+        </>
+    );
 };
 export default TripCalendar;
