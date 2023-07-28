@@ -116,27 +116,12 @@ router.get('/:id/:userId', async (req, res) => {
     monthProjection.unshift(`$userInfo.${userId}.${parseInt(prevMonth[0])}-${prevMonth[1]}`);
   }
   let requestedMonth = await getMonth(req.params.id, userId, monthProjection);
-
   const splitDate = monthQuery.split('-');
   const month = splitDate[0];
   const year = splitDate[1];
   requestedMonth = requestedMonth.toJSON();
   if (requestedMonth.month.length > 1) {
-    let updatedMonth;
-    if (requestedMonth.month[0] === null && requestedMonth.month[1] === null) {
-      updatedMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
-    } else {
-      // can only be -1, 0, or 1
-      const nullCheckIndex = requestedMonth.month.indexOf(null);
-      if (nullCheckIndex !== -1) {
-        const monthAfterOrBefore = nullCheckIndex
-          ? `${parseInt(nextMonth[0]) + 1}-2-${nextMonth[1]}`
-          : `${parseInt(prevMonth[0]) + 1}-2-${prevMonth[1]}`;
-        const tempMonth = timezone.createMonth(new Date(monthAfterOrBefore));
-        requestedMonth.month[nullCheckIndex] = tempMonth;
-      }
-      updatedMonth = timezone.convertCalendarLocal(requestedMonth.month, offset);
-    }
+    let updatedMonth = modifyMultiMonth(requestedMonth, offset, splitDate, nextMonth, prevMonth);
     res.status(200).send({ month: updatedMonth });
   } else {
     if (!requestedMonth.month[0]) {
@@ -147,6 +132,32 @@ router.get('/:id/:userId', async (req, res) => {
     }
   }
 });
+
+const modifyMultiMonth = (requestedMonth, offset, splitDate, nextMonth, prevMonth) => {
+  let updatedMonth;
+  if (requestedMonth.month[0] === null && requestedMonth.month[1] === null) {
+    updatedMonth = timezone.createMonth(new Date(`${parseInt(splitDate[0]) + 1}-2-${splitDate[1]}`));
+  } else {
+    const nullCheckIndex = requestedMonth.month.indexOf(null);
+    let tempMonth;
+    if ((offset >= 6 && nullCheckIndex === 0) || (offset <= -6 && nullCheckIndex === 1)) {
+      // add requested month
+      tempMonth = timezone.createMonth(new Date(`${parseInt(splitDate[0]) + 1}-2-${splitDate[1]}`));
+    } else {
+      // add next/prev month
+      // can only be -1, 0, or 1
+      if (nullCheckIndex !== -1) {
+        const monthAfterOrBefore = nullCheckIndex
+          ? `${parseInt(nextMonth[0]) + 1}-2-${nextMonth[1]}`
+          : `${parseInt(prevMonth[0]) + 1}-2-${prevMonth[1]}`;
+        tempMonth = timezone.createMonth(new Date(monthAfterOrBefore));
+      }
+    }
+    requestedMonth.month[nullCheckIndex] = tempMonth;
+    updatedMonth = timezone.convertCalendarLocal(requestedMonth.month, offset);
+  }
+  return updatedMonth;
+};
 
 const addSelection = async (tripId, userId, monthToAdd) => {
   const months = Object.keys(monthToAdd);
