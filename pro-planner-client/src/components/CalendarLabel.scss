@@ -1,4 +1,4 @@
-.calendar-month-control {
+.calendar-control {
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: center;
@@ -15,7 +15,7 @@
 	flex-flow: column nowrap;
 }
 
-.month-nav {
+.nav-button {
 	display: flex;
 	flex-flow: column nowrap;
 	justify-content: center;
@@ -48,4 +48,9 @@
 .calendar-label-year {
 	width: 100%;
 	font-size: 13px;
+}
+
+.calendar-outing-label {
+	width: 10em;
+	text-align: center;
 }

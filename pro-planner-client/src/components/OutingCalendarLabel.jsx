@@ -1,22 +1,19 @@
 import { Container } from 'react-bootstrap';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
-import { format, startOfMonth, subMonths, addMonths } from 'date-fns';
+import { format } from 'date-fns';
 import { assembleClass } from '../helpers/Utils';
 import './CalendarLabel.scss';
 
-const TripCalendarLabel = ({ date, startRange, endRange, onClick }) => {
-
-    const isAtRangeStart = subMonths(date, 1) <= startOfMonth(subMonths(startRange, 1));
-    const isAtRangeEnd = addMonths(date, 1) >= startOfMonth(addMonths(endRange, 1));
+const OutingCalendarLabel = ({ dateRange, isPrevDisabled, isNextDisabled, onClick }) => {
 
     const prevMonthClass = assembleClass(
         'nav-button',
-        isAtRangeStart && 'nav-disabled',
+        isPrevDisabled && 'nav-disabled',
     );
 
     const nextMonthClass = assembleClass(
         'nav-button',
-        isAtRangeEnd && 'nav-disabled',
+        isNextDisabled && 'nav-disabled',
     );
 
     return (
@@ -25,9 +22,10 @@ const TripCalendarLabel = ({ date, startRange, endRange, onClick }) => {
                 <button onClick={() => onClick(false)} className={prevMonthClass}>
                     <IoIosArrowBack />
                 </button>
-                <div className="calendar-month-labels">
-                    <span className="calendar-label calendar-label-year">{date.getFullYear()}</span>
-                    <span className="calendar-label">{format(date, 'MMMM')}</span>
+                <div className="calendar-outing-label">
+                    <span>{format(dateRange[0], 'MMM dd')}</span>
+                    <span>{" - "}</span>
+                    <span>{format(dateRange[1], 'MMM dd')}</span>
                 </div>
                 <button onClick={() => onClick(true)} className={nextMonthClass}>
                     <IoIosArrowForward />
@@ -37,4 +35,4 @@ const TripCalendarLabel = ({ date, startRange, endRange, onClick }) => {
     );
 };
 
-export default TripCalendarLabel;
+export default OutingCalendarLabel;

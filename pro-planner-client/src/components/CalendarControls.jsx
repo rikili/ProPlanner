@@ -2,9 +2,9 @@ import { Container } from 'react-bootstrap';
 import { MdModeEditOutline } from 'react-icons/md';
 import { RiCheckFill, RiCloseFill } from 'react-icons/ri';
 import { BiTargetLock } from 'react-icons/bi';
-import './TripCalendarControls.scss';
+import './CalendarControls.scss';
 
-const TripCalendarControls = ({
+const CalendarControls = ({
     toggleEdit,
     confirmEdit,
     editing,
@@ -60,4 +60,4 @@ const TripCalendarControls = ({
     );
 };
 
-export default TripCalendarControls;
+export default CalendarControls;

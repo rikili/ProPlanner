@@ -1,21 +1,24 @@
-.week-calendar {
+.day-container {
     width: 100%;
 }
 
-.first-segment {
+.segment {
     width: 100%;
-    height: 1em;
+    height: 0.8em;
     background-color: lightgrey;
-    border-bottom: 1px solid;
     border-right: 1px solid;
-}
 
-.second-segment {
-    width: 100%;
-    height: 1em;
-    background-color: lightgrey;
-    border-right: 1px solid;
-    border-bottom: 1px solid rgb(172, 172, 172);
+    &:first-child {
+        border-top: 1px solid black;
+    }
+
+    &:nth-child(odd) {
+        border-bottom: 1px dashed rgb(172, 172, 172);
+    }
+
+    &:nth-child(even) {
+        border-bottom: 1px solid black;
+    }
 }
 
 .top-segment {
@@ -30,12 +33,13 @@
     background-color: white;
 }
 
-.unavail {
-    background-color: grey;
+.unavailable {
+    background-color: lightgrey;
 }
 
 .available {
     background-color: white;
+    cursor: pointer;
 }
 
 .selected {
@@ -46,6 +50,14 @@
     background-color: blue;
 }
 
-.editable {
-    cursor: pointer;
+.deciding {
+    background-color: orange;
+}
+
+.summary {
+    background-color: yellow;
+}
+
+.decided {
+    background-color: purple;
 }

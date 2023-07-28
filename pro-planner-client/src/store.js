@@ -7,7 +7,7 @@ import costSlice from "./redux/costSlice";
 import errorSlice from './redux/errorSlice';
 import outingSlice from './redux/outingSlice';
 import tripSlice from './redux/tripSlice';
-import tripSummarySlice from './redux/tripSummarySlice';
+import summarySlice from './redux/summarySlice';
 
 export default configureStore({
     reducer: combineReducers({
@@ -17,7 +17,7 @@ export default configureStore({
         poll: pollSlice,
         outingSelections: outingSlice,
         tripSelections: tripSlice,
-        tripSummary: tripSummarySlice,
+        summary: summarySlice,
         cost: costSlice,
     }),
 });
