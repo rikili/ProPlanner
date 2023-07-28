@@ -1,10 +1,10 @@
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
+import {Link, useParams, useNavigate} from 'react-router-dom';
 
 import './NavigationBar.scss';
 
 const NavigationBar = () => {
-    const { tripId } = useParams();
+    const {tripId} = useParams();
     const navigate = useNavigate();
 
     return <>
@@ -13,6 +13,9 @@ const NavigationBar = () => {
                 <Navbar.Brand>ProPlanner</Navbar.Brand>
                 <Navbar.Collapse className="d-flex justify-content-between">
                     <Nav className="d-flex gap-3">
+                        <Link to={`overview`} className="nav-link">
+                            <Nav.Item>Overview</Nav.Item>
+                        </Link>
                         <Link to={`/${tripId}`} className="nav-link">
                             <Nav.Item>Scheduling</Nav.Item>
                         </Link>
