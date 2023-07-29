@@ -25,7 +25,7 @@ const TripCalendarLabel = ({ date, startRange, endRange, onClick }) => {
                 <button onClick={() => onClick(false)} className={prevMonthClass}>
                     <IoIosArrowBack />
                 </button>
-                <div className="calendar-month-labels">
+                <div className="calendar-labels">
                     <span className="calendar-label calendar-label-year">{date.getFullYear()}</span>
                     <span className="calendar-label">{format(date, 'MMMM')}</span>
                 </div>

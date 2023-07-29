@@ -10,7 +10,7 @@
 	}
 }
 
-.calendar-month-labels {
+.calendar-labels {
 	display: flex;
 	flex-flow: column nowrap;
 }
@@ -48,6 +48,11 @@
 .calendar-label-year {
 	width: 100%;
 	font-size: 13px;
+}
+
+.calendar-outing-year {
+	text-align: center;
+	font-size: 0.75em;
 }
 
 .calendar-outing-label {
