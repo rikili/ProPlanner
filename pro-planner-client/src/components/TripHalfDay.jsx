@@ -4,13 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { assembleClass } from '../helpers/Utils';
 import './TripCalendar.scss';
 import { setDetailedUsers, setDetailedDay } from '../redux/summarySlice';
-
-const stepArr = [
-	[0, 0.25],
-	[0.26, 0.5],
-	[0.51, 0.75],
-	[0.76, 1],
-];
+import { STEP_ARR } from '../helpers/Calendar';
 
 const TripHalfDay = ({
 	topHalf,
@@ -49,18 +43,18 @@ const TripHalfDay = ({
 		}
 	};
 
-	let step;
-	if (!editing) {
-		const ratio = selections.length / maxUsers;
-		step = stepArr.reduce((acc, [lower, upper], index) => {
-			if (acc === null) {
-				if (ratio >= lower && ratio <= upper) {
-					return index + 1;
-				}
-			}
-			return acc;
-		}, null);
-	}
+    let step;
+    if (!editing) {
+        const ratio = selections.length / maxUsers;
+        step = STEP_ARR.reduce((acc, [lower, upper], index) => {
+            if (acc === null) {
+                if (ratio >= lower && ratio <= upper) {
+                    return index + 1;
+                }
+            }
+            return acc;
+        }, null);
+    }
 
 	let classState;
 	if (editing) {

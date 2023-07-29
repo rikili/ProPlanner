@@ -9,7 +9,7 @@ const CalendarGroup = ({ children }) => {
     const [selectedUser, setSelectedUser] = useState(null);
 
     return <div className='group-wrapper'>
-        <div className='trip-content'>
+        <div className='group-content'>
             <UserSideBar
                 isEditMode={isEditMode}
                 setIsEditMode={setIsEditMode}

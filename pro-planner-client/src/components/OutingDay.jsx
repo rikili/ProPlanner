@@ -3,8 +3,9 @@ import { selectToInterval, getEndOfSegment, SEGMENT_TIME } from '../helpers/Outi
 import { assembleClass } from '../helpers/Utils';
 
 import { useDispatch, useSelector } from "react-redux";
-import './OutingDay.scss';
 import { setDetailedDay, setDetailedUsers } from "../redux/summarySlice";
+import { STEP_ARR } from "../helpers/Calendar";
+import './OutingDay.scss';
 
 const OutingDay = ({
     date,
@@ -18,7 +19,7 @@ const OutingDay = ({
     isInSelect,
     editSelections,
     decisionPreview,
-    scope,
+    maxUsers,
 }) => {
     const dispatch = useDispatch();
     const decision = useSelector(state => state.planParameters.decisionRange).map((isoString) => new Date(isoString));
@@ -60,9 +61,8 @@ const OutingDay = ({
         start: startOfDay(date),
         end: endOfDay(date)
     }, {step: SEGMENT_TIME})
-        .map((segmentStart, index) => {
+        .map((segmentStart) => {
             let isSelected = false;
-            const isHourStart = segmentStart.getMinutes() === 0;
             let segmentClass = assembleClass(
                 'segment',
                 isFirstDay && 'left-segment'
@@ -113,16 +113,26 @@ const OutingDay = ({
                 }
             }
 
+            let step;
+            const ratio = isSelected.length / maxUsers;
+            step = STEP_ARR.reduce((acc, [lower, upper], index) => {
+                if (acc === null) {
+                    if (ratio >= lower && ratio <= upper) {
+                        return index + 1;
+                    }
+                }
+                return acc;
+            }, null);
             const segmentLogic = () => {
                 if (isEditing) {
                     return assembleClass(
                         'available',
-                        inSelection ? 'hovered' : isSelectedSegment && 'selected',
+                        inSelection ? 'editing' : isSelectedSegment && `outing-edit-select`,
                     );
                 } else if (isDeciding) {
                     return assembleClass(
                         'available',
-                        inSelection ? 'deciding' : isSelectedSegment && 'selected',
+                        inSelection ? 'deciding' : isSelectedSegment && `outing-selected-${step}`,
                         decisionPreview && inDecidedSelect(segmentStart) && 'deciding',
 
                     );
@@ -130,8 +140,8 @@ const OutingDay = ({
                     return assembleClass(
                         'available',
                         isSummaryDate && 'summary',
-                        isSelectedSegment && 'selected',
-                        isDecision && (inDecidedRange(segmentStart) && 'decided'),
+                        isSelectedSegment && `outing-selected-${step}`,
+                        isDecision && (inDecidedRange(segmentStart) && `outing-decided-${step}`),
                     );
                 }
             }

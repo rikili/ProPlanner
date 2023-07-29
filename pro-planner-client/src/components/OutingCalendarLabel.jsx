@@ -22,10 +22,13 @@ const OutingCalendarLabel = ({ dateRange, isPrevDisabled, isNextDisabled, onClic
                 <button onClick={() => onClick(false)} className={prevMonthClass}>
                     <IoIosArrowBack />
                 </button>
-                <div className="calendar-outing-label">
-                    <span>{format(dateRange[0], 'MMM dd')}</span>
-                    <span>{" - "}</span>
-                    <span>{format(dateRange[1], 'MMM dd')}</span>
+                <div className="calendar-labels">
+                    <div className="calendar-outing-year">{format(dateRange[0], 'yyyy')}</div>
+                    <div className="calendar-outing-label">
+                        <span>{format(dateRange[0], 'MMM dd')}</span>
+                        <span>{" - "}</span>
+                        <span>{format(dateRange[1], 'MMM dd')}</span>
+                    </div>
                 </div>
                 <button onClick={() => onClick(true)} className={nextMonthClass}>
                     <IoIosArrowForward />

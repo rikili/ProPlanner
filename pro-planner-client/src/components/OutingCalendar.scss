@@ -1,3 +1,5 @@
+@import '../styles.scss';
+
 .body-content {
     width: 70em;
     display: flex;
@@ -5,18 +7,49 @@
     align-items: center;
 }
 
-.calendar-cols {
+.calendar-content {
     display: flex;
-    justify-content: flex-end;
+    flex-flow: column nowrap;
     width: 100%;
 }
 
-.col-container {
+.grid-and-labels {
     display: flex;
-    width: 100%;
+    flex: 1;
+    max-height: 25em;
+    overflow-y: scroll;
+}
+
+.day-labels {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    font-size: 0.75em;
 }
 
 .day-label {
     text-align: center;
-    font-size: 0.75em;
+    flex: 1;
+}
+
+.calendar-grid {
+    display: flex;
+    flex-flow: row nowrap;
+    border-radius: 1em;
+    border: 1px solid $calendar-borders;
+    clip-path: inset(0% 0% round 0.8em);
+    overflow: clip;
+    box-sizing: content-box;
+    width: 100%;
+    height: 31em;
+}
+
+.day-column {
+    width: 100%;
+    box-sizing: content-box;
+    border-right: 1px solid $calendar-borders;
+
+    &:last-child {
+        border-right: 0px;
+    }
 }

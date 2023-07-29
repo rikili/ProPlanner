@@ -366,22 +366,6 @@ function OutingCalendar({ tripId }) {
         return result;
     }
 
-    const weekScope = eachDayOfInterval({start: selectWeek[0], end: selectWeek[1]}).reduce((acc, day) => {
-        const daySlots = getDayRanges(day, slots);
-        if (daySlots) {
-            daySlots.forEach(([start, end]) => {
-                if (acc[0] && acc[1]) {
-                    if (isTimeBefore(getTime(start), acc[0])) acc[0] = getTime(start);
-                    if (isTimeBefore(acc[1], getTime(end))) acc[1] = getTime(end);
-                    return acc;
-                }
-                if (!acc[0]) acc[0] = getTime(start);
-                if (!acc[1]) acc[1] = getTime(end);
-            })
-        }
-        return acc;
-    }, [null, null]);
-
     const inPreviewRange = (anchor, cursor, target) => {
         if (!(anchor && cursor)) return false;
         return anchor <= target && target < cursor;
@@ -392,38 +376,45 @@ function OutingCalendar({ tripId }) {
         if (isDeciding) return inPreviewRange(decisionAnchor, decisionCursor, dateTime);
     }
 
-    return <Card>
+    return <Card className='outing-card'>
         <Card.Body className="body-content">
             <OutingCalendarLabel dateRange={[selectWeek[0], selectWeek[1]]}
                                  isPrevDisabled={!checkAnyAvailable(prevWeek[0], prevWeek[1], slots, endDay)}
                                  isNextDisabled={!checkAnyAvailable(nextWeek[0], nextWeek[1], slots, endDay)}
                                  onClick={changeWeek}/>
-            <div className="calendar-cols">
-                <div className="col-container">
+            <div className="calendar-content">
+                <div className="day-labels">
+                        {eachDayOfInterval({start: selectWeek[0], end: selectWeek[1]}).map((day) => {
+                            return <div className="day-label" key={`label-${format(day, 'MMM dd')}`}>{format(day, 'MMM dd')}</div>
+                        })}
+                    </div>
+                <div className="grid-and-labels">
                     <OutingHourLabels />
-                    {eachDayOfInterval({start: selectWeek[0], end: selectWeek[1]}).map((day, index) => {
-                        const editsForDay = currentSelects[getMonthIndex(day)]
-                            ? currentSelects[getMonthIndex(day)][day.getDate()]
-                            : null;
-                        return <div className="w-100" key={`dayCol-${format(day, 'yyyy-MM-dd')}`}>
-                            <div className="day-label">{format(day, 'MMM dd')}</div>
-                            <OutingDay
-                                key={`daySegments-${format(day, 'yyyy-MM-dd')}`}
-                                date={new Date(day)}
-                                slots={getDayRanges(day, slots)}
-                                selections={selectsInDay(day, selections)}
-                                editSelections={editsForDay}
-                                isFirstDay={index === 0}
-                                onSegmentClick={onSelectClick}
-                                onSegmentEnter={onEnterSegment}
-                                isEditing={isEditing}
-                                isDeciding={isDeciding}
-                                currentUser={currentUser}
-                                isInSelect={isInSelect}
-                                decisionPreview={decisionPreview}
-                            />
-                        </div>
-                    })}
+                    <div className="calendar-grid">
+                        {eachDayOfInterval({start: selectWeek[0], end: selectWeek[1]}).map((day, index) => {
+                            const editsForDay = currentSelects[getMonthIndex(day)]
+                                ? currentSelects[getMonthIndex(day)][day.getDate()]
+                                : null;
+                            return <div className="day-column" key={`dayCol-${format(day, 'yyyy-MM-dd')}`}>
+                                <OutingDay
+                                    key={`daySegments-${format(day, 'yyyy-MM-dd')}`}
+                                    date={new Date(day)}
+                                    slots={getDayRanges(day, slots)}
+                                    selections={selectsInDay(day, selections)}
+                                    editSelections={editsForDay}
+                                    isFirstDay={index === 0}
+                                    onSegmentClick={onSelectClick}
+                                    onSegmentEnter={onEnterSegment}
+                                    isEditing={isEditing}
+                                    isDeciding={isDeciding}
+                                    currentUser={currentUser}
+                                    isInSelect={isInSelect}
+                                    decisionPreview={decisionPreview}
+                                    maxUsers={users.length}
+                                />
+                            </div>
+                        })}
+                    </div>
                 </div>
             </div>
             <CalendarControls toggleEdit={toggleEdit}

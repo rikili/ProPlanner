@@ -1,36 +1,4 @@
-$day-font-size: 13px;
-
-$calendar-borders: rgb(150, 150, 150);
-
-$selected-day-full-dark: rgb(108, 160, 114);
-$selected-day-step-4: rgb(140, 195, 146);
-$selected-day-step-3: rgba(136, 198, 149, 0.75);
-$selected-day-step-2: rgb(147, 207, 160, 0.65);
-$selected-day-step-1: rgb(166, 239, 182, 0.55);
-$selected-day-label: rgb(81, 115, 81);
-
-$preview-day: rgb(133, 171, 228);
-$preview-day-dark: rgb(104, 143, 201);
-$preview-day-label: rgb(82, 118, 171);
-
-$detailed-day: rgb(180, 240, 232);
-
-$edit-day: rgb(173, 162, 233);
-$edit-day-label: rgb(97, 82, 185);
-
-$decided-day-4: rgb(255, 165, 0);
-$decided-day-3: rgb(255, 191, 71);
-$decided-day-2: rgb(255, 187, 86);
-$decided-day-1: rgb(255, 205, 139);
-$decided-day-preview: rgb(255, 216, 145);
-
-$invalid-day: rgb(217, 217, 217);
-$invalid-day-label: rgb(113, 113, 113);
-
-$half-line-default: rgb(194, 194, 194);
-$half-line-selected: rgb(98, 138, 106);
-$half-line-preview: rgb(88, 116, 159);
-$half-line-edit: rgb(149, 144, 204);
+@import '../styles.scss';
 
 
 .calendar-card {

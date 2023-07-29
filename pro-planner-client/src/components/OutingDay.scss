@@ -1,40 +1,45 @@
+@import '../styles.scss';
+
 .day-container {
     width: 100%;
 }
 
 .segment {
     width: 100%;
-    height: 0.8em;
+    min-height: 0.65em;
     background-color: lightgrey;
-    border-right: 1px solid;
-
-    &:first-child {
-        border-top: 1px solid black;
-    }
 
     &:nth-child(odd) {
         border-bottom: 1px dashed rgb(172, 172, 172);
     }
 
     &:nth-child(even) {
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid $calendar-borders;
+    }
+
+    &.outing-edit-select {
+        border-bottom-color: $half-line-edit;
+    }
+
+    &[class*="outing-selected-"] {
+        border-bottom-color: $half-line-selected;
+    }
+
+    &[class*="outing-decided-"] {
+        border-bottom-color: $half-line-decided;
+    }
+
+    &.editing {
+        border-bottom-color: $half-line-preview;
+    }
+
+    &:last-child {
+        border-bottom: none;
     }
 }
 
-.top-segment {
-    border-top: 1px solid;
-}
-
-.left-segment {
-    border-left: 1px solid;
-}
-
-.selectable {
-    background-color: white;
-}
-
 .unavailable {
-    background-color: lightgrey;
+    background-color: $invalid-day;
 }
 
 .available {
@@ -42,22 +47,44 @@
     cursor: pointer;
 }
 
-.selected {
-    background-color: green;
+.outing-selected-4 {
+    background-color: $selected-day-step-4;
+}
+.outing-selected-3 {
+    background-color: $selected-day-step-3;
+}
+.outing-selected-2 {
+    background-color: $selected-day-step-2;
+}
+.outing-selected-1 {
+    background-color: $selected-day-step-1;
 }
 
-.hovered {
-    background-color: blue;
+.outing-decided-4 {
+    background-color: $decided-day-4;
+}
+.outing-decided-3 {
+    background-color: $decided-day-3;
+}
+.outing-decided-2 {
+    background-color: $decided-day-2;
+}
+.outing-decided-1 {
+    background-color: $decided-day-1;
+}
+
+.outing-edit-select {
+    background-color: $edit-day;
+}
+
+.editing {
+    background-color: $preview-day;
 }
 
 .deciding {
-    background-color: orange;
+    background-color: $decided-day-preview;
 }
 
 .summary {
-    background-color: yellow;
-}
-
-.decided {
-    background-color: purple;
+    background-color: $detailed-day;
 }
