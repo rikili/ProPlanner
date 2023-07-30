@@ -132,8 +132,8 @@ const OutingDay = ({
                 } else if (isDeciding) {
                     return assembleClass(
                         'available',
-                        inSelection ? 'deciding' : isSelectedSegment && `outing-selected-${step}`,
-                        decisionPreview && inDecidedSelect(segmentStart) && 'deciding',
+                        inSelection ? 'deciding-selection' : isSelectedSegment && `outing-selected-${step}`,
+                        decisionPreview && inDecidedSelect(segmentStart) && 'outing-decided-4',
 
                     );
                 } else {
