@@ -395,7 +395,7 @@ function OutingCalendar({ tripId }) {
                             const editsForDay = currentSelects[getMonthIndex(day)]
                                 ? currentSelects[getMonthIndex(day)][day.getDate()]
                                 : null;
-                            return <div className="day-column" key={`dayCol-${format(day, 'yyyy-MM-dd')}`}>
+                            return <div className="day-column" key={`day-col-${format(day, 'yyyy-MM-dd')}`}>
                                 <OutingDay
                                     key={`daySegments-${format(day, 'yyyy-MM-dd')}`}
                                     date={new Date(day)}

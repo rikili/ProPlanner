@@ -6,15 +6,23 @@
 
 .segment {
     width: 100%;
-    min-height: 0.65em;
+    min-height: 0.8em;
     background-color: lightgrey;
 
     &:nth-child(odd) {
         border-bottom: 1px dashed rgb(172, 172, 172);
+
+        &.unavailable {
+            border-bottom: 0px;
+        }
     }
 
     &:nth-child(even) {
         border-bottom: 1px solid $calendar-borders;
+    }
+
+    &:nth-child(24) {
+        border-bottom: 2px solid $calendar-borders-dark;
     }
 
     &.outing-edit-select {
@@ -25,16 +33,16 @@
         border-bottom-color: $half-line-selected;
     }
 
-    &[class*="outing-decided-"] {
-        border-bottom-color: $half-line-decided;
-    }
-
     &.editing {
         border-bottom-color: $half-line-preview;
     }
 
     &:last-child {
         border-bottom: none;
+    }
+
+    &.deciding, &.deciding-selection, &[class*="outing-decided-"] {
+        border-bottom-color: $half-line-decided;
     }
 }
 
@@ -79,6 +87,10 @@
 
 .editing {
     background-color: $preview-day;
+}
+
+.deciding-selection {
+    background-color: $decided-day-preview;
 }
 
 .deciding {

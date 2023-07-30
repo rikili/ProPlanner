@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: flex-end;
     flex: 1;
-    font-size: 0.6em;
+    font-size: 0.8em;
     height: 1em;
     width: 4em;
 }
@@ -14,8 +14,7 @@
     position: relative;
     display: flex;
     flex-flow: column nowrap;
-    // top: 0.6em;
-    height: 31.2em;
+    height: 100%;
 }
 
 .next-btn {
