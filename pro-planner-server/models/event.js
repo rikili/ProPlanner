@@ -1,9 +1,8 @@
 // code references mongoose documention: https://mongoosejs.com/docs/guide.html , https://mongoosejs.com/docs/models.html, https://mongoosejs.com/docs/schematypes.html
-// setting empty object references: https://stackoverflow.com/questions/29188131/mongoose-set-default-as-empty-object
 
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const tripSchema = new Schema(
+const eventSchema = new Schema(
   {
     planParameters: {
       name: Schema.Types.String,
@@ -14,10 +13,11 @@ const tripSchema = new Schema(
       dateTimeRange: Schema.Types.Array,
     },
     userInfo: Schema.Types.Mixed,
+    decision: Schema.Types.Array,
   },
   {
-    collection: 'Trip',
+    collection: 'Event',
   }
 );
 
-module.exports = mongoose.model('Trip', tripSchema);
+module.exports = mongoose.model('Event', eventSchema);
