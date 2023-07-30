@@ -4,7 +4,6 @@ import {LOAD_STATUS} from '../constants';
 import {buildServerRoute} from "../helpers/Utils";
 
 
-// TODO: remove hardcoded server URL with .env
 export const getPollAsync = createAsyncThunk(
     'poll/get',
     async ({tripId}) => {
