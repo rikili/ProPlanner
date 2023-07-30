@@ -21,7 +21,7 @@ const { ObjectId } = require('mongodb');
 const eventHelper = require('../helpers/event');
 
 router.post('/', async (req, res) => {
-  const savedData = await eventHelper.createNewEvent(req.body);
+  const savedData = await eventHelper.createNewEvent(req.body, 'trip');
   const pollModel = new poll({
     eventId: new ObjectId(savedData._id),
     polls: {},
