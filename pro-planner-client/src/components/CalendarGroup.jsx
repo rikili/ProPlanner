@@ -4,7 +4,7 @@ import SummaryList from "./SummaryList";
 import DecisionInfo from "./DecisionInfo";
 import './CalendarGroup.scss';
 
-const CalendarGroup = ({ children }) => {
+const CalendarGroup = ({ renderCalendar }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
 
@@ -16,7 +16,7 @@ const CalendarGroup = ({ children }) => {
                 selectedUser={selectedUser}
                 setSelectedUser={setSelectedUser}
             />
-            {children}
+            {renderCalendar(selectedUser)}
             <div className='details-stack'>
                 <DecisionInfo />
                 <SummaryList />

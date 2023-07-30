@@ -23,7 +23,7 @@ const TripHalfDay = ({
 	className,
 }) => {
 	const dispatch = useDispatch();
-	const detailedDay = useSelector(state => state.tripSummary.detailedDay);
+	const detailedDay = useSelector(state => state.summary.detailedDay);
 	let isDetailedDay = false;
 	if (detailedDay) {
 		isDetailedDay = isEqual(new Date(detailedDay), date);
