@@ -8,7 +8,7 @@ const { ObjectId } = require('mongodb');
 const eventHelper = require('../helpers/event');
 
 router.post('/', async (req, res) => {
-  const savedData = await eventHelper.createNewEvent(req.body);
+  const savedData = await eventHelper.createNewEvent(req.body, 'outing');
   if (!savedData.err) {
     res.status(200).json(savedData);
   } else {

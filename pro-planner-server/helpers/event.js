@@ -2,12 +2,12 @@ const poll = require('../models/poll');
 const eventModel = require('../models/event');
 const { ObjectId } = require('mongodb');
 
-async function createNewEvent(data) {
+async function createNewEvent(data, planType) {
   try {
     const event = new eventModel({
       planParameters: {
         name: data.name,
-        planType: data.planType,
+        planType: planType,
         dayOffset: data.dayOffset,
         isAllDay: data.isAllDay,
         location: data.location,
