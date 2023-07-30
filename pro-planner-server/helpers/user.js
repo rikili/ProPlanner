@@ -2,9 +2,10 @@
 // updating object array references: https://sparkbyexamples.com/mongodb/update-objects-in-the-array-in-mongodb/?expand_article=1
 
 const { ObjectId } = require('mongodb');
+const event = require('../models/event');
 
-async function addUser(model, eventId, userName) {
-  const users = await model.findOneAndUpdate(
+async function addUser(eventId, userName) {
+  let users = await event.findOneAndUpdate(
     { _id: new ObjectId(eventId) },
     {
       $set: {
@@ -19,17 +20,19 @@ async function addUser(model, eventId, userName) {
       },
     }
   );
+  users = users.toJSON().userInfo;
   return users;
 }
 
-async function getUsers(model, eventId) {
-  const users = await model.findOne(
+async function getUsers(eventId) {
+  let users = await event.findOne(
     { _id: new ObjectId(eventId) },
     {
       _id: 0,
       userInfo: 1,
     }
   );
+  users = users.toJSON().userInfo;
   return users;
 }
 
