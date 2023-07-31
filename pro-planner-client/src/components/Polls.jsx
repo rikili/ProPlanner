@@ -1,18 +1,21 @@
 import React from 'react';
 import Poll from "./Poll";
 import {Container} from "react-bootstrap";
-import {useSelector} from 'react-redux';
 
-function Polls() {
+function Polls({polls}) {
 
-    const pollList = useSelector((state) => Object.values(state.poll.polls));
+    if (polls === null || !polls) {
+        return;
+    }
+
 
     return (
         <>
             <Container className='d-flex flex-column justify-content-center align-items-center'>
-                {pollList.map((poll) =>
+                {Object.entries(polls).map(([key, poll]) =>
                     <Poll poll={poll}
-                          key={poll.pollId}
+                          pollId={key}
+                          key={key}
                     />)}
             </Container>
         </>

@@ -1,25 +1,17 @@
 import React, {useState} from 'react';
 import {InputGroup, Button, Form, Card, Container} from "react-bootstrap";
-import {v4 as uuidv4} from 'uuid';
 import {useDispatch, useSelector} from 'react-redux';
-import {addPoll} from "../redux/pollSlice";
+import {addPollAsync} from "../redux/pollSlice";
 import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
 const MAX_QUESTION_LIMIT = 105;
 
-function AddPollForm() {
+function AddPollForm({polls}) {
     const [newQuestion, setNewQuestion] = useState('')
-    const polls = useSelector((state) => Object.values(state.poll.polls))
+    const currPolls = polls || {};
+    const pollDocumentId = useSelector((state) => state.poll.pollsId)
     const dispatch = useDispatch();
-
-
-    let formResult = {
-        pollId: uuidv4(),
-        question: newQuestion,
-        options: {},
-        votedUsers: []
-    }
 
     const handleAddPoll = (e) => {
         e.preventDefault();
@@ -41,7 +33,9 @@ function AddPollForm() {
             return;
         }
 
-        if (polls.find(poll => poll.question === newQuestion)) {
+        const pollsArray = Object.values(currPolls);
+
+        if (pollsArray.find(poll => poll.question === newQuestion)) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
                 message: 'Poll already exists, please add a different poll.',
@@ -50,7 +44,7 @@ function AddPollForm() {
         }
 
         dispatch(resetError());
-        dispatch(addPoll(formResult))
+        dispatch(addPollAsync({newQuestion, pollDocumentId}))
         setNewQuestion('')
     }
 
