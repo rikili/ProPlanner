@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const eventSchema = new Schema(
+const planSchema = new Schema(
   {
     planParameters: {
       name: Schema.Types.String,
@@ -16,8 +16,8 @@ const eventSchema = new Schema(
     decision: Schema.Types.Array,
   },
   {
-    collection: 'Event',
+    collection: 'Plan',
   }
 );
 
-module.exports = mongoose.model('Event', eventSchema);
+module.exports = mongoose.model('Plan', planSchema);
