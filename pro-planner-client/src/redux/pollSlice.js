@@ -1,9 +1,58 @@
-import {createSlice} from "@reduxjs/toolkit";
+import axios from 'axios';
+import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import {LOAD_STATUS} from '../constants';
+
+
+// TODO: remove hardcoded server URL with .env
+export const getPollAsync = createAsyncThunk(
+    'poll/get',
+    async ({tripId}) => {
+        const response = await axios.get(`http://localhost:5001/poll/${tripId}`);
+        return response.data;
+    });
+
+export const addPollAsync = createAsyncThunk(
+    'poll/add',
+    async ({newQuestion, pollDocumentId}) => {
+        const response = await axios.put(
+            `http://localhost:5001/poll/${pollDocumentId}`,
+            {
+                question: newQuestion
+            });
+        return response.data;
+    });
+
+export const addOptionAsync = createAsyncThunk(
+    'poll/option/add',
+    async ({newOption, pollDocumentId, pollId}) => {
+        const response = await axios.put(
+            `http://localhost:5001/poll/option/${pollDocumentId}/${pollId}`,
+            {
+                option: newOption
+            });
+        return response.data
+    });
+
+export const voteOptionAsync = createAsyncThunk(
+    'poll/option/vote',
+    async ({currUser, votedOptionId, newVotedOptionId, pollDocumentId, pollId}) => {
+        const response = await axios.patch(
+            `http://localhost:5001/poll/vote/${pollDocumentId}/${pollId}`,
+            {
+                user: currUser,
+                votedOptionId: votedOptionId,
+                newVotedOptionId: newVotedOptionId
+            });
+        return response.data;
+    });
+
 
 const pollSlice = createSlice({
     name: 'poll',
     initialState: {
+        pollsId: null, // poll document Id
         polls: {},
+        pollStatus: null,
     },
     reducers: {
         addPoll: (state, action) => {
@@ -39,6 +88,54 @@ const pollSlice = createSlice({
                 poll.options[input.selectedOption].voteCount++
             }
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(getPollAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(getPollAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            state.pollsId = action.payload._id;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(getPollAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+
+        builder.addCase(addPollAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(addPollAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            console.log(state.polls)
+            state.pollsId = action.payload._id;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(addPollAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+
+        builder.addCase(addOptionAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(addOptionAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(addOptionAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+
+        builder.addCase(voteOptionAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(voteOptionAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(voteOptionAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
     }
 })
 

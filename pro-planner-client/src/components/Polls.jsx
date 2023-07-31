@@ -5,14 +5,15 @@ import {useSelector} from 'react-redux';
 
 function Polls() {
 
-    const pollList = useSelector((state) => Object.values(state.poll.polls));
+    const polls = useSelector((state) => state.poll.polls);
 
     return (
         <>
             <Container className='d-flex flex-column justify-content-center align-items-center'>
-                {pollList.map((poll) =>
+                {Object.entries(polls).map(([key, poll]) =>
                     <Poll poll={poll}
-                          key={poll.pollId}
+                          pollId={key}
+                          key={key}
                     />)}
             </Container>
         </>
