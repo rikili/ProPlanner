@@ -1,22 +1,14 @@
 import React from 'react';
 import {Col, Container, Form, ProgressBar, Row} from "react-bootstrap";
-import {useSelector} from 'react-redux';
 
-function Option({option, poll, setSelectedOption}) {
-
-    const polls = useSelector((state) => Object.values(state.poll.polls))
-    const currPoll = polls.find((p) => p.pollId === poll.pollId);
-    const currPollOptions = Object.values(currPoll.options)
-
-    const currUser = 'User A'; // TODO: fetch current user
+function Option({option, optionId, poll, pollId, currUser, setSelectedOption}) {
 
     const handleRadioChange = (e) => {
         setSelectedOption(e.target.id);
-
     }
 
     const isOptionDisabled = (optionId) => {
-        const votedUser = currPoll.votedUsers.find((u) => u.user === currUser);
+        const votedUser = poll.votedUsers.find((u) => u.user === currUser);
 
         if (votedUser) {
             return votedUser.votedOptionId === optionId;
@@ -31,21 +23,20 @@ function Option({option, poll, setSelectedOption}) {
                 <Row>
                     <Col>
                         <Form.Check
-                            disabled={isOptionDisabled(option.optionId)}
+                            disabled={isOptionDisabled(optionId)}
                             type={'radio'}
                             label={option.option}
-                            name={poll.pollId}
-                            id={option.optionId}
-                            key={option.optionId}
+                            name={pollId}
+                            id={optionId}
                             onChange={handleRadioChange}
                         />
                     </Col>
                     <Col className="d-flex justify-content-end">
-                        {currPollOptions.find((o) => o.optionId === option.optionId).voteCount}
+                        {poll.options[optionId].voteCount}
                     </Col>
                     <Col>
                         <ProgressBar
-                            now={currPollOptions.find((o) => o.optionId === option.optionId).voteCount}
+                            now={poll.options[optionId].voteCount}
                         />
                     </Col>
                 </Row>
