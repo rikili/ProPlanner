@@ -14,14 +14,14 @@
 
 const express = require('express');
 const router = express.Router();
-const event = require('../models/event');
+const plan = require('../models/plan');
 const poll = require('../models/poll');
 const timezone = require('../helpers/timezone');
 const { ObjectId } = require('mongodb');
-const eventHelper = require('../helpers/event');
+const planHelper = require('../helpers/plan');
 
 router.post('/', async (req, res) => {
-  const savedData = await eventHelper.createNewEvent(req.body, 'trip');
+  const savedData = await planHelper.createNewEvent(req.body, 'trip');
   const pollModel = new poll({
     eventId: new ObjectId(savedData._id),
     polls: {},
@@ -70,25 +70,6 @@ router.put('/:id', async (req, res) => {
     addedNewUserInfo.month = timezone.convertCalendarLocal(addedNewUserInfo.month, timezone.getOffset(userTimezone));
   }
   res.status(200).send({ month: addedNewUserInfo.month });
-});
-
-router.get('/:id', async (req, res) => {
-  try {
-    new ObjectId(req.params.id);
-  } catch (e) {
-    res.status(404).send('Invalid plan ID');
-    return;
-  }
-  if (findParams(req.params.id)) {
-    const fetchedParams = await getParams(req.params.id);
-
-    if (fetchedParams) {
-      const params = fetchedParams.planParameters.toObject();
-      res.status(200).send(params);
-      return;
-    }
-  }
-  res.status(404).send('Invalid plan ID');
 });
 
 router.get('/:id/:userId', async (req, res) => {
@@ -159,7 +140,7 @@ const addSelection = async (tripId, userId, monthToAdd) => {
   let addMonth;
   if (months.length > 1) {
     const monthPaths = [`$userInfo.${userId}.${months[0]}`, `$userInfo.${userId}.${months[1]}`];
-    addMonth = await event.findOneAndUpdate(
+    addMonth = await plan.findOneAndUpdate(
       { _id: new ObjectId(tripId) },
       {
         $set: {
@@ -177,7 +158,7 @@ const addSelection = async (tripId, userId, monthToAdd) => {
     );
   } else {
     const monthPath = `$userInfo.${userId}.${months[0]}`;
-    addMonth = await event.findOneAndUpdate(
+    addMonth = await plan.findOneAndUpdate(
       { _id: new ObjectId(tripId) },
       {
         $set: {
@@ -197,21 +178,13 @@ const addSelection = async (tripId, userId, monthToAdd) => {
 };
 
 const getMonth = async (id, userId, month) => {
-  let dbMonth = await event.findOne(
+  let dbMonth = await plan.findOne(
     { _id: new ObjectId(id), [`userInfo.${userId}`]: { $exists: true } },
     {
       month: month,
     }
   );
   return dbMonth;
-};
-
-const findParams = async (id) => {
-  return !!(await event.findOne({ _id: new ObjectId(id) }));
-};
-
-const getParams = async (id) => {
-  return await event.findOne({ _id: new ObjectId(id), ['planParameters']: { $exists: true } }, ['planParameters']);
 };
 
 module.exports = router;

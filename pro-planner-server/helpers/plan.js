@@ -1,5 +1,5 @@
 const poll = require('../models/poll');
-const eventModel = require('../models/event');
+const eventModel = require('../models/plan');
 const { ObjectId } = require('mongodb');
 
 async function createNewEvent(data, planType) {

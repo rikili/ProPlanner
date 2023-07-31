@@ -16,12 +16,14 @@ const trip = require('./routes/trip');
 const outing = require('./routes/outing');
 const user = require('./routes/user');
 const poll = require('./routes/poll');
+const plan = require('./routes/plan');
 
 //  middleware
 app.use('/trip', trip);
 app.use('/outing', outing);
 app.use('/user', user);
 app.use('/poll', poll);
+app.use('/plan', plan);
 
 app.listen(5001, () => {
   console.log('server up listening on 5001');

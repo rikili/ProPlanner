@@ -4,7 +4,7 @@ import { buildServerRoute } from '../helpers/Utils';
 import { PLAN_TYPE, LOAD_STATUS } from '../constants';
 
 export const setupParams = createAsyncThunk('parameters/get', async (tripId) => {
-    const response = await axios.get(buildServerRoute('trip',tripId));
+    const response = await axios.get(buildServerRoute('plan',tripId));
     return response.data;
 });
 

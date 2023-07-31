@@ -3,12 +3,12 @@
 
 const express = require('express');
 const router = express.Router();
-const event = require('../models/event');
+const plan = require('../models/plan');
 const { ObjectId } = require('mongodb');
-const eventHelper = require('../helpers/event');
+const planHelper = require('../helpers/plan');
 
 router.post('/', async (req, res) => {
-  const savedData = await eventHelper.createNewEvent(req.body, 'outing');
+  const savedData = await planHelper.createNewEvent(req.body, 'outing');
   if (!savedData.err) {
     res.status(200).json(savedData);
   } else {
@@ -23,7 +23,7 @@ router.put('/:id', async (req, res) => {
   const month = Object.keys(selection);
   const monthPath = `$userInfo.${userId}.${month}`;
   try {
-    const addMonth = await event.findOneAndUpdate(
+    const addMonth = await plan.findOneAndUpdate(
       { _id: new ObjectId(outingId) },
       {
         $set: {
@@ -50,7 +50,7 @@ router.get('/:id/:userId', async (req, res) => {
   const month = req.query.month;
   try {
     const monthPath = [`$userInfo.${userId}.${month}`];
-    let queryMonth = await event.findOne(
+    let queryMonth = await plan.findOne(
       { _id: new ObjectId(outingId), [`userInfo.${userId}`]: { $exists: true } },
       {
         _id: 0,
