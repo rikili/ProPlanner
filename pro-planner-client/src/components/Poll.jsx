@@ -11,8 +11,8 @@ import {ERR_TYPE} from "../constants";
 
 function Poll({poll, pollId}) {
 
-    const currUser = 'user1';
-    // const currUser = useSelector((state) => state.user.selectedUser);
+    // const currUser = 'user1'; // testing purpose
+    const currUser = useSelector((state) => state.user.selectedUser);
     const [showModal, setShowModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
     const dispatch = useDispatch();

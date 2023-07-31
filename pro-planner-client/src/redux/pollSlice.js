@@ -6,8 +6,7 @@ import {buildServerRoute} from "../helpers/Utils";
 export const getPollAsync = createAsyncThunk(
     'poll/get',
     async ({tripId}) => {
-        const response = await axios.get(`http://localhost:5001/poll/${tripId}`);
-        // const response = await axios.get(buildServerRoute('poll', {tripId}));
+        const response = await axios.get(buildServerRoute('poll', tripId));
         return response.data;
     });
 
@@ -15,8 +14,7 @@ export const addPollAsync = createAsyncThunk(
     'poll/add',
     async ({newQuestion, pollDocumentId}) => {
         const response = await axios.put(
-            // buildServerRoute('poll', {pollDocumentId}),
-            `http://localhost:5001/poll/${pollDocumentId}`,
+            buildServerRoute('poll', pollDocumentId),
             {
                 question: newQuestion
             });
@@ -27,8 +25,7 @@ export const addOptionAsync = createAsyncThunk(
     'poll/option/add',
     async ({newOption, pollDocumentId, pollId}) => {
         const response = await axios.put(
-            // buildServerRoute('poll', 'option', {pollDocumentId}, {pollId}),
-            `http://localhost:5001/poll/option/${pollDocumentId}/${pollId}`,
+            buildServerRoute('poll', 'option', pollDocumentId, pollId),
             {
                 option: newOption
             });
@@ -39,8 +36,7 @@ export const voteOptionAsync = createAsyncThunk(
     'poll/option/vote',
     async ({currUser, votedOptionId, newVotedOptionId, pollDocumentId, pollId}) => {
         const response = await axios.patch(
-            // buildServerRoute('poll', 'vote', {pollDocumentId}, {pollId}),
-            `http://localhost:5001/poll/vote/${pollDocumentId}/${pollId}`,
+            buildServerRoute('poll', 'vote', pollDocumentId, pollId),
             {
                 user: currUser,
                 votedOptionId: votedOptionId,
