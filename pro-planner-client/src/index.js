@@ -19,7 +19,7 @@ import './index.scss';
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <VotePage />,
+        element: <LandingPage />,
         errorElement: <ErrorPage />,
     },
     {
