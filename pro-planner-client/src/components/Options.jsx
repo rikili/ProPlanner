@@ -3,17 +3,22 @@ import Option from "./Option";
 import {Form} from "react-bootstrap";
 
 
-function Options({poll, setSelectedOption, selectedOption}) {
+function Options({poll, pollId, currUser, setSelectedOption, selectedOption}) {
 
-    const options = Object.values(poll.options)
+    if (poll.options === null || !poll.options) {
+        return <p>Please add an option to vote.</p>;
+    }
 
     return (
         <>
             <Form>
-                {options.map((option) =>
+                {Object.entries(poll.options).map(([key, option]) =>
                     <Option option={option}
-                            key={option.optionId}
+                            optionId={key}
+                            key={key}
                             poll={poll}
+                            pollId={pollId}
+                            currUser={currUser}
                             setSelectedOption={setSelectedOption}
                             selectedOption={selectedOption}
                     />)}
