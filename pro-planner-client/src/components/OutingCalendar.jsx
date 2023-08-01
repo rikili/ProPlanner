@@ -330,9 +330,9 @@ function OutingCalendar({ planId }) {
     const confirmEdit = () => {
         dispatch(updateOutings({
             user: currentUser,
+            planId,
             selections: currentSelects,
             months: monthsToUpdate,
-            planId,
         }));
         toggleEdit();
     }

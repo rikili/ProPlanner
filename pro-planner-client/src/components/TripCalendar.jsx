@@ -50,7 +50,7 @@ const addNameToDay = (fullDay, destArr, dayIndex, username) => {
 	if (fullDay[1]) destArr[dayIndex][1].push(username);
 };
 
-const TripCalendar = ({ tripId, isEditMode, setIsEditMode, selectedUser }) => {
+const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	const plan = useSelector(state => state.planParameters);
 	const startDate = parseISO(plan.dateTimeRange[0]);
 	const endDate = parseISO(plan.dateTimeRange[1]);
@@ -112,7 +112,7 @@ const TripCalendar = ({ tripId, isEditMode, setIsEditMode, selectedUser }) => {
 				end: calendarEnd,
 			}).forEach(month => {
 				const monthIndex = getMonthIndex(month);
-				const userReq = axios.get(buildServerRoute('trip', tripId, user), {
+				const userReq = axios.get(buildServerRoute('trip', planId, user), {
 					params: {
 						month: monthIndex,
 						timezone: getTimezone(),
@@ -154,7 +154,7 @@ const TripCalendar = ({ tripId, isEditMode, setIsEditMode, selectedUser }) => {
 		return () => {
 			controller.abort();
 		};
-	}, [calendarEnd, calendarStart, dispatch, tripId, users]);
+	}, [calendarEnd, calendarStart, dispatch, planId, users]);
 
 	const combinedSelections = useMemo(() => {
 		const result = {};
@@ -287,7 +287,7 @@ const TripCalendar = ({ tripId, isEditMode, setIsEditMode, selectedUser }) => {
 		for (let monthIndex of monthsToUpdate) {
 			dispatch(
 				setUserSelectionsAsync({
-					tripId,
+					planId,
 					userId: currUser,
 					newSelections: dateSelections[monthIndex],
 					monthIndex,
