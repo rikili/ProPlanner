@@ -93,8 +93,10 @@ const costSlice = createSlice({
             state.costsStatus = LOAD_STATUS.LOADING;
         });
         builder.addCase(getCostAsync.fulfilled, (state, action) => {
-            // state.costs = action.payload.costs;
-            // TODO
+            console.log(state.costs)
+            console.log(action.payload.costs)
+            console.log(typeof action.payload.costs)
+            state.costs = action.payload.costs;
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(getCostAsync.rejected, (state, action) => {
