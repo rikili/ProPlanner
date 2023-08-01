@@ -21,6 +21,7 @@ const planParamSlice = createSlice({
         
         decisionRange: [],
 
+        isUploading: false,
         paramStatus: null,
         isInitialized: false,
     },
@@ -53,6 +54,10 @@ const planParamSlice = createSlice({
 
         setDecisionRange(state, { payload }) {
             state.decisionRange = payload;
+        },
+
+        setIsUploading(state, { payload }) {
+            state.isUploading = payload;
         }
     },
     extraReducers: (builder) => {
@@ -76,5 +81,5 @@ const planParamSlice = createSlice({
     }
 });
 
-export const { changePlanType, updatePlan, setDecisionRange } = planParamSlice.actions;
+export const { changePlanType, updatePlan, setDecisionRange, setIsUploading } = planParamSlice.actions;
 export default planParamSlice.reducer;

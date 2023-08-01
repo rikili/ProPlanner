@@ -4,7 +4,7 @@
 // disable button references https://stackoverflow.com/questions/38196743/conditionally-set-the-disabled-state-of-a-bootstrap-button
 // conditional className references https://stackoverflow.com/questions/30533171/react-js-conditionally-applying-class-attributes
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     isAfter,
@@ -23,7 +23,7 @@ import {
 import { Card } from 'react-bootstrap';
 import { getMonthIndex } from '../helpers/Calendar';
 import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay, isTimeBefore } from '../helpers/OutingCalendar';
-import { setUserSelections } from '../redux/outingSlice';
+import { resetUpdateFailed, setLoading, setUserSelections, updateOutings } from '../redux/outingSlice';
 
 import OutingDay from './OutingDay';
 import OutingHourLabels from './OutingHourLabels';
@@ -32,9 +32,12 @@ import CalendarControls from './CalendarControls';
 import OutingCalendarLabel from './OutingCalendarLabel';
 import { setDecisionRange } from '../redux/planParamSlice';
 import axios from 'axios';
+import { buildServerRoute } from '../helpers/Utils';
+import { setError } from '../redux/errorSlice';
+import { ERR_TYPE } from '../constants';
 
 // Update working selections for current user
-const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding) => {
+const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding, setUpdateMonths, updateMonths) => {
     eachDayOfInterval({
         start: selectStart,
         end: selectEnd
@@ -43,6 +46,7 @@ const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding) 
         const isEndDay = isSameDay(dayStart, selectEnd);
 
         const monthIndex = getMonthIndex(dayStart);
+        if (!updateMonths.includes(monthIndex)) setUpdateMonths([...updateMonths, monthIndex]);
         const dateIndex = dayStart.getDate();
 
         if (!currSelects[monthIndex]) currSelects[monthIndex] = {};
@@ -192,13 +196,15 @@ const checkAnyAvailable = (weekStart, weekEnd, dates, endBoundary) => {
     return result;
 };
 
-function OutingCalendar({ tripId }) {
+function OutingCalendar({ planId }) {
     const params = useSelector(state => state.planParameters);
     const endDay = new Date(params.dateTimeRange[1]);
 
     const currentUser = useSelector(state => state.user.selectedUser);
     const users = useSelector(state => state.user.userList);
-    const selections = useSelector(state => state.outingSelections);
+    const selections = useSelector(state => state.outing.selections);
+    const isLoading = useSelector(state => state.outing.isLoading);
+    const updateFailed = useSelector(state => state.outing.updateFailed);
     const [selectWeek, setSelectWeek] = useState([
         startOfWeek(new Date(params.dateTimeRange[0][0])),
         endOfWeek(new Date(params.dateTimeRange[0][0]))
@@ -220,54 +226,91 @@ function OutingCalendar({ tripId }) {
             : {}
     );
     const [isEditing, setEditing] = useState(false);
-    const [lastMonthUpdate, setMonthUpdate] = useState(null);
+    const [monthsToUpdate, setUpdateMonths] = useState([]);
     const [firstLoad, setFirstLoad] = useState(false);
     const dispatch = useDispatch();
 
     let slots = useMemo(() => generateSlots(params), [params]);
 
-    // useEffect(() => {
-    //     const controller = new AbortController();
-    //     const promiseTrack = [];
+    useEffect(() => {
+        const controller = new AbortController();
+        const promiseTrack = [];
 
-    //     dispatch(setLoading(true));
-    //     users.forEach((user) => {
-    //         eachMonthOfInterval({start: selectWeek[0], end: selectWeek[1]}).forEach((month) => {
-    //             const monthIndex = getMonthIndex(month);
-    //             const request = axios.get(buildServerRoute('outing', planId, user), {
-    //                 // TODO: what information is needed
-    //             });
-    //             request.then((result) => {
-    //                 dispatch(
-    //                     // TODO: update user month information
-    //                 )
-    //             })
-    //             .catch(() => {});
-    //             promiseTrack.push(request);
-    //         });
-    //     });
+        dispatch(setLoading(true));
+        const startOfMonths = eachMonthOfInterval({start: selectWeek[0], end: selectWeek[1]});
+        users.forEach((user) => {
+            startOfMonths.forEach((month) => {
+                const monthIndex = getMonthIndex(month);
+                const request = axios.get(buildServerRoute('outing', planId, user), {
+                    params: {
+                        month: monthIndex
+                    },
+                    signal: controller.signal,
+                });
+                promiseTrack.push(request);
+            });
+        });
 
-    //     Promise.all(promiseTrack)
-    //         .then(() => {
-    //             dispatch(setLoading(false));
-    //             if (!firstLoad) setFirstLoad(true);
-    //         })
-    //         .catch((e) => {
-    //             if (e.request.status === 0) return;
-    //             dispatch(
-    //                 setError({
-    //                     errType: ERR_TYPE.ERR,
-    //                     message:
-    //                         'Month information could not be fetched, please try again later. Close this notification to be redirected to the landing page.',
-    //                     redirect: '/',
-    //                     disableControl: true,
-    //                 })
-    //             );
-    //         });
-    //     return () => {
-    //         controller.abort();
-    //     }
-    // }, [selectWeek, tripId, users]);
+        Promise.allSettled(promiseTrack)
+            .then((results) => {
+                dispatch(setLoading(false));
+
+                const numOfMonths = startOfMonths.length;
+                users.forEach((user, index) => {
+                    for (let resIndex = 0; resIndex < numOfMonths; resIndex++) {
+                        const result = results[resIndex + (index * numOfMonths)];
+
+                        if (!result.reason) {
+                            dispatch(setUserSelections({user, selections: {
+                                [getMonthIndex(startOfMonths[resIndex])]: result.value.data.month[0]
+                            }}));
+                            return;
+                        }
+
+                        // axios error (aka cancelled request)
+                        const request = result.reason.request;
+                        if (request) {
+                            if (request.status === 0) {
+                                return;
+                            }
+                        }
+
+                        // error from backend
+                        const response = result.reason.response;
+                        if (response) {
+                            if (response.status === 404) {
+                                dispatch(setUserSelections({user, selections: {}}));
+                            }
+                        } else {
+                            dispatch(
+                                setError({
+                                    errType: ERR_TYPE.ERR,
+                                    message:
+                                        'Month information could not be fetched, please try again later. Close this notification to be redirected to the landing page.',
+                                    redirect: '/',
+                                    disableControl: true,
+                                })
+                            );
+                        }
+                    }
+                });
+            });
+        return () => {
+            controller.abort();
+        }
+    }, [selectWeek, planId, users]);
+
+    if (updateFailed) {
+        dispatch(
+            setError({
+                errType: ERR_TYPE.WARN,
+                message:
+                    'An error occurred in updating your selections.',
+                disableControl: false,
+            })
+        );
+        dispatch(resetUpdateFailed());
+    }
 
     const onEnterSegment = (dateTime) => {
         if (isSelecting) setEditCursor(dateTime);
@@ -285,7 +328,12 @@ function OutingCalendar({ tripId }) {
     }
 
     const confirmEdit = () => {
-        dispatch(setUserSelections({user: currentUser, selections: currentSelects}));
+        dispatch(updateOutings({
+            user: currentUser,
+            selections: currentSelects,
+            months: monthsToUpdate,
+            planId,
+        }));
         toggleEdit();
     }
 
@@ -316,7 +364,7 @@ function OutingCalendar({ tripId }) {
             } else {
                 const updateCopy = JSON.parse(JSON.stringify(currentSelects));
                 if (isAfter(editCursor, editAnchor)) {
-                    updateSelections(updateCopy, editAnchor, editCursor, slots, isAdding);
+                    updateSelections(updateCopy, editAnchor, editCursor, slots, isAdding, setUpdateMonths, monthsToUpdate);
                 }
                 setCurrSelects(updateCopy);
                 setIsSelecting(false);
@@ -397,6 +445,7 @@ function OutingCalendar({ tripId }) {
                                 : null;
                             return <div className="day-column" key={`day-col-${format(day, 'yyyy-MM-dd')}`}>
                                 <OutingDay
+                                    fake={isLoading}
                                     key={`daySegments-${format(day, 'yyyy-MM-dd')}`}
                                     date={new Date(day)}
                                     slots={getDayRanges(day, slots)}

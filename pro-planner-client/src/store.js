@@ -15,7 +15,7 @@ export default configureStore({
         user: userSlice,
         error: errorSlice,
         poll: pollSlice,
-        outingSelections: outingSlice,
+        outing: outingSlice,
         tripSelections: tripSlice,
         summary: summarySlice,
         cost: costSlice,

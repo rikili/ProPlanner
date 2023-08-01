@@ -13,7 +13,7 @@ import './HomePage.scss';
 import { buildServerRoute } from '../helpers/Utils';
 
 const HomePage = () => {
-	const tripId = useLoaderData();
+	const planId = useLoaderData();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const selectedUser = useSelector(state => state.user.selectedUser);
@@ -24,10 +24,10 @@ const HomePage = () => {
 
 	useEffect(() => {
 		if (!isUserSelected) {
-			navigate(`/user/${tripId}`);
+			navigate(`/user/${planId}`);
 		} else {
-			dispatch(setupParams(tripId));
-			axios.get(buildServerRoute('trip', tripId))
+			dispatch(setupParams(planId));
+			axios.get(buildServerRoute('plan', planId))
 				.then((result) => {
 					dispatch(updatePlan(result.data));
 				})
@@ -42,7 +42,7 @@ const HomePage = () => {
 					}
 				});
 		}
-	}, [dispatch, tripId, isUserSelected, navigate]);
+	}, [dispatch, planId, isUserSelected, navigate]);
 
 	return <>
 		<div className='home-page'>

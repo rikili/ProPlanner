@@ -1,35 +1,68 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { buildServerRoute } from '../helpers/Utils';
+
+export const updateOutings = createAsyncThunk('outing/update', async({ user, planId, selections, months }, { rejectWithValue }) => {
+    const promises = months.map((monthIndex) => axios.put(buildServerRoute('outing', planId), {
+        userId: user,
+        selections: {
+            [monthIndex]: selections[monthIndex]
+        }
+    }));
+    let reject = false;
+    const result = (await Promise.allSettled(promises)).map((res) => {
+        if (!res.reason) return res.value.data.month;
+        reject = true;
+        return null; // clear out error cases
+    });
+    const payload = {
+        result,
+        months,
+        user,
+    };
+    return (reject ? rejectWithValue(payload) : payload);
+});
 
 const outingSlice = createSlice({
-	name: 'calendar',
+	name: 'outing',
 	initialState: {
-        user1: {
-            '06-2023': {
-                1: [["00:00", "3:00"], ["5:00",  "7:00"]],
-                2: [["21:00", "23:59"]],
-                3: [["00:00", "01:00"], ["02:00","03:00"], ["20:00", "21:00"], ["22:00", "23:00"]]
-            }
-        },
-        user2: {
-            '06-2023': {
-                1: [["00:00", "3:00"], ["5:00",  "7:00"]],
-                3: [["00:00", "3:00"], ["5:00",  "7:00"]]
-            }
-        },
-        user3: {
-            '06-2023': {
-                1: [["00:00", "3:00"], ["5:00",  "7:00"]],
-                5: [["00:00", "3:00"], ["5:00",  "7:00"]]
-            }
-        },
+        isLoading: false,
+        selections: {},
     },
 	reducers: {
 		setUserSelections(state, action) {
 			const { user, selections } = action.payload;
-			state[user] = selections;
+			state.selections[user] = selections;
 		},
+        setLoading(state, { payload }) {
+            state.isLoading = payload;
+        },
+        resetUpdateFailed(state) {
+            state.updateFailed = false;
+        }
 	},
+    extraReducers: (builder) => {
+        builder.addCase(updateOutings.fulfilled, (state, { payload }) => {
+            const { result, hasUpdateFailed, months, user } = payload;
+
+            months.forEach((monthIndex, index) => {
+                const userSelections = state.selections[user];
+                const monthResult = result[index];
+                userSelections[monthIndex] = monthResult;
+            });
+        });
+        builder.addCase(updateOutings.rejected, (state, { payload }) => {
+            const { result, months, user } = payload;
+
+            months.forEach((monthIndex, index) => {
+                const userSelections = state.selections[user];
+                const monthResult = result[index];
+                if (!monthResult) return;
+                userSelections[monthIndex] = monthResult;
+            });
+        });
+    }
 });
 
-export const { setUserSelections } = outingSlice.actions;
+export const { setUserSelections, setLoading, resetUpdateFailed } = outingSlice.actions;
 export default outingSlice.reducer;
