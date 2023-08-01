@@ -80,7 +80,7 @@ const TripHalfDay = ({
 
 	return (
 		<div
-			onClick={handleClick}
+			onClick={isValid ? handleClick : null}
 			onMouseEnter={editing || deciding ? onMouseEnter : null}
 			className={compiledClass}
 		>

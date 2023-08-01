@@ -24,7 +24,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             {
-                path: '/',
+                path: '',
                 element: <LandingPage />,
                 errorElement: <ErrorPage />,
             },
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/:tripId/',
+                path: '/:tripId',
                 loader: ({ params }) => params.tripId, // TODO: can be made to cause an API call to fetch ID, passing it for now
                 element: <HomePage />,
                 errorElement: <ErrorPage />,

@@ -9,10 +9,11 @@ import { addDays, format } from 'date-fns';
 
 import InputDetailsForm from '../components/InputDetailsForm';
 import TimeRangeForm from '../components/TimeRangeForm';
-import { updatePlan } from '../redux/planParamSlice';
+import { setIsUploading, updatePlan } from '../redux/planParamSlice';
 import { setError, resetError } from '../redux/errorSlice';
 import { ERR_TYPE, PLAN_TYPE } from '../constants';
 import { buildServerRoute } from '../helpers/Utils';
+import LoadingDisplay from '../components/LoadingDisplay';
 
 const isProperSubmission = (formData, isOuting) => {
     if (!(formData.name && formData.location)) return false;
@@ -99,6 +100,7 @@ const PlanCreator = ({ title = <><b>Plan Setup</b></> }) => {
     const detailForm = useRef(null);
     const timeForm = useRef(null);
     const isOuting = useSelector(state => state.planParameters.planType) === PLAN_TYPE.OUTING;
+    const isUploading = useSelector(state => state.planParameters.isUploading);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -254,30 +256,35 @@ const PlanCreator = ({ title = <><b>Plan Setup</b></> }) => {
             return;
         }
 
-        const postPromise = axios.post(buildServerRoute('trip'), formResult)
+        const planType = isOuting ? PLAN_TYPE.OUTING : PLAN_TYPE.TRIP;
+        axios.post(buildServerRoute(planType), formResult)
             .then((result) => {
-                dispatch(updatePlan(formResult));
+                dispatch(updatePlan({...formResult, planType}));
+                dispatch(setIsUploading(false));
                 dispatch(resetError());
-                navigate(`/user/${result.data}`);
+                navigate(`/user/${result.data['_id']}`);
             })
             .catch((err) => {
                 console.log(err);
+                dispatch(setIsUploading(false));
             });
-
-        // dispatch(updatePlan(formResult));
-        // dispatch(resetError());
-        // navigate(`/user/${postPromise}`); // TODO: ID should be generated on confirm -- get from backend
+        dispatch(setIsUploading(true));
     }
 
-    return <div className="w-50 mx-auto mt-5">
-        <InputDetailsForm ref={detailForm} title={title} />
-        {isOuting && <TimeRangeForm ref={timeForm} />}
-        <div className="text-center m-3">
-            <Button className="w-50" variant="success" size="md" onClick={handleFormSubmission}>
-                <b>Submit</b>
-            </Button>
-        </div>
-    </div>
+    return <>
+        {isUploading
+            ? <LoadingDisplay />
+            : <div className="w-50 mx-auto">
+                <InputDetailsForm ref={detailForm} title={title} />
+                {isOuting && <TimeRangeForm ref={timeForm} />}
+                <div className="text-center m-3">
+                    <Button className="w-50" variant="success" size="md" onClick={handleFormSubmission}>
+                        <b>Submit</b>
+                    </Button>
+                </div>
+            </div>
+        }
+    </>
 }
 
 export default PlanCreator;

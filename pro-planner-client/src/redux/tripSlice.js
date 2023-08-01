@@ -3,7 +3,7 @@ import { buildServerRoute, getTimezone } from '../helpers/Utils';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { LOAD_STATUS } from '../constants';
 
-export const setUserSelectionsAsync = createAsyncThunk('calendar/trip/update', async ({tripId, userId, newSelections, monthIndex}) => {
+export const setUserSelectionsAsync = createAsyncThunk('trip/update', async ({tripId, userId, newSelections, monthIndex}) => {
     const timezone = getTimezone();
     const response = await axios.put(buildServerRoute('trip',tripId), { 
         userId,
@@ -28,7 +28,7 @@ const addSelectionToUser = (state, userId, monthIndex, monthSelects) => {
 }
 
 const tripSlice = createSlice({
-	name: 'calendar',
+	name: 'trip',
 	initialState: {
         isLoading: false,   // in loading state
         isInitDone: false,    // inital loading finished for user fetching
