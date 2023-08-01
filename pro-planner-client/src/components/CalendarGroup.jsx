@@ -16,7 +16,7 @@ const CalendarGroup = ({ renderCalendar }) => {
                 selectedUser={selectedUser}
                 setSelectedUser={setSelectedUser}
             />
-            {renderCalendar(selectedUser)}
+            {renderCalendar(selectedUser, setIsEditMode, isEditMode)}
             <div className='details-stack'>
                 <DecisionInfo />
                 <SummaryList />
