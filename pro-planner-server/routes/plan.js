@@ -14,12 +14,43 @@ router.get('/:id', async (req, res) => {
     const fetchedParams = await getParams(req.params.id);
     if (fetchedParams) {
       const params = fetchedParams.planParameters.toObject();
-      console.log(params)
       res.status(200).send(params);
       return;
     }
   }
   res.status(404).send('Invalid plan ID');
+});
+
+router.put('/:id', async (req, res) => {
+  const id = req.params.id;
+  const data = req.body;
+  const newParams = {
+    name: data.name,
+    planType: data.planType,
+    dayOffset: data.dayOffset,
+    isAllDay: data.isAllDay,
+    location: data.location,
+    dateTimeRange: data.dateTimeRange,
+  };
+  try {
+    let updatedParams = await plan.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      {
+        $set: { planParameters: newParams },
+      },
+      {
+        new: true,
+        projection: {
+          _id: 0,
+          planParameters: 1,
+        },
+      }
+    );
+    updatedParams = updatedParams.toJSON();
+    res.status(200).json(updatedParams.planParameters);
+  } catch (err) {
+    res.status(400).send({ err: err.message });
+  }
 });
 
 const findParams = async (id) => {
