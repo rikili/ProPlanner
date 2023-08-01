@@ -31,6 +31,15 @@ const costSchema = new Schema(
     }
 );
 
+// const costSchema = new Schema(
+//   {
+//       costs: Schema.Types.Mixed
+//   },
+//   {
+//     collection: 'Cost',
+//   }
+// );
+
 module.exports = {
   Expense: mongoose.model('Expense', expenseSchema),
   UserExpense: mongoose.model('UserExpenses', userExpenseSchema),

@@ -4,38 +4,45 @@
 const express = require('express');
 const router = express.Router();
 const {Cost, UserExpense, Expense} = require("../models/cost");
+const trip = require('../models/trip'); // TODO: change this to plan
 
 router.get('/:id', async (req, res) => {
     // If eventId doesn't exist, create one and add it to mongodb
     // If exists, return resutls
 
-    const getUserExpense = () => {
-        // TODO: fetches users and add a UserExpense for each user
-        return {};
+    
+    const getUserExpense = async () => {
+        const plan = await trip.find({_id: req.params.id}, {"userInfo": 1, "_id": 0});
+        // const results = {};
+        const results = new Map();
+
+        Object.values(plan).forEach((userInfo) => {
+            if (userInfo["userInfo"]){
+                Object.keys(userInfo["userInfo"]).forEach((name) => {
+                    const userToAdd = {
+                        userName: name,
+                        expenses: {}
+                    }
+                    results.set(name, userToAdd);
+                })
+            }
+        });
+        const x = UserExpense(results)
+        return results;
     }
 
-    const costs = await Cost.findOne({ eventId: req.params.id });
+    let costs = await Cost.findOne({ _id: req.params.id });
+    
     if (!costs) {
         const costData = {
-            eventId: req.params.id,
-            costs: getUserExpense()
+            _id: req.params.id,
+            costs: await getUserExpense()
         };
         newCost = new Cost(costData)
         const savedCost = await newCost.save()
+        costs = savedCost;
     }
-
-    // try {
-    //     console.log("object ID Exists: ")
-    //     console.log(req.params.id)
-    //     const doc = new ObjectId(req.params.id);
-        
-    //     console.log("fetched costs: " + costs);
-    // } catch (e) {
-    //     console.log("ERROR")
-    //     return;
-    // }
-    console.log("Requesting costs")
-    res.json('');
+    res.json(costs);
 });
 
 
