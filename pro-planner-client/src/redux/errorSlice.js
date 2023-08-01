@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { updateOutings } from './outingSlice';
 import { ERR_TYPE } from '../constants';
+import { setUserSelectionsAsync } from './tripSlice';
 
 // Custom Errors
 const selectionUpdateFailure = (state) => {
@@ -59,6 +60,10 @@ const errorSlice = createSlice({
         // Custom error cases
         builder.addCase(updateOutings.rejected, (state) => {
             selectionUpdateFailure(state);
+        });
+
+        builder.addCase(setUserSelectionsAsync.rejected, (state) => {
+            selectionUpdateFailure(state)
         });
     },
 });

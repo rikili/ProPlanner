@@ -2,7 +2,7 @@ import './TripCalendar.scss';
 import axios from 'axios';
 import { useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Col, Button, Container, Card } from 'react-bootstrap';
+import { Col, Container, Card } from 'react-bootstrap';
 import {
 	getDay,
 	startOfMonth,
@@ -31,14 +31,13 @@ import { getMonthIndex } from '../helpers/Calendar';
 import { getHalfDate, isFirstHalf } from '../helpers/TripCalendar';
 import { buildServerRoute, getTimezone } from '../helpers/Utils';
 import { setError } from '../redux/errorSlice';
-import { ERR_TYPE, LOAD_STATUS } from '../constants';
+import { ERR_TYPE } from '../constants';
 import './TripCalendar.scss';
 import TripDay from './TripDay';
 import TripCalendarLabel from './TripCalendarLabel';
 import TripWeekDayLabels from './TripWeekDayLabels';
 import TripMonthSelector from './TripMonthSelector';
 import { setDecisionRange } from '../redux/planParamSlice';
-import UserSideBar from './UserSideBar';
 import CalendarControls from './CalendarControls';
 
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
@@ -59,9 +58,6 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	const calendar = useSelector(state => state.tripSelections.selections);
 	const isLoading = useSelector(state => state.tripSelections.isLoading);
 	const isInitDone = useSelector(state => state.tripSelections.isInitDone);
-	const hasUpdateFailed =
-		useSelector(state => state.tripSelections.updateStatus) ===
-		LOAD_STATUS.FAILED;
 
 	let userCalendar;
 	if (calendar[currUser]) {
@@ -77,9 +73,6 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	// Check for whether we can move further left or right using month selectors
 	let isLeftEnd = isSameMonth(currDateStart, startDate);
 	let isRightEnd = isSameMonth(currDateStart, endDate);
-
-	// Edit mode toggle
-	// const [isEditMode, setIsEditMode] = useState(false);
 
 	// Deciding mode toggle
 	const [isDeciding, setIsDeciding] = useState(false);
@@ -284,16 +277,12 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	};
 
 	const confirmEdits = () => {
-		for (let monthIndex of monthsToUpdate) {
-			dispatch(
-				setUserSelectionsAsync({
-					planId,
-					userId: currUser,
-					newSelections: dateSelections[monthIndex],
-					monthIndex,
-				})
-			);
-		}
+		dispatch(setUserSelectionsAsync({
+			tripId: planId,
+			userId: currUser,
+			newSelections: dateSelections,
+			months: monthsToUpdate,
+		}));
 		setUpdateMonths([]);
 		resetSelecting();
 		toggleEdit();
@@ -400,22 +389,11 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 		}
 	};
 
-	if (hasUpdateFailed) {
-		dispatch(
-			setError({
-				errType: ERR_TYPE.ERR,
-				message: 'Updating of selections has failed. Please try again.',
-				disableControl: false,
-			})
-		);
-	}
-
 	// Compile final renderings of calendar grid
 	if (
 		!(
 			isInitDone &&
-			Object.values(combinedSelections).length &&
-			!hasUpdateFailed
+			Object.values(combinedSelections).length
 		)
 	)
 		return <div></div>;
