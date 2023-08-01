@@ -12,14 +12,14 @@ const SchedulePage = () => {
 
     const renderCalendar = (selectedUser, setIsEditMode, isEditMode) =>
         planParams.planType === PLAN_TYPE.OUTING ? (
-            <OutingCalendar
+            <OutingCalendar planId={planId} />
+        ) : (
+            <TripCalendar
                 planId={planId}
                 selectedUser={selectedUser}
                 isEditMode={isEditMode}
                 setIsEditMode={setIsEditMode}
             />
-        ) : (
-            <TripCalendar planId={planId} selectedUser={selectedUser} />
         );
 
     return <CalendarGroup renderCalendar={renderCalendar} />;

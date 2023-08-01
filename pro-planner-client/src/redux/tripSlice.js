@@ -1,23 +1,46 @@
 import axios from 'axios';
 import { buildServerRoute, getTimezone } from '../helpers/Utils';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { LOAD_STATUS } from '../constants';
 
-export const setUserSelectionsAsync = createAsyncThunk('trip/update', async ({tripId, userId, newSelections, monthIndex}) => {
-    const timezone = getTimezone();
-    const response = await axios.put(buildServerRoute('trip',tripId), { 
-        userId,
-        timezone,
-        selections: {
-            [monthIndex] : newSelections,
+export const setUserSelectionsAsync = createAsyncThunk(
+    'trip/updateSelects',
+    async ({ tripId, userId, newSelections, months }, { rejectWithValue }) => {
+        const timezone = getTimezone();
+
+        const promises = months.map((monthIndex) =>
+            axios.put(buildServerRoute('trip', tripId), {
+                userId,
+                timezone,
+                selections: {
+                    [monthIndex]: newSelections[monthIndex],
+                },
+            })
+        );
+
+        const results = await Promise.allSettled(promises);
+
+        let reject = false;
+        const result = results.map((res) => {
+            if (!res.reason) return res;
+            reject = true;
+            return null;
+        });
+
+        const payloadData = {};
+
+        result.forEach((res, index) => {
+            if (!res) return;
+            const monthIndex = months[index];
+            payloadData[monthIndex] = res.value.data.month;
+        });
+
+        const payload = {
+            userId: userId,
+            data: payloadData,
         }
-    });
-    return {
-        userId: userId,
-        monthIndex: monthIndex,
-        data: response.data
-    };
-});
+        return (reject ? rejectWithValue(payload) : payload);
+    }
+);
 
 const addSelectionToUser = (state, userId, monthIndex, monthSelects) => {
     if (!state.selections[userId]) {
@@ -25,19 +48,18 @@ const addSelectionToUser = (state, userId, monthIndex, monthSelects) => {
     } else {
         state.selections[userId][monthIndex] = monthSelects;
     }
-}
+};
 
 const tripSlice = createSlice({
-	name: 'trip',
-	initialState: {
-        isLoading: false,   // in loading state
-        isInitDone: false,    // inital loading finished for user fetching
-        updateStatus: null,
-        selections: { },
-	},
-	reducers: {
+    name: 'trip',
+    initialState: {
+        isLoading: false, // in loading state
+        isInitDone: false, // inital loading finished for user fetching
+        selections: {},
+    },
+    reducers: {
         setUserSelections(state, action) {
-            const {userId, monthIndex, data} = action.payload;
+            const { userId, monthIndex, data } = action.payload;
             if (!state.selections[userId]) {
                 state.selections[userId] = {};
             }
@@ -52,17 +74,22 @@ const tripSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(setUserSelectionsAsync.pending, (state, action) => {
-            const {userId, newSelections, monthIndex} = action.meta.arg;
+            const { userId, newSelections, monthIndex } = action.meta.arg;
             addSelectionToUser(state, userId, monthIndex, newSelections);
         });
         builder.addCase(setUserSelectionsAsync.fulfilled, (state, action) => {
-            const {userId, monthIndex, data} = action.payload;
-            addSelectionToUser(state, userId, monthIndex, data.month);
+            const { userId, data } = action.payload;
+            Object.entries(data).forEach(([monthIndex, selections]) => {
+                addSelectionToUser(state, userId, monthIndex, selections);
+            });
         });
-        builder.addCase(setUserSelectionsAsync.rejected, (state) => {
-            state.updateStatus = LOAD_STATUS.FAILED;
+        builder.addCase(setUserSelectionsAsync.rejected, (state, action) => {
+            const { userId, data } = action.payload;
+            Object.entries(data).forEach(([monthIndex, selections]) => {
+                addSelectionToUser(state, userId, monthIndex, selections);
+            });
         });
-    }
+    },
 });
 
 export const { setUserSelections, setLoading, completeInit } = tripSlice.actions;
