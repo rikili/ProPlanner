@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -15,6 +15,7 @@ import store from './store';
 import HomePage from './routes/HomePage';
 import UserSelectionPage from './routes/UserSelectionPage';
 import './index.scss';
+import EditPage from './routes/EditPage';
 import WrapperPage from './routes/WrapperPage';
 import OverviewPage from "./routes/OverviewPage";
 
@@ -62,7 +63,15 @@ const router = createBrowserRouter([
                         path: 'cost',
                         element: <CostPage />
                     },
+                    {
+                        path: 'edit',
+                        element: <EditPage />
+                    }
                 ]
+            },
+            {
+                path: '/:tridId/',
+                element: redirect('..')
             }
         ]
     },

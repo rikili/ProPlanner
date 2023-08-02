@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router-dom';
 
 import OutingCalendar from '../components/OutingCalendar';
 import TripCalendar from '../components/TripCalendar';
@@ -7,15 +7,16 @@ import CalendarGroup from '../components/CalendarGroup';
 import { PLAN_TYPE } from '../constants';
 
 const SchedulePage = () => {
-    const planId = useLocation().pathname.slice(1);
+    const { tripId } = useParams();
+
     const planParams = useSelector((state) => state.planParameters);
 
     const renderCalendar = (selectedUser, setIsEditMode, isEditMode) =>
         planParams.planType === PLAN_TYPE.OUTING ? (
-            <OutingCalendar planId={planId} />
+            <OutingCalendar planId={tripId} />
         ) : (
             <TripCalendar
-                planId={planId}
+                planId={tripId}
                 selectedUser={selectedUser}
                 isEditMode={isEditMode}
                 setIsEditMode={setIsEditMode}
