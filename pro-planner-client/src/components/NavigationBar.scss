@@ -2,7 +2,18 @@
     text-decoration: none;
     color: black;
 
-    &:hover {
+    &:hover &.on-bar {
         color: lightgrey;
+    }
+
+    &.in-dropdown {
+        padding-left: 1em;
+        &:hover {
+            background-color: rgb(231, 231, 231);
+        }
+
+        &:active {
+            background-color: grey;
+        }
     }
 }

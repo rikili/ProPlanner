@@ -46,7 +46,7 @@ const HomePage = () => {
 
 	return <>
 		<div className='home-page'>
-			<NavigationBar />
+			<NavigationBar planId={planId}/>
 			<div className='page-content'>
 				{ (loadingState === LOAD_STATUS.LOADING) && <LoadingDisplay /> }
 				{ isParamsInit && <Outlet /> }
