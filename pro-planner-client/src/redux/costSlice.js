@@ -15,8 +15,19 @@ export const addExpenseAsync = createAsyncThunk('cost/addExpense', async({tripId
         itemAmount: newItemAmount
     }
 
-    const response = await axios.post(buildServerRoute('cost', tripId), data);
+    const response = await axios.put(buildServerRoute('cost', 'addExpense', tripId), data);
     return response.data;
+});
+
+export const removeExpenseAsync = createAsyncThunk('cost/removeExpense', async({tripId, userId, newItem, newItemAmount}) => {
+    // const data = {
+    //     userName: userId,
+    //     itemName: newItem,
+    //     itemAmount: newItemAmount
+    // }
+
+    // const response = await axios.post(buildServerRoute('cost', tripId), data);
+    // return response.data;
 });
 
 const costSlice = createSlice({
@@ -93,27 +104,33 @@ const costSlice = createSlice({
             state.costsStatus = LOAD_STATUS.LOADING;
         });
         builder.addCase(getCostAsync.fulfilled, (state, action) => {
-            console.log(state.costs)
-            console.log(action.payload.costs)
-            console.log(typeof action.payload.costs)
+            // console.log(state.costs)
+            // console.log(action.payload.costs)
+            // console.log(typeof action.payload.costs)
             state.costs = action.payload.costs;
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(getCostAsync.rejected, (state, action) => {
             state.pollStatus = LOAD_STATUS.FAILED;
         });
-        builder.addCase(addExpenseAsync.pending, (state, action) => {
-            state.costsStatus = LOAD_STATUS.LOADING;
-        });
+        // builder.addCase(addExpenseAsync.pending, (state, action) => {
+        //     state.costsStatus = LOAD_STATUS.LOADING;
+        // });
         builder.addCase(addExpenseAsync.fulfilled, (state, action) => {
-            // state.costs[action.payload.user] =
-            // TODO
+            state.costs = action.payload.costs;
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(addExpenseAsync.rejected, (state, action) => {
             state.pollStatus = LOAD_STATUS.FAILED;
         });
-        // put request to update a single user's expense (add/remove)
+        builder.addCase(removeExpenseAsync.fulfilled, (state, action) => {
+            // TODO
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(removeExpenseAsync.rejected, (state, action) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+
     }
 })
 
