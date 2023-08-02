@@ -75,9 +75,9 @@ const InputDetailsForm = ({ title = false, editDetails }) => {
                 </Card.Title>
             )}
             <Card.Body>
-                <h7>
+                <h6>
                     <b>Details</b>
-                </h7>
+                </h6>
                 <p className="detail-form-instruct">* - Required fields</p>
                 <div>
                     <Form.Group controlId="planName" className="mb-2">
