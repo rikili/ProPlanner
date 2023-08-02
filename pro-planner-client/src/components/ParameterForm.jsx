@@ -141,6 +141,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null }) => {
             name: formVals('planName'),
             location: formVals('planLocation'),
             budget: formVals('planBudget'),
+            description: formVals('planDescription'),
             dateRange: [
                 reformatDateString(formVals('planStartDate')),
                 reformatDateString(formVals('planEndDate'))
@@ -160,6 +161,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null }) => {
             name: detailResults.name,
             location: detailResults.location,
             budget: detailResults.budget,
+            description: detailResults.description,
             dateTimeRange: [],
             dayOffset: [],
         };
@@ -326,7 +328,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null }) => {
         <InputDetailsForm title={title} editDetails={editDetails} />
         {isOuting && <TimeRangeForm editDetails={editDetails} />}
         <div className="text-center">
-            <Button className="w-50" variant="success" size="md" type="submit">
+            <Button className="w-50 mb-3" variant="success" size="md" type="submit">
                 <b>Submit</b>
             </Button>
         </div>
