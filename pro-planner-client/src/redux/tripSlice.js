@@ -73,10 +73,6 @@ const tripSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(setUserSelectionsAsync.pending, (state, action) => {
-            const { userId, newSelections, monthIndex } = action.meta.arg;
-            addSelectionToUser(state, userId, monthIndex, newSelections);
-        });
         builder.addCase(setUserSelectionsAsync.fulfilled, (state, action) => {
             const { userId, data } = action.payload;
             Object.entries(data).forEach(([monthIndex, selections]) => {
