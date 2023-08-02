@@ -4,7 +4,6 @@ import { Button, Form } from 'react-bootstrap';
 import { addUserAsync } from '../redux/userSlice';
 import { useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { setError, resetError } from '../redux/errorSlice';
 import { ERR_TYPE } from '../constants';
 
@@ -68,8 +67,6 @@ const AddUserForm = () => {
 			return;
 		}
 		dispatch(resetError());
-		// console.log({ newUser });
-		console.log({ planId, newUser });
 		dispatch(addUserAsync({ newUser, planId }));
 		setUserName('');
 	};
