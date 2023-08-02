@@ -12,9 +12,9 @@ const planSchema = new Schema(
       location: Schema.Types.String,
       dateTimeRange: Schema.Types.Array,
       description: Schema.Types.String,
+      decision: Schema.Types.Array,
     },
     userInfo: Schema.Types.Mixed,
-    decision: Schema.Types.Array,
   },
   {
     collection: 'Plan',
