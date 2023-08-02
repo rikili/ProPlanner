@@ -16,6 +16,7 @@ const planParamSlice = createSlice({
         dateTimeRange: [],
         dayOffset: [],
         isAllDay: false,
+        description: '',
         location: null,
         budget: null,
         
@@ -47,6 +48,7 @@ const planParamSlice = createSlice({
             state.dayOffset = payload.dayOffset;
             state.isAllDay = payload.isAllDay;
             state.location = payload.location;
+            state.description = payload.description;
             state.budget = payload.budget;
             state.dateTimeRange = payload.dateTimeRange;
             state.planType = payload.planType;
@@ -73,13 +75,15 @@ const planParamSlice = createSlice({
             state.paramStatus = LOAD_STATUS.FAILED;
         });
         builder.addCase(setupParams.fulfilled, (state, action) =>  {
-            const params = action.payload;
-            state.name = params.name;
-            state.planType = params.planType;
-            state.dateTimeRange = params.dateTimeRange;
-            state.dayOffset = params.dayOffset;
-            state.isAllDay = params.isAllDay;
-            state.location = params.location;
+            const {name, planType, dateTimeRange, dayOffset, budget, description, isAllDay, location} = action.payload;
+            state.name = name;
+            state.planType = planType;
+            state.dateTimeRange = dateTimeRange;
+            state.dayOffset = dayOffset;
+            budget && (state.budget = budget);
+            description && (state.description = description);
+            state.isAllDay = isAllDay;
+            state.location = location;
             state.paramStatus = LOAD_STATUS.SUCCESS;
             state.isInitialized = true;
         });
