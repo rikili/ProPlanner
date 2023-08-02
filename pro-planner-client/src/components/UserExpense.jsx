@@ -3,7 +3,7 @@ import {FaMinus, FaPlus} from "react-icons/fa6";
 import {CiSquarePlus} from "react-icons/ci";
 import {Form, Button, Card, Col, InputGroup, ListGroup, Row, Modal} from "react-bootstrap";
 import {useDispatch} from "react-redux";
-import { addExpenseAsync, removeExpense} from "../redux/costSlice";
+import { addExpenseAsync, removeExpenseAsync} from "../redux/costSlice";
 import { useLocation } from "react-router";
 // import {v4 as uuidv4} from "uuid";
 import {setError} from "../redux/errorSlice";
@@ -40,7 +40,6 @@ const UserExpense = ({user, userId, currUserId}) => {
 
     const handleAddExpense = () => {
         let formResult = {
-            // expenseId: uuidv4()
             tripId: tripId,
             userId: userId,
             newItem: newItem,
@@ -89,10 +88,11 @@ const UserExpense = ({user, userId, currUserId}) => {
     const handleDeleteExpense = () => {
         if (deleteExpenseId) {
             let target = {
+                tripId: tripId,
                 userId: userId,
                 expenseId: deleteExpenseId,
             }
-            dispatch(removeExpense(target));
+            dispatch(removeExpenseAsync(target));
         }
         setDeleteExpenseId(null);
         setShowDeleteConfirmation(false);

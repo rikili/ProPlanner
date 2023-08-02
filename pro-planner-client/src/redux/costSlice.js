@@ -19,15 +19,14 @@ export const addExpenseAsync = createAsyncThunk('cost/addExpense', async({tripId
     return response.data;
 });
 
-export const removeExpenseAsync = createAsyncThunk('cost/removeExpense', async({tripId, userId, newItem, newItemAmount}) => {
-    // const data = {
-    //     userName: userId,
-    //     itemName: newItem,
-    //     itemAmount: newItemAmount
-    // }
+export const removeExpenseAsync = createAsyncThunk('cost/removeExpense', async({tripId, userId, expenseId}) => {
+    const data = {
+        userName: userId,
+        expenseId: expenseId
+    }
 
-    // const response = await axios.post(buildServerRoute('cost', tripId), data);
-    // return response.data;
+    const response = await axios.put(buildServerRoute('cost', 'removeExpense', tripId), data);
+    return response.data;
 });
 
 const costSlice = createSlice({
@@ -78,18 +77,6 @@ const costSlice = createSlice({
         },
     },
     reducers: {
-        // addExpense: (state, action) => {
-        //     const input = action.payload;
-        //     const newExpense = {
-        //         item: input.newItem,
-        //         amount: input.newItemAmount
-        //     }
-        //     state.costs[input.userId].expenses[input.expenseId] = newExpense
-        // },
-        removeExpense: (state, action) => {
-            const input = action.payload;
-            delete state.costs[input.userId].expenses[input.expenseId];
-        },
         addUser: (state, action) => {
             const input = action.payload
             const newUser = {
@@ -104,18 +91,15 @@ const costSlice = createSlice({
             state.costsStatus = LOAD_STATUS.LOADING;
         });
         builder.addCase(getCostAsync.fulfilled, (state, action) => {
-            // console.log(state.costs)
-            // console.log(action.payload.costs)
-            // console.log(typeof action.payload.costs)
             state.costs = action.payload.costs;
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(getCostAsync.rejected, (state, action) => {
             state.pollStatus = LOAD_STATUS.FAILED;
         });
-        // builder.addCase(addExpenseAsync.pending, (state, action) => {
-        //     state.costsStatus = LOAD_STATUS.LOADING;
-        // });
+        builder.addCase(addExpenseAsync.pending, (state, action) => {
+            state.costsStatus = LOAD_STATUS.LOADING;
+        });
         builder.addCase(addExpenseAsync.fulfilled, (state, action) => {
             state.costs = action.payload.costs;
             state.pollStatus = LOAD_STATUS.SUCCESS;
@@ -123,14 +107,16 @@ const costSlice = createSlice({
         builder.addCase(addExpenseAsync.rejected, (state, action) => {
             state.pollStatus = LOAD_STATUS.FAILED;
         });
+        builder.addCase(removeExpenseAsync.pending, (state, action) => {
+            state.costsStatus = LOAD_STATUS.LOADING;
+        });
         builder.addCase(removeExpenseAsync.fulfilled, (state, action) => {
-            // TODO
+            state.costs = action.payload.costs;
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(removeExpenseAsync.rejected, (state, action) => {
             state.pollStatus = LOAD_STATUS.FAILED;
         });
-
     }
 })
 
