@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     Button,
     Card,
     Col,
     Container,
     Form,
+    Overlay,
     OverlayTrigger,
     Row,
     Tooltip
@@ -21,13 +22,18 @@ const LandingPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const tripButtonIcon = useRef(null);
+    const outingButtonIcon = useRef(null);
+
+    const [showTripTooltip, setShowTripTooltip] = useState(false);
+    const [showOutingTooltip, setShowOutingTooltip] = useState(false);
+
     const handleInput = e => {
         setInputValue(e.target.value);
     };
 
     const handleJoin = (event) => {
         event.preventDefault();
-        //TODO: get ID if URL
         navigate(`/user/${inputValue}`);
     }
 
@@ -36,13 +42,11 @@ const LandingPage = () => {
         navigate(`create`);
     }
 
-    const renderTooltip = text => <Tooltip id="button-tooltip">{text}</Tooltip>;
-
     return (
         <Container>
             <Row className="vh-100 d-flex justify-content-center align-items-center">
                 <Col md={8} lg={6} xs={12}>
-                    <div className="border border-3 border-primary"></div>
+                    <div className="border border-3 border-primary" style={{position: 'relative', top: '0.3em', zIndex: '1'}} />
                     <Card className="shadow">
                         <Card.Body>
                             <div className="mt-md-4">
@@ -57,36 +61,54 @@ const LandingPage = () => {
                                         <Button
                                             variant="primary"
                                             size="lg"
-                                            className="mb-2 w-50 m-auto"
+                                            className="mb-2 w-50 m-auto d-flex"
                                             onClick={() => handleCreate(PLAN_TYPE.TRIP)}
                                         >
-                                            Trip
-                                            <OverlayTrigger
+                                            <div className="m-auto">Trip</div>
+                                            <span className="float-end"
+                                                  onMouseEnter={() => setShowTripTooltip(true)}
+                                                  onMouseLeave={() => setShowTripTooltip(false)}
+                                                  ref={tripButtonIcon}>
+                                                <FiInfo />
+                                            </span>
+                                            <Overlay
+                                                target={tripButtonIcon.current}
+                                                show={showTripTooltip}
                                                 placement="top"
-                                                overlay={renderTooltip('Tooltip for Trip')}
                                             >
-                                                <span className="float-end">
-                                                    <FiInfo />
-                                                </span>
-                                            </OverlayTrigger>
+                                                {(props) => (
+                                                    <Tooltip {...props}>
+                                                        {'Scheduling based on scale of half day increments. For planning longer trips/timeframes'}
+                                                    </Tooltip>
+                                                )}
+                                            </Overlay>
                                         </Button>
                                     </Row>
-                                    <Row className="text-center">
+                                    <Row className="text-center mb-3">
                                         <Button
                                             variant="primary"
                                             size="lg"
-                                            className="w-50 m-auto"
+                                            className="w-50 m-auto d-flex"
                                             onClick={() => handleCreate(PLAN_TYPE.OUTING)}
                                         >
-                                            Outing
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={renderTooltip('Tooltip for Outing')}
+                                            <div className="m-auto">Outing</div>
+                                            <span className="float-end"
+                                                  onMouseEnter={() => setShowOutingTooltip(true)}
+                                                  onMouseLeave={() => setShowOutingTooltip(false)}
+                                                  ref={outingButtonIcon}>
+                                                <FiInfo />
+                                            </span>
+                                            <Overlay
+                                                target={outingButtonIcon.current}
+                                                show={showOutingTooltip}
+                                                placement="bottom"
                                             >
-                                                <span className="float-end">
-                                                    <FiInfo />
-                                                </span>
-                                            </OverlayTrigger>
+                                                {(props) => (
+                                                    <Tooltip {...props}>
+                                                        {'Scheduling based on scale of half hour increments. For planning a one-day event'}
+                                                    </Tooltip>
+                                                )}
+                                            </Overlay>
                                         </Button>
                                     </Row>
                                     <div className="mt-3">
