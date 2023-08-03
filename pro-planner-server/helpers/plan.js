@@ -12,6 +12,7 @@ async function createNewEvent(data, planType) {
         isAllDay: data.isAllDay,
         location: data.location,
         dateTimeRange: data.dateTimeRange,
+        description: data.description ? data.description : '',
       },
       decision: [],
     });
