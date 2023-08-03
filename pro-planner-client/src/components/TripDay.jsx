@@ -53,7 +53,7 @@ const TripDay = ({
 	}
 
 	return (
-		<Container className="trip-half-container" key={`day-container`}>
+		<div className="trip-half-container" key={`day-container`}>
 			<TripHalfDay
 				topHalf={true}
 				date={firstHalfDate}
@@ -87,7 +87,7 @@ const TripDay = ({
 				className={className}
 				key={`day-second`}
 			/>
-		</Container>
+		</div>
 	);
 };
 
