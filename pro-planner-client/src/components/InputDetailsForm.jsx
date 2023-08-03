@@ -1,16 +1,18 @@
-import { useState, useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card, Form, Row, ButtonGroup, Button, Col } from 'react-bootstrap';
 import { dayOffsetToDOW } from '../helpers/Calendar';
 import { PLAN_TYPE } from '../constants';
 import { format } from 'date-fns';
+import { BiArrowBack } from 'react-icons/bi';
 
 import './InputDetailsForm.scss';
+import { useNavigate } from 'react-router-dom';
 
 const dateToInputValue = (date) => {
     return format(date, 'yyyy-MM-dd');
 };
 
-const InputDetailsForm = ({ title = false, editDetails }) => {
+const InputDetailsForm = ({ title = false, editDetails, showBack = false }) => {
     const [selectedDays, setSelectedDays] = useState({
         Su: true,
         Mo: true,
@@ -20,6 +22,8 @@ const InputDetailsForm = ({ title = false, editDetails }) => {
         Fr: true,
         Sa: true,
     });
+    const navigate = useNavigate();
+
     const startDateInput = useRef(null);
     const endDateInput = useRef(null);
     const nameInput = useRef(null);
@@ -67,8 +71,17 @@ const InputDetailsForm = ({ title = false, editDetails }) => {
         setSelectedDays(newSelection);
     };
 
+    const handleBack = (e) => {
+        e.preventDefault();
+        navigate('/');
+    }
+
     return (
         <Card className="p-2">
+            {showBack && <div>
+                    <button className="back-button" onClick={handleBack}><BiArrowBack /></button>
+                </div>
+            }
             {title && (
                 <Card.Title className="mb-1">
                     <h4>{title}</h4>

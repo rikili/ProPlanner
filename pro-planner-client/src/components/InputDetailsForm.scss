@@ -2,3 +2,18 @@
     font-size: 0.8em;
     color: rgb(182, 34, 34);
 }
+
+.back-button {
+    display: flex;
+    justify-content: flex-start;
+    padding: 0.5em;
+    border-radius: 1em;
+
+    &:hover {
+        background-color: lightgrey;
+    }
+
+    &:active {
+        background-color: rgb(142, 181, 255);
+    }
+}

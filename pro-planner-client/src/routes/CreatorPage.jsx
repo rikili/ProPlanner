@@ -30,7 +30,7 @@ const CreatorPage = () => {
     return <>
         {isUploading
             ? <LoadingDisplay />
-            : <ParameterForm title="Plan Setup" onSubmit={handleSubmit} />
+            : <ParameterForm title="Plan Setup" onSubmit={handleSubmit} showBack />
         }
     </>
 }
