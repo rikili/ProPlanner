@@ -1,5 +1,5 @@
 // code references mongoose documention: https://mongoosejs.com/docs/guide.html , https://mongoosejs.com/docs/models.html, https://mongoosejs.com/docs/schematypes.html
-
+// mongoose allow return empty property references: https://stackoverflow.com/questions/68795159/mongoose-does-not-return-properties-that-are-empty-objects
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const planSchema = new Schema(
@@ -18,6 +18,7 @@ const planSchema = new Schema(
   },
   {
     collection: 'Plan',
+    minimize: false,
   }
 );
 
