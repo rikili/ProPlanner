@@ -16,6 +16,7 @@ import HomePage from './routes/HomePage';
 import UserSelectionPage from './routes/UserSelectionPage';
 import './index.scss';
 import WrapperPage from './routes/WrapperPage';
+import OverviewPage from "./routes/OverviewPage";
 
 const router = createBrowserRouter([
     {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
                     {
                         path: '',
                         element: <SchedulePage />
+                    },
+                    {
+                        path: '',
+                        element: <OverviewPage />
                     },
                     {
                         path: 'vote',
