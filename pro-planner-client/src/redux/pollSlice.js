@@ -5,8 +5,8 @@ import {buildServerRoute} from "../helpers/Utils";
 
 export const getPollAsync = createAsyncThunk(
     'poll/get',
-    async ({tripId}) => {
-        const response = await axios.get(buildServerRoute('poll', tripId));
+    async ({planId}) => {
+        const response = await axios.get(buildServerRoute('poll', planId));
         return response.data;
     });
 
