@@ -25,6 +25,7 @@ const EditPage = () => {
         location: params.location,
         budget: params.budget,
         planType: params.planType,
+        description: params.description,
     };
 
     const handleSubmission = (formResult, planType) => {
