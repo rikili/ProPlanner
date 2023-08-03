@@ -1,0 +1,35 @@
+.summary-list {
+    flex-grow: 5 !important;
+}
+
+.summary-body {
+    display: flex;
+    align-items: center;
+    flex-flow: column nowrap;
+}
+
+.trip-summary-list {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    font-size: 13px;
+}
+
+.trip-summary-label {
+    color: rgb(167, 167, 167);
+    &.trip-summary-selected {
+        color: black
+    }
+}
+
+.trip-summary-instruct {
+    display: flex;
+    height: 100%;
+    margin-top: 5em;
+    flex-direction: column;
+    text-align: center;
+    color: rgb(167, 167, 167);
+}

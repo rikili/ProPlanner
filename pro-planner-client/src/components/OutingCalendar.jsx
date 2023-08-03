@@ -4,7 +4,7 @@
 // disable button references https://stackoverflow.com/questions/38196743/conditionally-set-the-disabled-state-of-a-bootstrap-button
 // conditional className references https://stackoverflow.com/questions/30533171/react-js-conditionally-applying-class-attributes
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     isAfter,
@@ -17,18 +17,27 @@ import {
     isWithinInterval,
     format,
     isSameDay,
+    isEqual,
+    eachMonthOfInterval,
 } from 'date-fns';
-import { Row, Col, Container } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { getMonthIndex } from '../helpers/Calendar';
-import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay } from '../helpers/OutingCalendar';
-import { setUserSelections } from '../redux/outingSlice';
+import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay, isTimeBefore } from '../helpers/OutingCalendar';
+import { resetUpdateFailed, setLoading, setUserSelections, updateOutings } from '../redux/outingSlice';
 
 import OutingDay from './OutingDay';
 import OutingHourLabels from './OutingHourLabels';
-import Button from 'react-bootstrap/Button';
+import './OutingCalendar.scss';
+import CalendarControls from './CalendarControls';
+import OutingCalendarLabel from './OutingCalendarLabel';
+import { setDecisionRange } from '../redux/planParamSlice';
+import axios from 'axios';
+import { buildServerRoute } from '../helpers/Utils';
+import { setError } from '../redux/errorSlice';
+import { ERR_TYPE } from '../constants';
 
 // Update working selections for current user
-const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding) => {
+const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding, setUpdateMonths, updateMonths) => {
     eachDayOfInterval({
         start: selectStart,
         end: selectEnd
@@ -37,6 +46,7 @@ const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding) 
         const isEndDay = isSameDay(dayStart, selectEnd);
 
         const monthIndex = getMonthIndex(dayStart);
+        if (!updateMonths.includes(monthIndex)) setUpdateMonths([...updateMonths, monthIndex]);
         const dateIndex = dayStart.getDate();
 
         if (!currSelects[monthIndex]) currSelects[monthIndex] = {};
@@ -186,63 +196,195 @@ const checkAnyAvailable = (weekStart, weekEnd, dates, endBoundary) => {
     return result;
 };
 
-function OutingCalendar() {
+function OutingCalendar({ planId }) {
     const params = useSelector(state => state.planParameters);
     const endDay = new Date(params.dateTimeRange[1]);
 
     const currentUser = useSelector(state => state.user.selectedUser);
-    const selections = useSelector(state => state.outingSelections);
+    const users = useSelector(state => state.user.userList);
+    const selections = useSelector(state => state.outing.selections);
+    const isLoading = useSelector(state => state.outing.isLoading);
+    const updateFailed = useSelector(state => state.outing.updateFailed);
     const [selectWeek, setSelectWeek] = useState([
         startOfWeek(new Date(params.dateTimeRange[0][0])),
         endOfWeek(new Date(params.dateTimeRange[0][0]))
     ]);
     const [isSelecting, setIsSelecting] = useState(false);
+    
+    const [isDeciding, setIsDeciding] = useState(false);
+    const [isDecidingPreview, setIsDecidingPreview] = useState(null);
+    const [decisionAnchor, setDecisionAnchor] = useState(null);
+    const [decisionCursor, setDecisionCursor] = useState(null);
+    const [decisionPreview, setDecisionPreview] = useState(null);
+
     const [isAdding, setIsAdding] = useState(true);
-    const [selectCursor, setCursor] = useState(null);
-    const [selectAnchor, setAnchor] = useState(null);
+    const [editCursor, setEditCursor] = useState(null);
+    const [editAnchor, setEditAnchor] = useState(null);
     const [currentSelects, setCurrSelects] = useState(
         !!selections[currentUser]
             ? JSON.parse(JSON.stringify(selections[currentUser]))
             : {}
     );
     const [isEditing, setEditing] = useState(false);
+    const [monthsToUpdate, setUpdateMonths] = useState([]);
+    const [firstLoad, setFirstLoad] = useState(false);
     const dispatch = useDispatch();
 
     let slots = useMemo(() => generateSlots(params), [params]);
 
-    const onEnterSegment = (dateTime) => {
-        if (isSelecting) {
-            setCursor(dateTime);
+    useEffect(() => {
+        const controller = new AbortController();
+        const promiseTrack = [];
+
+        dispatch(setLoading(true));
+        const startOfMonths = eachMonthOfInterval({start: selectWeek[0], end: selectWeek[1]});
+        users.forEach((user) => {
+            startOfMonths.forEach((month) => {
+                const monthIndex = getMonthIndex(month);
+                const request = axios.get(buildServerRoute('outing', planId, user), {
+                    params: {
+                        month: monthIndex
+                    },
+                    signal: controller.signal,
+                });
+                promiseTrack.push(request);
+            });
+        });
+
+        Promise.allSettled(promiseTrack)
+            .then((results) => {
+                dispatch(setLoading(false));
+
+                const numOfMonths = startOfMonths.length;
+                users.forEach((user, index) => {
+                    for (let resIndex = 0; resIndex < numOfMonths; resIndex++) {
+                        const result = results[resIndex + (index * numOfMonths)];
+
+                        if (!result.reason) {
+                            dispatch(setUserSelections({user, selections: {
+                                [getMonthIndex(startOfMonths[resIndex])]: result.value.data.month[0]
+                            }}));
+                            return;
+                        }
+
+                        // axios error (aka cancelled request)
+                        const request = result.reason.request;
+                        if (request) {
+                            if (request.status === 0) {
+                                return;
+                            }
+                        }
+
+                        // error from backend
+                        const response = result.reason.response;
+                        if (response) {
+                            if (response.status === 404) {
+                                dispatch(setUserSelections({user, selections: {}}));
+                            }
+                        } else {
+                            dispatch(
+                                setError({
+                                    errType: ERR_TYPE.ERR,
+                                    message:
+                                        'Month information could not be fetched, please try again later. Close this notification to be redirected to the landing page.',
+                                    redirect: '/',
+                                    disableControl: true,
+                                })
+                            );
+                        }
+                    }
+                });
+            });
+        return () => {
+            controller.abort();
         }
+    }, [selectWeek, planId, users]);
+
+    if (updateFailed) {
+        dispatch(
+            setError({
+                errType: ERR_TYPE.WARN,
+                message:
+                    'An error occurred in updating your selections.',
+                disableControl: false,
+            })
+        );
+        dispatch(resetUpdateFailed());
+    }
+
+    const onEnterSegment = (dateTime) => {
+        if (isSelecting) setEditCursor(dateTime);
+        if (isDeciding) setDecisionCursor(dateTime);
     }
 
     const toggleEdit = () => {
         if (isEditing) {
-            setAnchor(null);
-            setCursor(null);
-            dispatch(setUserSelections({user: currentUser, selections: currentSelects}));
+            setEditAnchor(null);
+            setEditCursor(null);
             setIsSelecting(false);
         }
         setEditing(!isEditing);
+        setCurrSelects(JSON.parse(JSON.stringify(selections[currentUser])));
+    }
+
+    const confirmEdit = () => {
+        dispatch(updateOutings({
+            user: currentUser,
+            planId,
+            selections: currentSelects,
+            months: monthsToUpdate,
+        }));
+        toggleEdit();
+    }
+
+    const toggleDecision = () => {
+        if (isDeciding) {
+            setDecisionAnchor(null);
+            setDecisionCursor(null);
+            setDecisionPreview(null);
+            setIsDeciding(false);
+            setIsDecidingPreview(false);
+            return;
+        }
+        setIsDeciding(true);
+    }
+
+    const confirmDecision = () => {
+        dispatch(setDecisionRange([decisionPreview[0].toISOString(), decisionPreview[1].toISOString()]));
+        toggleDecision();
     }
 
     const onSelectClick = (dateTime, isSelected) => {
-        if (!isSelecting) {
-            setIsSelecting(true);
-            setIsAdding(!isSelected);
-            setAnchor(dateTime);
-            setCursor(getEndOfSegment(dateTime));
-            return;
+        if (isEditing) {
+            if (!isSelecting) {
+                setIsSelecting(true);
+                setIsAdding(!isSelected);
+                setEditAnchor(dateTime);
+                setEditCursor(getEndOfSegment(dateTime));
+            } else {
+                const updateCopy = JSON.parse(JSON.stringify(currentSelects));
+                if (isAfter(editCursor, editAnchor)) {
+                    updateSelections(updateCopy, editAnchor, editCursor, slots, isAdding, setUpdateMonths, monthsToUpdate);
+                }
+                setCurrSelects(updateCopy);
+                setIsSelecting(false);
+                setEditAnchor(null);
+                setEditCursor(null);
+            }
+        } else if (isDeciding) {
+            if (!isDecidingPreview) {
+                setIsDecidingPreview(true);
+                setDecisionAnchor(dateTime);
+                setDecisionCursor(getEndOfSegment(dateTime));
+            } else {
+                setIsDecidingPreview(false);
+                if (decisionAnchor < decisionCursor) {
+                    setDecisionPreview([decisionAnchor, decisionCursor]);
+                }
+                setDecisionAnchor(null);
+                setDecisionCursor(null);
+            }
         }
-        
-        const updateCopy = JSON.parse(JSON.stringify(currentSelects));
-        if (isAfter(selectCursor, selectAnchor)) {
-            updateSelections(updateCopy, selectAnchor, selectCursor, slots, isAdding);
-        }
-        setCurrSelects(updateCopy);
-        setIsSelecting(false);
-        setAnchor(null);
-        setCursor(null);
     }
 
     const nextWeek = [addWeeks(selectWeek[0], 1), addWeeks(selectWeek[1], 1)];
@@ -272,50 +414,66 @@ function OutingCalendar() {
         return result;
     }
 
-    return <Container>
-        <Col className="d-flex flex-row mb-2">
-            <Button key={'edit'} onClick={toggleEdit} style={{backgroundColor: isEditing ? 'red' : 'blue'}}>edit</Button>
-            <Button
-                onClick={() => changeWeek(false)}
-                disabled={!checkAnyAvailable(prevWeek[0], prevWeek[1], slots, endDay)}
-            >
-                prev
-            </Button>
-            <Button
-                onClick={() => changeWeek(true)}
-                disabled={!checkAnyAvailable(nextWeek[0], nextWeek[1], slots, endDay)}
-            >
-                next
-            </Button>
-        </Col>
-        <Row>
-            <Col className="d-flex flex-row w-75 m-auto">
-                <OutingHourLabels />
-                {eachDayOfInterval({start: selectWeek[0], end: selectWeek[1]}).map((day, index) => {
-                    const editsForDay = currentSelects[getMonthIndex(day)]
-                        ? currentSelects[getMonthIndex(day)][day.getDate()]
-                        : null;
-                    return <Row className="w-100" key={`dayCol-${format(day, 'yyyy-MM-dd')}`}>
-                        <div className="text-center">{format(day, 'MMM dd')}</div>
-                        <OutingDay
-                            key={`daySegments-${format(day, 'yyyy-MM-dd')}`}
-                            date={new Date(day)}
-                            slots={getDayRanges(day, slots)}
-                            selections={selectsInDay(day, selections)}
-                            editSelections={editsForDay}
-                            isFirstDay={index === 0}
-                            onSegmentClick={onSelectClick}
-                            onSegmentEnter={onEnterSegment}
-                            isEditing={isEditing}
-                            currentUser={currentUser}
-                            anchor={selectAnchor}
-                            cursor={selectCursor}
-                        />
-                    </Row>
-                })}
-            </Col>
-        </Row>
-    </Container>
+    const inPreviewRange = (anchor, cursor, target) => {
+        if (!(anchor && cursor)) return false;
+        return anchor <= target && target < cursor;
+    }
+
+    const isInSelect = (dateTime) => {
+        if (isEditing) return inPreviewRange(editAnchor, editCursor, dateTime);
+        if (isDeciding) return inPreviewRange(decisionAnchor, decisionCursor, dateTime);
+    }
+
+    return <Card className='outing-card'>
+        <Card.Body className="body-content">
+            <OutingCalendarLabel dateRange={[selectWeek[0], selectWeek[1]]}
+                                 isPrevDisabled={!checkAnyAvailable(prevWeek[0], prevWeek[1], slots, endDay)}
+                                 isNextDisabled={!checkAnyAvailable(nextWeek[0], nextWeek[1], slots, endDay)}
+                                 onClick={changeWeek}/>
+            <div className="calendar-content">
+                <div className="day-labels">
+                        {eachDayOfInterval({start: selectWeek[0], end: selectWeek[1]}).map((day) => {
+                            return <div className="day-label" key={`label-${format(day, 'MMM dd')}`}>{format(day, 'MMM dd')}</div>
+                        })}
+                    </div>
+                <div className="grid-and-labels">
+                    <OutingHourLabels />
+                    <div className="calendar-grid">
+                        {eachDayOfInterval({start: selectWeek[0], end: selectWeek[1]}).map((day, index) => {
+                            const editsForDay = currentSelects[getMonthIndex(day)]
+                                ? currentSelects[getMonthIndex(day)][day.getDate()]
+                                : null;
+                            return <div className="day-column" key={`day-col-${format(day, 'yyyy-MM-dd')}`}>
+                                <OutingDay
+                                    fake={isLoading}
+                                    key={`daySegments-${format(day, 'yyyy-MM-dd')}`}
+                                    date={new Date(day)}
+                                    slots={getDayRanges(day, slots)}
+                                    selections={selectsInDay(day, selections)}
+                                    editSelections={editsForDay}
+                                    isFirstDay={index === 0}
+                                    onSegmentClick={onSelectClick}
+                                    onSegmentEnter={onEnterSegment}
+                                    isEditing={isEditing}
+                                    isDeciding={isDeciding}
+                                    currentUser={currentUser}
+                                    isInSelect={isInSelect}
+                                    decisionPreview={decisionPreview}
+                                    maxUsers={users.length}
+                                />
+                            </div>
+                        })}
+                    </div>
+                </div>
+            </div>
+            <CalendarControls toggleEdit={toggleEdit}
+                              confirmEdit={confirmEdit}
+                              editing={isEditing}
+                              deciding={isDeciding}
+                              toggleDecision={toggleDecision}
+                              confirmDecisions={confirmDecision} />
+        </Card.Body>
+    </Card>
 }
 
 export default OutingCalendar;

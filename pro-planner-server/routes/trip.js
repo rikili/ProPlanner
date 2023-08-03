@@ -14,27 +14,20 @@
 
 const express = require('express');
 const router = express.Router();
-const trip = require('../models/trip');
+const plan = require('../models/plan');
+const poll = require('../models/poll');
 const timezone = require('../helpers/timezone');
 const { ObjectId } = require('mongodb');
+const planHelper = require('../helpers/plan');
 
 router.post('/', async (req, res) => {
-  // const userId = new ObjectId(req.body.userId);
-  // temp userId
-  const userId = new ObjectId('649009f3cf33190dacb27a77');
-  const userSelections = timezone.makeAvailabilityDates(req.body.selections, req.body.timezone);
-  const tripModel = new trip({
-    planParameters: {
-      name: req.body.name,
-      planType: req.body.planType,
-      availableDays: req.body.availableDays,
-      isAllDay: req.body.isAllDay,
-      location: req.body.location,
-      dateTimeRange: req.body.dateTimeRange,
-    },
-    userInfo: { [userId]: userSelections },
+  const savedData = await planHelper.createNewEvent(req.body, 'trip');
+  const pollModel = new poll({
+    eventId: new ObjectId(savedData._id),
+    polls: {},
   });
-  let savedData = await tripModel.save();
+  await pollModel.save();
+
   res.status(200).json(savedData);
 });
 
@@ -42,7 +35,7 @@ router.put('/:id', async (req, res) => {
   const userTimezone = req.body.timezone;
   const tripId = req.params.id;
   const userId = req.body.userId;
-  let userSelection = timezone.makeAvailabilityDates(req.body.selection, userTimezone);
+  let userSelection = timezone.makeAvailabilityDates(req.body.selections, userTimezone);
   const selectionMonths = Object.keys(userSelection);
 
   if (selectionMonths.length > 1) {
@@ -79,25 +72,6 @@ router.put('/:id', async (req, res) => {
   res.status(200).send({ month: addedNewUserInfo.month });
 });
 
-router.get('/:id', async (req, res) => {
-  try {
-    new ObjectId(req.params.id);
-  } catch (e) {
-    res.status(404).send('Invalid plan ID');
-    return;
-  }
-  if (findParams(req.params.id)) {
-    const fetchedParams = await getParams(req.params.id);
-
-    if (fetchedParams) {
-      const params = fetchedParams.planParameters.toObject();
-      res.status(200).send(params);
-      return;
-    }
-  }
-  res.status(404).send('Invalid plan ID');
-});
-
 router.get('/:id/:userId', async (req, res) => {
   const monthQuery = req.query.month;
   const userId = req.params.userId;
@@ -113,43 +87,60 @@ router.get('/:id/:userId', async (req, res) => {
     monthProjection.unshift(`$userInfo.${userId}.${parseInt(prevMonth[0])}-${prevMonth[1]}`);
   }
   let requestedMonth = await getMonth(req.params.id, userId, monthProjection);
-  requestedMonth = requestedMonth.toJSON();
-  if (requestedMonth.month.length > 1) {
-    let updatedMonth;
-    if (requestedMonth.month[0] === null && requestedMonth.month[1] === null) {
-      const splitDate = monthQuery.split('-');
-      const month = splitDate[0];
-      const year = splitDate[1];
-      updatedMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
+  const splitDate = monthQuery.split('-');
+  const month = splitDate[0];
+  const year = splitDate[1];
+  if (requestedMonth) {
+    requestedMonth = requestedMonth.toJSON();
+    if (requestedMonth.month.length > 1) {
+      let updatedMonth = modifyMultiMonth(requestedMonth, offset, splitDate, nextMonth, prevMonth);
+      res.status(200).send({ month: updatedMonth });
     } else {
+      if (!requestedMonth.month[0]) {
+        const newMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
+        res.status(200).send({ month: newMonth });
+      } else {
+        res.status(200).send({ month: requestedMonth.month[0] });
+      }
+    }
+  } else {
+    const fakeMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
+    res.status(200).send({ month: fakeMonth });
+  }
+});
+
+const modifyMultiMonth = (requestedMonth, offset, splitDate, nextMonth, prevMonth) => {
+  let updatedMonth;
+  if (requestedMonth.month[0] === null && requestedMonth.month[1] === null) {
+    updatedMonth = timezone.createMonth(new Date(`${parseInt(splitDate[0]) + 1}-2-${splitDate[1]}`));
+  } else {
+    const nullCheckIndex = requestedMonth.month.indexOf(null);
+    let tempMonth;
+    if ((offset >= 6 && nullCheckIndex === 0) || (offset <= -6 && nullCheckIndex === 1)) {
+      // add requested month
+      tempMonth = timezone.createMonth(new Date(`${parseInt(splitDate[0]) + 1}-2-${splitDate[1]}`));
+    } else {
+      // add next/prev month
       // can only be -1, 0, or 1
-      const nullCheckIndex = requestedMonth.month.indexOf(null);
       if (nullCheckIndex !== -1) {
         const monthAfterOrBefore = nullCheckIndex
           ? `${parseInt(nextMonth[0]) + 1}-2-${nextMonth[1]}`
           : `${parseInt(prevMonth[0]) + 1}-2-${prevMonth[1]}`;
-        const tempMonth = timezone.createMonth(new Date(monthAfterOrBefore));
-        requestedMonth.month[nullCheckIndex] = tempMonth;
+        tempMonth = timezone.createMonth(new Date(monthAfterOrBefore));
       }
-      updatedMonth = timezone.convertCalendarLocal(requestedMonth.month, offset);
     }
-    res.status(200).send({ month: updatedMonth });
-  } else {
-    if (!requestedMonth.month[0]) {
-      const newMonth = timezone.createMonth(new Date(`${parseInt(monthQuery.split('-')[0]) + 1}-2-${monthQuery.split('-')[1]}`));
-      res.status(200).send({ month: newMonth });
-    } else {
-      res.status(200).send({ month: requestedMonth.month[0] });
-    }
+    requestedMonth.month[nullCheckIndex] = tempMonth;
+    updatedMonth = timezone.convertCalendarLocal(requestedMonth.month, offset);
   }
-});
+  return updatedMonth;
+};
 
 const addSelection = async (tripId, userId, monthToAdd) => {
   const months = Object.keys(monthToAdd);
   let addMonth;
   if (months.length > 1) {
     const monthPaths = [`$userInfo.${userId}.${months[0]}`, `$userInfo.${userId}.${months[1]}`];
-    addMonth = await trip.findOneAndUpdate(
+    addMonth = await plan.findOneAndUpdate(
       { _id: new ObjectId(tripId) },
       {
         $set: {
@@ -167,7 +158,7 @@ const addSelection = async (tripId, userId, monthToAdd) => {
     );
   } else {
     const monthPath = `$userInfo.${userId}.${months[0]}`;
-    addMonth = await trip.findOneAndUpdate(
+    addMonth = await plan.findOneAndUpdate(
       { _id: new ObjectId(tripId) },
       {
         $set: {
@@ -187,21 +178,13 @@ const addSelection = async (tripId, userId, monthToAdd) => {
 };
 
 const getMonth = async (id, userId, month) => {
-  let dbMonth = await trip.findOne(
+  let dbMonth = await plan.findOne(
     { _id: new ObjectId(id), [`userInfo.${userId}`]: { $exists: true } },
     {
       month: month,
     }
   );
   return dbMonth;
-};
-
-const findParams = async (id) => {
-  return !!(await trip.findOne({ _id: new ObjectId(id) }));
-};
-
-const getParams = async (id) => {
-  return await trip.findOne({ _id: new ObjectId(id), ['planParameters']: { $exists: true } }, ['planParameters']);
 };
 
 module.exports = router;

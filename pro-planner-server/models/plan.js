@@ -2,22 +2,22 @@
 
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const OutingSchema = new Schema(
+const planSchema = new Schema(
   {
-    date: Schema.Types.Date,
     planParameters: {
       name: Schema.Types.String,
       planType: Schema.Types.String,
-      availableDays: Schema.Types.Array,
+      dayOffset: Schema.Types.Array,
       isAllDay: Schema.Types.Boolean,
       location: Schema.Types.String,
-      dateTimeRange: Schema.Types.Date,
+      dateTimeRange: Schema.Types.Array,
     },
-    userInfo: [{ user: Schema.Types.ObjectId, availabilities: [{ start: Schema.Types.Date, end: Schema.Types.Date }] }],
+    userInfo: Schema.Types.Mixed,
+    decision: Schema.Types.Array,
   },
   {
-    collection: 'Outing',
+    collection: 'Plan',
   }
 );
 
-module.exports = mongoose.model('Outing', OutingSchema);
+module.exports = mongoose.model('Plan', planSchema);

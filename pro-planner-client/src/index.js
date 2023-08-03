@@ -14,12 +14,13 @@ import ErrorPage from './routes/ErrorPage';
 import store from './store';
 import HomePage from './routes/HomePage';
 import UserSelectionPage from './routes/UserSelectionPage';
-import ErrorContainer from './components/ErrorContainer';
+import './index.scss';
+import WrapperPage from './routes/WrapperPage';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <ErrorContainer />,
+        element: <WrapperPage />,
         errorElement: <ErrorPage />,
         children: [
             {
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/:tripId/',
+                path: '/:tripId',
                 loader: ({ params }) => params.tripId, // TODO: can be made to cause an API call to fetch ID, passing it for now
                 element: <HomePage />,
                 errorElement: <ErrorPage />,
@@ -64,11 +65,9 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
         <Provider store={store}>
             <RouterProvider router={router} />
         </Provider>
-    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

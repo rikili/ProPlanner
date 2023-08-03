@@ -1,33 +1,28 @@
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 
 import OutingCalendar from '../components/OutingCalendar';
-import TripCalendar from "../components/TripCalendar";
-import { ERR_TYPE, PLAN_TYPE } from '../constants';
-import { setError } from "../redux/errorSlice";
+import TripCalendar from '../components/TripCalendar';
+import CalendarGroup from '../components/CalendarGroup';
+import { PLAN_TYPE } from '../constants';
 
 const SchedulePage = () => {
-    const planParams = useSelector(state => state.planParameters);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const planId = useLocation().pathname.slice(1);
+    const planParams = useSelector((state) => state.planParameters);
 
-    useEffect(() => {
-        if (!planParams.name) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Information of this plan is invalid, malformed, or missing. Close this notification to be redirected to the landing page.',
-                redirect: '/',
-                disableControl: true
-            }));
-        }
-    }, [planParams, navigate, dispatch]);
+    const renderCalendar = (selectedUser, setIsEditMode, isEditMode) =>
+        planParams.planType === PLAN_TYPE.OUTING ? (
+            <OutingCalendar planId={planId} />
+        ) : (
+            <TripCalendar
+                planId={planId}
+                selectedUser={selectedUser}
+                isEditMode={isEditMode}
+                setIsEditMode={setIsEditMode}
+            />
+        );
 
-    return <div>
-        {planParams.name && (planParams.planType === PLAN_TYPE.OUTING)
-        ? <OutingCalendar />
-        : <TripCalendar />}
-    </div>
+    return <CalendarGroup renderCalendar={renderCalendar} />;
 };
 
 export default SchedulePage;

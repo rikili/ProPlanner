@@ -2,13 +2,14 @@
 
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const UserSchema = new Schema(
+const pollSchema = new Schema(
   {
-    name: Schema.Types.String,
+    eventId: Schema.Types.ObjectId,
+    polls: Schema.Types.Mixed,
   },
   {
-    collection: 'User',
+    collection: 'Poll',
   }
 );
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('Poll', pollSchema);

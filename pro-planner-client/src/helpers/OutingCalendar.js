@@ -38,6 +38,12 @@ export const selectToInterval = (date, [start, end]) => {
 
 const buildDate = (date, time) => set(new Date(date), processTime(time));
 
+export const isTimeBefore = (firstTime, secTime, checkEqual = false) => {
+        return checkEqual 
+            ? buildDate(new Date(), firstTime) <= buildDate(new Date(), secTime)
+            : buildDate(new Date(), firstTime) < buildDate(new Date(), secTime);
+}
+
 const getDayFromTemplate = (date, template, cutoff = null) => {
     if (!cutoff) cutoff = endOfDay(date);
     const dayArr = [];

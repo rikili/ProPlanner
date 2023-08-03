@@ -1,0 +1,54 @@
+@import '../styles.scss';
+
+.body-content {
+    width: 70em;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.calendar-content {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 100%;
+}
+
+.grid-and-labels {
+    display: flex;
+    flex: 1;
+}
+
+.day-labels {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    font-size: 0.8em;
+    margin-left: 4em;
+    margin-right: 1em;
+}
+
+.day-label {
+    text-align: center;
+    flex: 1;
+}
+
+.calendar-grid {
+    display: flex;
+    flex-flow: row nowrap;
+    border-radius: 1em;
+    border: 1px solid $calendar-borders;
+    clip-path: inset(0% 0% round 0.8em);
+    overflow: clip;
+    box-sizing: content-box;
+    width: 100%;
+}
+
+.day-column {
+    width: 100%;
+    box-sizing: content-box;
+    border-right: 1px solid $calendar-borders;
+
+    &:last-child {
+        border-right: 0px;
+    }
+}

@@ -1,51 +1,102 @@
-.week-calendar {
+@import '../styles.scss';
+
+.day-container {
     width: 100%;
 }
 
-.first-segment {
+.segment {
     width: 100%;
-    height: 1em;
+    min-height: 0.8em;
     background-color: lightgrey;
-    border-bottom: 1px solid;
-    border-right: 1px solid;
+
+    &:nth-child(odd) {
+        border-bottom: 1px dashed rgb(172, 172, 172);
+
+        &.unavailable {
+            border-bottom: 0px;
+        }
+    }
+
+    &:nth-child(even) {
+        border-bottom: 1px solid $calendar-borders;
+    }
+
+    &:nth-child(24) {
+        border-bottom: 2px solid $calendar-borders-dark;
+    }
+
+    &.outing-edit-select {
+        border-bottom-color: $half-line-edit;
+    }
+
+    &[class*="outing-selected-"] {
+        border-bottom-color: $half-line-selected;
+    }
+
+    &.editing {
+        border-bottom-color: $half-line-preview;
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &.deciding, &.deciding-selection, &[class*="outing-decided-"] {
+        border-bottom-color: $half-line-decided;
+    }
 }
 
-.second-segment {
-    width: 100%;
-    height: 1em;
-    background-color: lightgrey;
-    border-right: 1px solid;
-    border-bottom: 1px solid rgb(172, 172, 172);
-}
-
-.top-segment {
-    border-top: 1px solid;
-}
-
-.left-segment {
-    border-left: 1px solid;
-}
-
-.selectable {
-    background-color: white;
-}
-
-.unavail {
-    background-color: grey;
+.unavailable {
+    background-color: $invalid-day;
 }
 
 .available {
     background-color: white;
-}
-
-.selected {
-    background-color: green;
-}
-
-.hovered {
-    background-color: blue;
-}
-
-.editable {
     cursor: pointer;
+}
+
+.outing-selected-4 {
+    background-color: $selected-day-step-4;
+}
+.outing-selected-3 {
+    background-color: $selected-day-step-3;
+}
+.outing-selected-2 {
+    background-color: $selected-day-step-2;
+}
+.outing-selected-1 {
+    background-color: $selected-day-step-1;
+}
+
+.outing-decided-4 {
+    background-color: $decided-day-4;
+}
+.outing-decided-3 {
+    background-color: $decided-day-3;
+}
+.outing-decided-2 {
+    background-color: $decided-day-2;
+}
+.outing-decided-1 {
+    background-color: $decided-day-1;
+}
+
+.outing-edit-select {
+    background-color: $edit-day;
+}
+
+.editing {
+    background-color: $preview-day;
+}
+
+.deciding-selection {
+    background-color: $decided-day-preview;
+}
+
+.deciding {
+    background-color: $decided-day-preview;
+}
+
+.summary {
+    background-color: $detailed-day;
 }

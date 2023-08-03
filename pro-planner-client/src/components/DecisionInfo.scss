@@ -1,0 +1,38 @@
+.decision-body {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.decision-footer {
+    padding: 0.3em;
+    margin: 0;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.decision-clear-button {
+    margin: 0;
+}
+
+.decision-content {
+    font-size: 13px;
+}
+
+.decision-range {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: 0.2em;
+    color: orange;
+}
+
+.decision-instruct {
+    font-size: 13px;
+    display: flex;
+    height: 100%;
+    margin-top: 0.5em;
+    flex-direction: column;
+    text-align: center;
+    color: rgb(167, 167, 167);
+}

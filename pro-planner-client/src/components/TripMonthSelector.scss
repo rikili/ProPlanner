@@ -1,0 +1,58 @@
+.trip-month-selector {
+    display: flex;
+    flex-flow: row nowrap;
+    font-size: 11.5px;
+    gap: 1em;
+    background-color: rgb(243, 243, 243);
+    border-radius: 0.5em;
+    align-items: center;
+    padding: 0.35em;
+}
+
+.trip-year-selector {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    font-size: 13px;
+}
+
+.trip-year-selector-label {
+    padding: 0 0.3em;
+    height: 100%;
+}
+
+.trip-year-select-button {
+    border-radius: 0.4em;
+    &:hover {
+        background-color: rgb(214, 214, 214);
+    }
+}
+
+.trip-month-list {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.8em;
+}
+
+.trip-month-button {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    border-radius: 0.5em;
+    width: 100%;
+}
+
+.trip-month-button-valid {
+    background-color: white;
+}
+
+.trip-month-button-invalid {
+    cursor: default;
+    background-color: rgb(214, 214, 214);
+}
+
+.trip-month-button-selected {
+    background-color: rgb(168, 219, 166);
+}

@@ -12,9 +12,9 @@ function OutingHourLabels() {
     return (
         <div className="hours-container">
             {hours.map((hour, index) => (
-                <p key={`hour-label-${index}`} className="hours">
+                <div key={`hour-label-${index}`} className="hours">
                     {format(hour, 'h aa')}
-                </p>
+                </div>
             ))}
         </div>
     );

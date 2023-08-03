@@ -1,0 +1,30 @@
+@import '../styles.scss';
+
+// .page-body {
+//     height: calc(100vh - $navbar-height);
+
+//     & > div {
+//         height: 100%;
+//     }
+// }
+
+// .home-page {
+//     height: 100%;
+//     display: flex;
+//     flex-flow: column nowrap;
+// }
+
+.page-content {
+    height: 100%;
+    flex: 1;
+
+    & > div {
+        height: 100%;
+    }
+}
+
+.home-page {
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+}

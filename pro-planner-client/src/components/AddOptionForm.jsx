@@ -1,28 +1,21 @@
 import React, {useState} from 'react';
 import {Modal, Button, Form} from "react-bootstrap";
-import {useDispatch} from 'react-redux';
-import {addOption} from "../redux/pollSlice";
-import {v4 as uuidv4} from 'uuid';
+import {useDispatch, useSelector} from 'react-redux';
+import {addOptionAsync} from "../redux/pollSlice";
 import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
 const MAX_OPTION_LIMIT = 70;
 
-function AddOptionForm({poll, showModal, setShowModal}) {
+function AddOptionForm({poll, pollId, showModal, setShowModal}) {
     const [newOption, setNewOption] = useState("")
     const dispatch = useDispatch();
-
-    let formResult = {
-        pollId: poll.pollId,
-        optionId: uuidv4(),
-        option: newOption,
-        voteCount: 0,
-    }
+    const pollDocumentId = useSelector((state) => state.poll.pollsId)
 
     const handleAddOption = (e) => {
         e.preventDefault();
         const formattedNewOption = newOption.trim();
-        const options = Object.values(poll.options)
+        const options = poll.options || {};
 
         if (formattedNewOption.length === 0) {
             dispatch(setError({
@@ -41,7 +34,9 @@ function AddOptionForm({poll, showModal, setShowModal}) {
             return;
         }
 
-        if (options.find(option => option.option === newOption)) {
+        const optionsArray = Object.values(options);
+
+        if (optionsArray.find(option => option.option === newOption)) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
                 disableControl: true,
@@ -51,7 +46,7 @@ function AddOptionForm({poll, showModal, setShowModal}) {
         }
 
         dispatch(resetError());
-        dispatch(addOption(formResult));
+        dispatch(addOptionAsync({newOption, pollDocumentId, pollId}));
         handleCloseModal();
     };
 

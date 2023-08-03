@@ -1,14 +1,20 @@
 .hours {
-    margin: 0 5px 0.72em 0;
-    font-size: 0.9em;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    font-size: 0.8em;
+    height: 1em;
+    width: 4em;
 }
 
 .hours-container {
+    margin-right: 0.8em;
     position: relative;
-    top: 1em;
-    text-align: center;
+    display: flex;
+    flex-flow: column nowrap;
     height: 100%;
-    min-width: 3em;
 }
 
 .next-btn {

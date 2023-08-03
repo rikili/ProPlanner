@@ -1,0 +1,61 @@
+.calendar-control {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	padding: 0.5em 0;
+
+	& > span {
+		display: flex;
+		justify-content: center;
+	}
+}
+
+.calendar-labels {
+	display: flex;
+	flex-flow: column nowrap;
+}
+
+.nav-button {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	border-width: 0;
+	padding: 0 0.5em;
+	border-radius: 0.3em;
+
+	&:hover {
+		background-color: rgb(190, 190, 190);
+	}
+
+	&.nav-disabled {
+		&:hover {
+			background-color: transparent;
+			cursor: default;
+		}
+		color: lightgrey;
+	}
+}
+
+.calendar-label {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	font-size: 18px;
+	padding: 0 1em;
+	width: 10em;
+}
+
+.calendar-label-year {
+	width: 100%;
+	font-size: 13px;
+}
+
+.calendar-outing-year {
+	text-align: center;
+	font-size: 0.75em;
+}
+
+.calendar-outing-label {
+	width: 10em;
+	text-align: center;
+}

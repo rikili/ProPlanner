@@ -1,28 +1,199 @@
-* {
-	margin: 0;
+@import '../styles.scss';
+
+
+.calendar-card {
+	& > .card-body {
+		display: flex;
+		flex-flow: column nowrap;
+		justify-content: center;
+		align-items: center;
+		padding: 0 1em 1em 1em;
+	}
+}
+
+.trip-calendar {
+	display: flex;
+	flex-direction: column;
+	min-width: 55em;
+	min-height: 40em;
+	padding: 1em;
+}
+
+.trip-border {
+	position: absolute;
+	height: 100%;
+	border: 1px solid $calendar-borders;
+	border-radius: 1em;
+	background: none;
+	pointer-events: none;
 	padding: 0;
-	box-sizing: border-box;
+	margin: 0;
+}
+
+.trip-loading-container {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+	height: 100%;
+}
+
+.trip-calendar-container {
+	padding: 0;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	border-radius: 1em;
+	clip-path: inset(0% 0% round 1em);
+	min-height: 30em;
+	max-height: 30em;
+	flex: 1;
+}
+
+.fake-day {
+	background-color: rgb(230, 230, 230);
+}
+
+.trip-day-container {
+	display: flex;
+	border-bottom: 1px solid $calendar-borders;
+	padding: 0;
+	flex: 1;
+	
+
+	&:nth-child(2) {
+		border-radius: 1em 1em 0 0;
+
+		& > .trip-half-container:first-child {
+			border-radius: 1em 0 0 0;
+			& > .half-day:first-child {
+				border-radius: 1em 0 0 0;
+			}
+		}
+
+		& > .trip-half-container:last-child {
+			border-radius: 0 1em 0 0;
+			& > .half-day:first-child {
+				border-radius: 0 1em 0 0;
+			}
+		}
+	}
+
+	&:last-child {
+		border-bottom: 0;
+		border-radius: 0 0 1em 1em;
+
+		& > .trip-half-container:first-child {
+			border-radius: 0 0 0 1em;
+			& > .half-day:last-child {
+				border-radius: 0 0 0 1em;
+			}
+		}
+
+		& > .trip-half-container:last-child {
+			border-radius: 0 0 1em 0;
+			& > .half-day:last-child {
+				border-radius: 0 0 1em 0;
+			}
+		}
+	}
+}
+
+.trip-half-container {
+	border-right: 1px solid $calendar-borders;
+	padding: 0;
+	flex: 1;
+
+	&:last-child {
+		border-right: 0;
+	}
 }
 
 .half-day {
-	border: 1px solid rgb(229, 209, 209);
+	cursor: pointer;
+	font-size: $day-font-size;
+	flex: 1;
 	height: 50%;
+
+	&:first-child {
+		&.trip-selected {
+			color: $selected-day-label;
+		}
+	}
+
+	&:last-child {
+		&.valid {
+			border-top: 1px dashed $half-line-default;
+		}
+
+		&.trip-selected {
+			border-top: 1px dashed $half-line-selected;
+		}
+	
+		&.trip-preview {
+			border-top: 1px dashed $half-line-preview;
+		}
+
+		&.trip-edit {
+			border-top: 1px dashed $half-line-edit;
+		}
+	}
 }
 
-.valid:hover {
-	background-color: rgba(71, 174, 215, 0.964);
-	transform: scale(1.2);
-	transition: transform 0.3s ease;
-}
-.valid {
-	font-weight: bold;
+.trip-half-label {
+	margin-left: 0.5em;
 }
 
-.invalid {
-	color: rgb(178, 178, 178);
+.trip-selected {
+	color: $selected-day-label;
+}
+.trip-selected-4 {
+	background-color: $selected-day-step-4;
+}
+.trip-selected-3 {
+	background-color: $selected-day-step-3;
+}
+.trip-selected-2 {
+	background-color: $selected-day-step-2;
+}
+.trip-selected-1 {
+	background-color: $selected-day-step-1;
 }
 
-.active {
-	background-color: rgba(71, 174, 215, 0.964);
-	color: white;
+.trip-decided-4 {
+	background-color: $decided-day-4;
+}
+.trip-decided-3 {
+	background-color: $decided-day-3;
+}
+.trip-decided-2 {
+	background-color: $decided-day-2;
+}
+.trip-decided-1 {
+	background-color: $decided-day-1;
+}
+
+.trip-detailed {
+	background-color: $detailed-day;
+}
+
+.trip-decided-preview {
+	background-color: $decided-day-preview;
+}
+
+.trip-edit {
+	background-color: $edit-day;
+	color: $edit-day-label;
+}
+
+.trip-preview {
+	&.trip-edit {
+		background-color: $preview-day-dark;
+	}
+	color: $preview-day-label;
+	background-color: $preview-day;
+}
+
+.trip-invalid {
+	color: $invalid-day-label;
+	background-color: $invalid-day;
 }

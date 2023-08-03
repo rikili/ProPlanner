@@ -1,27 +1,24 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
 import { Card, Col, ListGroup, Row } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 
-const UserSideBar = props => {
+const UserSideBar = ({ isEditMode, selectedUser, setSelectedUser }) => {
 	const userList = useSelector(state => state.user.userList);
 	const loggedInUser = useSelector(state => state.user.selectedUser);
-	const selectedUser = props.selectedUser;
-	const setSelectedUser = props.setSelectedUser;
-	const isEditing = props.isEditing;
 
 	return (
-		<div className="d-flex flex-column justify-content-center align-items-center mt-4">
-			<Card className="mt-2" style={{ width: '350px' }}>
-				<Card.Header as="h4" className="text-center">
-					Responders
+		<div className="d-flex flex-column justify-content-center align-items-center">
+			<Card className="details-card summary-list">
+				<Card.Header className="summary-body text-center">
+					<b>Responders</b>
 				</Card.Header>
-				<Card.Body>
+				<Card.Body className="summary-body">
 					<ListGroup
 						variant="flush"
 						style={{ maxHeight: '300px', overflow: 'scroll' }}
 					>
-						{isEditing ? (
+						{isEditMode ? (
 							<>
 								<ListGroup.Item className="text-center" disabled as="h6">
 									All Users
@@ -55,7 +52,7 @@ const UserSideBar = props => {
 								<ListGroup.Item
 									className="text-center"
 									onClick={() => setSelectedUser(loggedInUser)}
-									active={selectedUser == loggedInUser}
+									active={selectedUser === loggedInUser}
 								>
 									{loggedInUser}
 								</ListGroup.Item>
@@ -75,18 +72,6 @@ const UserSideBar = props => {
 						)}
 					</ListGroup>
 				</Card.Body>
-				<Card.Footer>
-					<Row>
-						<Col as="h5" xs={8}>
-							{' '}
-							Finalized Date:{' '}
-						</Col>
-						<Col as="h5" className="text-end">
-							{' '}
-							N/A{' '}
-						</Col>
-					</Row>
-				</Card.Footer>
 			</Card>
 		</div>
 	);
