@@ -10,10 +10,8 @@ import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useSelector } from 'react-redux';
 import { Card, Form, Row, ButtonGroup, Button, Col } from 'react-bootstrap';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
-import ApiModal from './ApiModal';
 
 const InputDetailsForm = forwardRef(({ title = false }, ref) => {
-	// const apiKey = useSelector(state => state.planParameters.apiKey);
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey: process.env.REACT_APP_API_KEY,
 		libraries: ['places'],
@@ -82,7 +80,6 @@ const InputDetailsForm = forwardRef(({ title = false }, ref) => {
 				</Card.Title>
 			)}
 			<Card.Body className="ps-5 pe-5">
-				<ApiModal show={modalShow} onHide={() => setModalShow(false)} />
 				<h6>
 					<b>Details</b>
 				</h6>

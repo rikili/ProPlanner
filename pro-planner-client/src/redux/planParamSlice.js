@@ -11,7 +11,6 @@ const planParamSlice = createSlice({
 		isAllDay: false,
 		location: null,
 		budget: null,
-		apiKey: '',
 	},
 	reducers: {
 		// payload should be a string of either 'Trip' or 'Outing'
@@ -37,11 +36,6 @@ const planParamSlice = createSlice({
 			state.location = input.location;
 			state.budget = input.budget;
 			state.dateTimeRange = input.dateTimeRange;
-		},
-
-		updateApiKey(state, action) {
-			const apiKey = action.payload;
-			state.apiKey = apiKey;
 		},
 	},
 });
