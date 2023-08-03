@@ -1,5 +1,4 @@
 import React from 'react';
-import NavigationBar from '../components/NavigationBar';
 import {Card, Col, Container, Row} from 'react-bootstrap';
 import './OverviewPage.scss';
 import ExpenseSplit from '../components/ExpenseSplit';
@@ -32,7 +31,6 @@ const OverviewPage = () => {
 
     return (
         <>
-            <NavigationBar/>
             <Container className="overview-container">
                 <Row className="overview-header-row">{tripName}</Row>
                 <Row className="overview-map-row">
