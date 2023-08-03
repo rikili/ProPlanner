@@ -492,14 +492,14 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
                                 rangeEnd={endDate}
                             />
                             <TripWeekDayLabels />
-                            <Container className="trip-calendar-container">
-                                <Container className="trip-border" />
+                            <Container className="trip-calendar-container p-0">
+                                <div className="trip-border w-100" />
                                 {isLoading
                                     ? Array(6)
                                           .fill(0)
                                           .map((_, index) => {
                                               return (
-                                                  <Container key={`week-${index}`} className="trip-day-container">
+                                                  <div key={`week-${index}`} className="trip-day-container">
                                                       {Array(6)
                                                           .fill(0)
                                                           .map((_, index) => (
@@ -509,14 +509,14 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
                                                                   key={`load-day-${index}`}
                                                               />
                                                           ))}
-                                                  </Container>
+                                                  </div>
                                               );
                                           })
                                     : weekArr.map((week, index) => {
                                           return (
-                                              <Container key={`week-${index}`} className="trip-day-container">
+                                              <div key={`week-${index}`} className="trip-day-container">
                                                   {week.map((day) => day)}
-                                              </Container>
+                                              </div>
                                           );
                                       })}
                             </Container>

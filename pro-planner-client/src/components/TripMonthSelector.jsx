@@ -40,7 +40,7 @@ const TripMonthSelector = ({ selectedMonth, setSelectedMonth, rangeStart, rangeE
                     </button>
                 )}
             </div>
-            <Container className="trip-month-list">
+            <span className="trip-month-list">
                 {eachMonthOfInterval({ start: startOfYear(viewYear), end: endOfYear(viewYear) }).map((month) => {
                     const monthInRange = inRange(month);
                     const buttonClass = assembleClass(
@@ -55,7 +55,7 @@ const TripMonthSelector = ({ selectedMonth, setSelectedMonth, rangeStart, rangeE
                         </div>
                     );
                 })}
-            </Container>
+            </span>
         </Container>
     );
 };

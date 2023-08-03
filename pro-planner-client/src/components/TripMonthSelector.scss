@@ -1,6 +1,8 @@
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+// @import "../../node_modules/bootstrap/scss/variables";
+
 .trip-month-selector {
     display: flex;
-    flex-flow: row nowrap;
     font-size: 11.5px;
     gap: 1em;
     background-color: rgb(243, 243, 243);
@@ -30,9 +32,9 @@
 
 .trip-month-list {
     display: flex;
-    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    justify-content: space-between;
     gap: 0.8em;
 }
 
@@ -55,4 +57,18 @@
 
 .trip-month-button-selected {
     background-color: rgb(168, 219, 166);
+}
+
+@include media-breakpoint-between(xs, lg) {
+    .trip-year-selector {
+        flex-wrap: wrap;
+    }
+
+    .trip-month-list {
+        flex-wrap: wrap;
+    }
+
+    .trip-month-button {
+        width: 5em;
+    }
 }

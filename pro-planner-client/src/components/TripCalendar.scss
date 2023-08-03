@@ -1,3 +1,4 @@
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
 @import '../styles.scss';
 
 
@@ -14,7 +15,7 @@
 .trip-calendar {
 	display: flex;
 	flex-direction: column;
-	min-width: 55em;
+	width: 100%;
 	min-height: 40em;
 	padding: 1em;
 }
@@ -197,3 +198,10 @@
 	color: $invalid-day-label;
 	background-color: $invalid-day;
 }
+
+// @include media-breakpoint-between(xs, lg) {
+// 	.calendar-card {
+// 		grid-row-start: 1;
+// 		grid-row-end: 2;
+// 	}
+// }
