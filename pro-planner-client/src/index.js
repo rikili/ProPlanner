@@ -51,7 +51,7 @@ const router = createBrowserRouter([
                         element: <SchedulePage />
                     },
                     {
-                        path: '',
+                        path: 'overview',
                         element: <OverviewPage />
                     },
                     {
