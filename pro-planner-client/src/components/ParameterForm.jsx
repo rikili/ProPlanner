@@ -1,18 +1,17 @@
-import axios from 'axios';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { isAfter, eachDayOfInterval, isEqual } from 'date-fns';
+import { isAfter, eachDayOfInterval, isEqual, addMonths } from 'date-fns';
 import { START_DAY_TIME, END_DAY_TIME } from '../constants';
 import { addDays, format } from 'date-fns';
 
 import InputDetailsForm from '../components/InputDetailsForm';
 import TimeRangeForm from '../components/TimeRangeForm';
-import { updatePlan } from '../redux/planParamSlice';
-import { setError, resetError } from '../redux/errorSlice';
+import { setError } from '../redux/errorSlice';
 import { ERR_TYPE, PLAN_TYPE } from '../constants';
-import { buildServerRoute } from '../helpers/Utils';
+
+const MAX_TRIP_MONTH_RANGE = 12;
+const MAX_OUTING_MONTH_RANGE = 5;
 
 // Helper functions
 
@@ -121,12 +120,12 @@ const formatSelectedDays = (selectedDays) => {
     Form component to intake plan parameter details
 
     Props:
-        Title: takes a string/element/component to display as title of form card
+        title: a string/element/component to display as title of form card
         onSubmit: callback function to be fed completed form details
         editDetails: if defined, defines component to be in edit mode. All fields should be defined to
                        be used for placeholding the fields in the form
 */
-const ParameterForm = ({ title, onSubmit, editDetails = null }) => {
+const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }) => {
     const [validated, setValidated] = useState(false);
     const isOuting = useSelector(state => state.planParameters.planType) === PLAN_TYPE.OUTING;
     const dispatch = useDispatch();
@@ -213,6 +212,16 @@ const ParameterForm = ({ title, onSubmit, editDetails = null }) => {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
                 message: 'Dates inputs are invalid, start date must be before or the same as the end date.',
+            }));
+            return;
+        }
+
+        if (addMonths(convStart, isOuting ? MAX_OUTING_MONTH_RANGE : MAX_TRIP_MONTH_RANGE) < convEnd) {
+            dispatch(setError({
+                errType: ERR_TYPE.ERR,
+                message: isOuting
+                    ? 'Dates inputs are invalid, Outing plans can have a max of only a 5 month difference between start and end.'
+                    : 'Dates inputs are invalid, Trip plans can have a max of only a one year difference between start and end.',
             }));
             return;
         }
@@ -321,11 +330,12 @@ const ParameterForm = ({ title, onSubmit, editDetails = null }) => {
             }));
             return;
         }
-        onSubmit(formResult, isOuting ? PLAN_TYPE.OUTING : PLAN_TYPE.TRIP);
+        console.log('submit', formResult);
+        // onSubmit(formResult, isOuting ? PLAN_TYPE.OUTING : PLAN_TYPE.TRIP);
     }
 
     return <Form className="w-50 mx-auto d-flex flex-column gap-3 pt-3" onSubmit={handleFormSubmission} noValidate validated={validated}>
-        <InputDetailsForm title={title} editDetails={editDetails} />
+        <InputDetailsForm title={title} editDetails={editDetails} showBack={showBack} />
         {isOuting && <TimeRangeForm editDetails={editDetails} />}
         <div className="text-center">
             <Button className="w-50 mb-3" variant="success" size="md" type="submit">
