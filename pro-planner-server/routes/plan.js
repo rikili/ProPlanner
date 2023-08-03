@@ -31,6 +31,7 @@ router.put('/:id', async (req, res) => {
     isAllDay: data.isAllDay,
     location: data.location,
     dateTimeRange: data.dateTimeRange,
+    description: data.description,
   };
   try {
     let updatedParams = await plan.findOneAndUpdate(

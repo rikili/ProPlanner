@@ -11,6 +11,7 @@ const planSchema = new Schema(
       isAllDay: Schema.Types.Boolean,
       location: Schema.Types.String,
       dateTimeRange: Schema.Types.Array,
+      description: Schema.Types.String,
     },
     userInfo: Schema.Types.Mixed,
     decision: Schema.Types.Array,
