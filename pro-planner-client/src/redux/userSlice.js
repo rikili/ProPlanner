@@ -19,6 +19,19 @@ export const addUserAsync = createAsyncThunk(
 	}
 );
 
+export const deleteUsersAsync = createAsyncThunk(
+	'user/delete',
+	async ({ planId, usersToDelete }) => {
+		await axios.delete(buildServerRoute('user'), {
+			data: {
+				eventId: planId,
+				users: usersToDelete,
+			},
+		});
+		return usersToDelete;
+	}
+);
+
 const userSlice = createSlice({
 	name: 'user',
 	initialState: {
@@ -57,6 +70,12 @@ const userSlice = createSlice({
 		});
 		builder.addCase(addUserAsync.rejected, (state, action) => {
 			state.pollStatus = LOAD_STATUS.FAILED;
+		});
+		builder.addCase(deleteUsersAsync.fulfilled, (state, action) => {
+			const updatedUsers = state.userList.filter(
+				user => !action.payload.includes(user)
+			);
+			state.userList = updatedUsers;
 		});
 	},
 });
