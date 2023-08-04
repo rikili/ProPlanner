@@ -30,11 +30,11 @@ import OutingHourLabels from './OutingHourLabels';
 import './OutingCalendar.scss';
 import CalendarControls from './CalendarControls';
 import OutingCalendarLabel from './OutingCalendarLabel';
-import { setDecisionRange } from '../redux/planParamSlice';
+import { setPlanDecision } from '../redux/planParamSlice';
 import axios from 'axios';
 import { buildServerRoute } from '../helpers/Utils';
 import { setError } from '../redux/errorSlice';
-import { ERR_TYPE } from '../constants';
+import { ERR_TYPE, PLAN_TYPE } from '../constants';
 
 // Update working selections for current user
 const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding, setUpdateMonths, updateMonths) => {
@@ -350,7 +350,16 @@ function OutingCalendar({ planId }) {
     }
 
     const confirmDecision = () => {
-        dispatch(setDecisionRange([decisionPreview[0].toISOString(), decisionPreview[1].toISOString()]));
+        dispatch(
+            setPlanDecision({
+                planId,
+                planType: PLAN_TYPE.OUTING,
+                range: [
+                    decisionPreview[0].toISOString(),
+                    decisionPreview[1].toISOString(),
+                ]
+            })
+        );
         toggleDecision();
     }
 
