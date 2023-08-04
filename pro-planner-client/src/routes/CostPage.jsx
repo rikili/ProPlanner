@@ -7,6 +7,7 @@ import { useLocation } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import React, {useEffect} from "react";
 import {LOAD_STATUS} from "../constants";
+import './CostPage.scss';
 
 const CostPage = () => {
 
@@ -20,17 +21,16 @@ const CostPage = () => {
 
     return (
         <>
-            {(loadingState === LOAD_STATUS.LOADING) && <LoadingDisplay/>}
-            <Container>
-                <Row>
-                    <Col>
-                        <TripExpense />
-                    </Col>
-                    <Col>
-                        <ExpenseSplit />
-                    </Col>
-                </Row>
-            </Container>
+            {(loadingState === LOAD_STATUS.LOADING) 
+            ? <LoadingDisplay/>
+            : <Container className="cost-page">
+                <Col>
+                    <TripExpense className="expense-list" />
+                </Col>
+                <Col>
+                    <ExpenseSplit className="cost-split"/>
+                </Col>
+            </Container>}
         </>
     );
 }

@@ -1,0 +1,31 @@
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
+.cost-page {
+    display: flex;
+    width: 80em;
+    margin-top: 1em;
+}
+
+.cost-list {
+    flex: 1;
+}
+
+.cost-split {
+    position: sticky !important;
+    top: 1em;
+}
+
+.expense-list {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 1.5em;
+}
+
+@include media-breakpoint-between(xs, lg) {
+    .cost-page {
+        display: flex;
+        flex-flow: column nowrap;
+        gap: 1em;
+        width: 100%;
+    }
+}

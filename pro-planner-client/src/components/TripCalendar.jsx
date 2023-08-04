@@ -39,6 +39,7 @@ import TripWeekDayLabels from './TripWeekDayLabels';
 import TripMonthSelector from './TripMonthSelector';
 import { setPlanDecision } from '../redux/planParamSlice';
 import CalendarControls from './CalendarControls';
+import LoadingDisplay from './LoadingDisplay';
 
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
 	if (!destArr[dayIndex].length) {
@@ -384,7 +385,9 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 			Object.values(combinedSelections).length
 		)
 	)
-		return <div></div>;
+		return <Card className="calendar-card">
+			<LoadingDisplay />
+		</Card>;
 
 	const maxUsers = Object.keys(calendar).length;
 	let iterDate = new Date(calendarStart);

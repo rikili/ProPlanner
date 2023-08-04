@@ -46,9 +46,8 @@ function Poll({poll, pollId}) {
 
     return (
         <>
-            <Accordion className='mt-2 p-2'>
-                <Accordion.Item eventKey="0"
-                                style={{width: '700px'}}>
+            <Accordion className='mt-2 p-2' style={{maxWidth: '700px', width: '100%'}}>
+                <Accordion.Item eventKey="0">
                     <Accordion.Header>{poll.question}</Accordion.Header>
                     <Accordion.Body>
                         <Options style={{marginTop: '10px'}}

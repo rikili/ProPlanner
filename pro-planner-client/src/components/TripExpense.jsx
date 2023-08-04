@@ -4,7 +4,7 @@ import {Container} from "react-bootstrap";
 import UserExpense from "./UserExpense";
 // import {addUser} from "../redux/costSlice";
 
-function TripExpense() {
+function TripExpense({ className }) {
 
     const users = useSelector((state) => state.cost.costs);
     const currUser = useSelector((state) => state.user.selectedUser);
@@ -49,8 +49,8 @@ function TripExpense() {
 
     return (
         <>
-            <Container className='d-flex flex-column justify-content-center align-items-center mt-4'>
-                {users && Object.entries(users).map(([key, user], index) =>
+            <Container className={className}>
+                {users && Object.entries(users).map(([key, user]) =>
                     <UserExpense
                         user={user}
                         currUserId={currUserId}
