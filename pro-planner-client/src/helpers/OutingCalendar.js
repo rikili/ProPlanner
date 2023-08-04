@@ -44,6 +44,8 @@ export const isTimeBefore = (firstTime, secTime, checkEqual = false) => {
             : buildDate(new Date(), firstTime) < buildDate(new Date(), secTime);
 }
 
+export const makeOutingDate = (date) => format(date, 'yyyy-MM-dd HH:mm');
+
 const getDayFromTemplate = (date, template, cutoff = null) => {
     if (!cutoff) cutoff = endOfDay(date);
     const dayArr = [];
