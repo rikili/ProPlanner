@@ -1,9 +1,28 @@
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
 .overview-container {
   margin-top: 20px;
+  padding: 0;
 }
 
-.overview-header-row {
+.overview-header {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100%;
+}
+
+.overview-header-title {
   font-size: 35px;
+}
+
+.overview-header-dates, .overview-header-times {
+  color: rgb(156, 156, 156);
+}
+
+.overview-content {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 0 1em;
 }
 
 .overview-map-row {
@@ -21,12 +40,17 @@
 .overview-details-cost-row {
   margin-top: 10px;
   display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .overview-details-col {
   padding: 0px;
-  margin-right: 5px;
   display: flex;
+  gap: 0.5em;
+  flex: 1;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .overview-details-card {
@@ -50,10 +74,34 @@
 
 .overview-cost-col {
   padding: 0px;
-  margin-left: 5px;
   display: flex;
 }
 
 .overview-cost-card {
   flex: 1;
+}
+
+.cost-card {
+  flex: 1;
+}
+
+@include media-breakpoint-between(xs, lg) {
+  .overview-details-card {
+    width: 100%;
+  }
+
+  .cost-card {
+    width: 100%;
+  }
+
+  .overview-details-col {
+    flex-flow: column nowrap;
+    align-items: center;
+  }
+}
+
+@include media-breakpoint-between(xs, sm) {
+  .overview-header {
+    margin-left: 0.5em;
+  }
 }

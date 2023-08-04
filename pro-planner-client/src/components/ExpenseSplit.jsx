@@ -1,11 +1,11 @@
 import {Card, Col, ListGroup, Row, ProgressBar} from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { FcAdvance } from "react-icons/fc";
+import './ExpenseSplit.scss';
 
 
 
-
-const ExpenseSplit = () => { 
+const ExpenseSplit = ({ className }) => { 
     const budget = useSelector(state => state.planParameters.budget);
     const cost  = useSelector(state => state.cost.costs);
     const userSpendings = [];
@@ -34,11 +34,11 @@ const ExpenseSplit = () => {
         let leftIndex = 0;
         let rightIndex = userSpendings.length - 1;
         const results = [];
+        let key = 0;
 
         while (leftIndex < rightIndex) {
             let leftUserOwes = (costPerUser - userSpendings[leftIndex][1]).toFixed(2);
             let rightUserAmount = userSpendings[rightIndex][1];
-            let key = 0;
 
             if (!leftUserOwes) {
                 leftIndex++;
@@ -46,13 +46,13 @@ const ExpenseSplit = () => {
                 userSpendings[leftIndex][1] += leftUserOwes;
                 userSpendings[rightIndex][1] -= leftUserOwes;
                 results.push(
-                    <ListGroup.Item as="h5" key={key} style={{textAlign: "center"}}>
-                        <Row style={{textAlign: "left"}}>
-                            <Col>{userSpendings[leftIndex][0]} :</Col>
+                    <ListGroup.Item as="h5" key={`split-item-${key}`} style={{textAlign: "center"}}>
+                        <div className="cost-row">
+                            <Col> {userSpendings[leftIndex][0]} :</Col>
                             <Col>${leftUserOwes}</Col>
-                            <Col lg={2}><FcAdvance style={{ transform: 'scale(2.2)'}}/></Col>
+                            <Col lg={2}><FcAdvance className="cost-arrow"/></Col>
                             <Col>{userSpendings[rightIndex][0]}</Col>
-                        </Row>
+                        </div>
                     </ListGroup.Item>
                 );    
                 leftIndex++;
@@ -61,17 +61,18 @@ const ExpenseSplit = () => {
                 userSpendings[leftIndex][1] += leftUserPaysRightUser;
                 userSpendings[rightIndex][1] -= leftUserPaysRightUser;
                 results.push(
-                    <ListGroup.Item as="h5" key={key} style={{textAlign: "center"}}>
-                        <Row style={{textAlign: "left"}}>
-                            <Col> {userSpendings[leftIndex][0]} :</Col>
+                    <ListGroup.Item as="h5" key={`split-item-${key}`} style={{textAlign: "center"}}>
+                        <div className="cost-row">
+                            <Col > {userSpendings[leftIndex][0]} :</Col>
                             <Col>${leftUserPaysRightUser}</Col>
-                            <Col lg={2}><FcAdvance style={{ transform: 'scale(2.2)'}}/></Col>
+                            <Col lg={2}><FcAdvance className="cost-arrow"/></Col>
                             <Col>{userSpendings[rightIndex][0]}</Col>
-                        </Row>
+                        </div>
                     </ListGroup.Item>
                 );    
                 rightIndex--;
             }
+            key++;
         }
         
         return results;
@@ -88,9 +89,9 @@ const ExpenseSplit = () => {
     
 
     return (
-        <div className="d-flex flex-column justify-content-center align-items-center mt-4">
-            <Card className='mt-2' style={{width: '500px'}}>
-                <Card.Header as="h4" className="text-center" >
+        <>
+            <Card className={className}>
+                <Card.Header as="h4" >
                 Cost Split Calculations
                 </Card.Header>
                 <Card.Body>
@@ -123,7 +124,7 @@ const ExpenseSplit = () => {
                     }
                 </Card.Footer>
             </Card>
-        </div>
+        </>
     );
 
 };

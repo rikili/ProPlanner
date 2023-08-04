@@ -110,7 +110,7 @@ const UserExpense = ({user, userId, currUserId}) => {
 
     return (
         <>
-            <Card className='mt-2' style={{width: '500px'}}>
+            <Card>
                 <Card.Header as="h5">
                     <Row>
                         <Col>{user.userName}</Col>
