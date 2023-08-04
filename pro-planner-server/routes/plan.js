@@ -32,6 +32,7 @@ router.put('/:id', async (req, res) => {
     location: data.location,
     dateTimeRange: data.dateTimeRange,
     description: data.description,
+    decision: data.decision,
   };
   try {
     let updatedParams = await plan.findOneAndUpdate(
