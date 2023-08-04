@@ -1,8 +1,8 @@
 .nav-link {
-	text-decoration: none;
-	color: black;
+    text-decoration: none;
+    color: white;
 
-	&:hover {
+    &:hover {
 		color: lightgrey;
 		transform: scale(1.1);
 	}
@@ -17,8 +17,114 @@
 			background-color: rgb(231, 231, 231);
 		}
 
-		&:active {
-			background-color: grey;
-		}
-	}
+        &:active {
+            background-color: grey;
+        }
+    }
+}
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
+.navigation-bar {
+    color: white;
+    background-color: rgb(28, 48, 73);
+}
+
+.nav-brand {
+    color: white;
+}
+
+.navlink {
+    text-decoration: none;
+    color: white;
+
+    &:hover &.on-bar {
+        color: lightgrey;
+    }
+
+    &.in-dropdown {
+        padding-left: 1em;
+        &:hover {
+            background-color: rgb(231, 231, 231);
+        }
+
+        &:active {
+            background-color: grey;
+        }
+    }
+
+    &:active {
+        color: grey;
+    }
+}
+
+.navbar-collapse {
+    display: flex;
+    justify-content: space-between;
+}
+
+.nav-content {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.navbar-divider-horizontal {
+    display: none;
+    border-top: 1px solid white;
+    margin: 1em 0;
+}
+
+.navbar-divider-vertical {
+    position: relative;
+    margin: 0 1em;
+    border-left: 2px solid white;
+    height: 1.5em;
+}
+
+.user-link-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5em;
+    justify-content: center;
+}
+
+@include media-breakpoint-between(xs, lg) {
+    .navigation-bar {
+        position: sticky !important;
+        top: 0;
+        z-index: 3;
+    }
+
+    .toggle-button {
+        border: 1px solid lightgrey;
+        height: 2em;
+        width: 2.3em;
+        border-radius: 0.5em;
+        // url below refernced from bootstrap scss
+        background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='lightgrey' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>") no-repeat center;
+    }
+
+    .navbar-divider-vertical {
+        display: none;
+    }
+
+    .navbar-divider-horizontal {
+        display: block;
+    }
+
+    .navbar-collapse {
+        display: block;
+    }
+
+    .nav-content {
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: flex-start;
+        gap: 0.75em;
+        margin-top: 0.5em;
+    }
+
+    .navbar-divider {
+        display: block;
+    }
 }
