@@ -48,94 +48,93 @@ const NavigationBar = ({ planId }) => {
 
 	const toUserSelect = () => navigate(`/user/${planId}`);
 
-	return (
-		<>
-			<Navbar bg="light">
-				<Container>
-					<Navbar.Brand>ProPlanner</Navbar.Brand>
-					<Navbar.Collapse className="d-flex justify-content-between">
-						<Nav className="d-flex gap-3">
-							<Link to={`overview`} className="nav-link">
-								<Nav.Item>Overview</Nav.Item>
-							</Link>
-							<Link to={`/${planId}`} className="nav-link">
-								<Nav.Item>Scheduling</Nav.Item>
-							</Link>
-							<Link to={`vote`} className="nav-link">
-								<Nav.Item>Voting</Nav.Item>
-							</Link>
-							<Link to={`cost`} className="nav-link">
-								<Nav.Item>Cost</Nav.Item>
-							</Link>
-						</Nav>
-						<Row className="align-items-center">
-							<Col>
-								<OverlayTrigger
-									placement="bottom"
-									overlay={renderTooltip('Copy Code')}
-								>
-									<button
-										className="nav-link"
-										onClick={() => {
-											setCopied(true);
-											handleCopy();
-										}}
+    return <>
+        <Navbar className="navigation-bar" collapseOnSelect expand="lg">
+            <Container>
+                <Link to={`/${planId}`} className="navlink">
+                    <Navbar.Brand as="h4" bsPrefix="nav-brand">ProPlanner</Navbar.Brand>
+                </Link>
+                <Navbar.Toggle bsPrefix={"toggle-button"}/>
+                <Navbar.Collapse id="responsive-navbar-nav" className="navbar-collapse">
+                    <Nav className="nav-content">
+                        <div className="navbar-divider-vertical"/>
+                        <Link to={`overview`} className="navlink">
+                            <Nav.Item>Overview</Nav.Item>
+                        </Link>
+                        <Link to={`/${planId}`} className="navlink">
+                            <Nav.Item>Scheduling</Nav.Item>
+                        </Link>
+                        <Link to={`vote`} className="navlink">
+                            <Nav.Item>Voting</Nav.Item>
+                        </Link>
+                        <Link to={`cost`} className="navlink">
+                            <Nav.Item>Cost</Nav.Item>
+                        </Link>
+                    </Nav>
+                    <div className="navbar-divider-horizontal"/>
+					<div className="user-link-group">
+						<OverlayTrigger
+							placement="bottom"
+							overlay={renderTooltip('Copy Code')}
+						>
+							<button
+								className="nav-link"
+								onClick={() => {
+									setCopied(true);
+									handleCopy();
+								}}
+								style={{
+									appearance: 'none',
+									padding: 8,
+									border: 0,
+									outline: 0,
+									curser: 'pointer',
+								}}
+							>
+								<div style={{ position: 'relative', width: 5, height: 15 }}>
+									<Clipboard
 										style={{
-											appearance: 'none',
-											padding: 8,
-											border: 0,
-											outline: 0,
-											curser: 'pointer',
+											position: 'absolute',
+											color: 'white',
+											top: 0,
+											left: 0,
+											strokeDasharray: 50,
+											strokeDashoffset: copied ? -50 : 0,
+											transition: 'all 300ms ease-in-out',
 										}}
-									>
-										<div style={{ position: 'relative', width: 5, height: 15 }}>
-											<Clipboard
-												style={{
-													position: 'absolute',
-													color: 'black',
-													top: 0,
-													left: 0,
-													strokeDasharray: 50,
-													strokeDashoffset: copied ? -50 : 0,
-													transition: 'all 300ms ease-in-out',
-												}}
-											/>
-											<Checkmark
-												isVisible={copied}
-												style={{
-													color: 'green',
-													position: 'absolute',
-													top: 0,
-													left: 0,
-													strokeDasharray: 50,
-													strokeDashoffset: copied ? 0 : -50,
-													transition: 'all 300ms ease-in-out',
-												}}
-											/>
-										</div>
-									</button>
-								</OverlayTrigger>{' '}
-							</Col>
-							<Col>
-								<NavDropdown
-									title={`Hello, ${selectedUser ? selectedUser : 'User'} `}
-								>
-									<NavDropdown.Item onClick={toUserSelect}>
-										Change user
-									</NavDropdown.Item>
-									<NavDropdown.Item onClick={handleEdit}>
-										Edit plan
-									</NavDropdown.Item>
-									<NavDropdown.Divider />
-									<NavDropdown.Item href="/">Start a new Plan</NavDropdown.Item>
-								</NavDropdown>
-							</Col>
-						</Row>
-					</Navbar.Collapse>
-				</Container>
-			</Navbar>
-		</>
-	);
+									/>
+									<Checkmark
+										isVisible={copied}
+										style={{
+											color: 'rgb(116, 212, 106)',
+											position: 'absolute',
+											top: 0,
+											left: 0,
+											strokeDasharray: 50,
+											strokeDashoffset: copied ? 0 : -50,
+											transition: 'all 300ms ease-in-out',
+										}}
+									/>
+								</div>
+							</button>
+						</OverlayTrigger>
+						<NavDropdown className="user-dropdown" title={`Hello, ${selectedUser ? selectedUser : 'User'} `}>
+							<NavDropdown.Item onClick={toUserSelect}>
+								Change user
+							</NavDropdown.Item>
+							<NavDropdown.Item onClick={handleEdit}>
+								Edit plan
+							</NavDropdown.Item>
+							<NavDropdown.Divider />
+							<NavDropdown.Item href='/'>
+								Start a new Plan
+							</NavDropdown.Item>
+						</NavDropdown>
+					</div>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
+    </>
 };
 
 export default NavigationBar;
