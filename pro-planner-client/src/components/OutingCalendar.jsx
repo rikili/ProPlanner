@@ -22,7 +22,7 @@ import {
 } from 'date-fns';
 import { Card } from 'react-bootstrap';
 import { getMonthIndex } from '../helpers/Calendar';
-import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay, isTimeBefore } from '../helpers/OutingCalendar';
+import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay, isTimeBefore, makeOutingDate } from '../helpers/OutingCalendar';
 import { resetUpdateFailed, setLoading, setUserSelections, updateOutings } from '../redux/outingSlice';
 
 import OutingDay from './OutingDay';
@@ -227,7 +227,6 @@ function OutingCalendar({ planId }) {
     );
     const [isEditing, setEditing] = useState(false);
     const [monthsToUpdate, setUpdateMonths] = useState([]);
-    const [firstLoad, setFirstLoad] = useState(false);
     const dispatch = useDispatch();
 
     let slots = useMemo(() => generateSlots(params), [params]);
@@ -355,8 +354,8 @@ function OutingCalendar({ planId }) {
                 planId,
                 planType: PLAN_TYPE.OUTING,
                 range: [
-                    decisionPreview[0].toISOString(),
-                    decisionPreview[1].toISOString(),
+                    makeOutingDate(decisionPreview[0]),
+                    makeOutingDate(decisionPreview[1]),
                 ]
             })
         );

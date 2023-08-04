@@ -1,5 +1,5 @@
 import { eachMinuteOfInterval, format, isAfter, isWithinInterval, startOfDay, subMinutes, endOfDay, isEqual, parseISO } from "date-fns";
-import { selectToInterval, getEndOfSegment, SEGMENT_TIME } from '../helpers/OutingCalendar';
+import { selectToInterval, getEndOfSegment, SEGMENT_TIME, makeOutingDate } from '../helpers/OutingCalendar';
 import { assembleClass } from '../helpers/Utils';
 
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +23,7 @@ const OutingDay = ({
     maxUsers,
 }) => {
     const dispatch = useDispatch();
-    const decision = useSelector(state => state.planParameters.decisionRange).map((isoString) => new Date(isoString));
+    const decision = useSelector(state => state.planParameters.decisionRange).map((outingString) => new Date(outingString));
     const summaryState = useSelector(state => state.summary.detailedDay);
     const summaryDate = summaryState ? new Date(summaryState) : null;
     const isDecision = !!decision.length;
@@ -103,7 +103,7 @@ const OutingDay = ({
                     dispatch(setDetailedDay(null));
                     dispatch(setDetailedUsers([]));
                 } else {
-                    dispatch(setDetailedDay(segmentStart.toISOString()));
+                    dispatch(setDetailedDay(makeOutingDate(segmentStart)));
                     dispatch(setDetailedUsers([...isSelected]));
                 }
             }

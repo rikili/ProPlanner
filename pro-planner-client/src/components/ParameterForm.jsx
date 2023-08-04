@@ -9,6 +9,7 @@ import InputDetailsForm from '../components/InputDetailsForm';
 import TimeRangeForm from '../components/TimeRangeForm';
 import { setError } from '../redux/errorSlice';
 import { ERR_TYPE, PLAN_TYPE } from '../constants';
+import { makeOutingDate } from '../helpers/OutingCalendar';
 
 const MAX_TRIP_MONTH_RANGE = 12;
 const MAX_OUTING_MONTH_RANGE = 5;
@@ -275,7 +276,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
             }
 
             formResult.isAllDay = false;
-            formResult.dateTimeRange = [[startDateTime.toISOString(), startEndTime.toISOString()], endDate.toISOString()];
+            formResult.dateTimeRange = [[makeOutingDate(startDateTime), makeOutingDate(startEndTime)], makeOutingDate(endDate)];
         } else {
             startDateTime = new Date(`${startString}, ${START_DAY_TIME}`);
             const endDate = new Date(`${endString}, ${END_DAY_TIME}`);
