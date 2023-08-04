@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Card, Col, ListGroup, Row } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
+import { Card, ListGroup } from 'react-bootstrap';
 
 const UserSideBar = ({ isEditMode, selectedUser, setSelectedUser }) => {
 	const userList = useSelector(state => state.user.userList);
@@ -16,7 +15,7 @@ const UserSideBar = ({ isEditMode, selectedUser, setSelectedUser }) => {
 				<Card.Body className="summary-body">
 					<ListGroup
 						variant="flush"
-						style={{ maxHeight: '300px', overflow: 'scroll' }}
+						style={{ maxHeight: '300px', overflowY: 'scroll' }}
 					>
 						{isEditMode ? (
 							<>
