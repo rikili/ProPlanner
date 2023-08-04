@@ -84,7 +84,8 @@ const UserList = () => {
 				<div style={{ width: '100%' }}>
 					<Row>
 						<Col>
-							<Form.Label>Which one is you?</Form.Label>
+							{!isEditing && <Form.Label>Which one is you?</Form.Label>}
+							{isEditing && <Form.Label>Choose Users to delete</Form.Label>}
 						</Col>
 						{!isEditing && (
 							<Col xs={2} sm={2} md={2} lg={2} style={{ width: '12%' }}>

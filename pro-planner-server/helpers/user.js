@@ -20,8 +20,8 @@ async function addUser(planId, userName) {
 			},
 		}
 	);
-	// users = users.toJSON().userInfo;
-	// return users;
+	users = users.toJSON().userInfo;
+	return users;
 }
 
 async function deleteUser(planId, userName) {
