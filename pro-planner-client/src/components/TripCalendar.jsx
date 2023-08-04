@@ -31,13 +31,13 @@ import { dayOffsetToDOW, getMonthIndex } from '../helpers/Calendar';
 import { getHalfDate, isFirstHalf } from '../helpers/TripCalendar';
 import { buildServerRoute, getTimezone } from '../helpers/Utils';
 import { setError } from '../redux/errorSlice';
-import { ERR_TYPE } from '../constants';
+import { ERR_TYPE, PLAN_TYPE } from '../constants';
 import './TripCalendar.scss';
 import TripDay from './TripDay';
 import TripCalendarLabel from './TripCalendarLabel';
 import TripWeekDayLabels from './TripWeekDayLabels';
 import TripMonthSelector from './TripMonthSelector';
-import { setDecisionRange } from '../redux/planParamSlice';
+import { setPlanDecision } from '../redux/planParamSlice';
 import CalendarControls from './CalendarControls';
 
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
@@ -457,12 +457,15 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	const confirmDecision = () => {
 		if (decisionEditRange) {
 			dispatch(
-				setDecisionRange([
-					decisionEditRange[0].toISOString(),
-					decisionEditRange[1].toISOString(),
-				])
+				setPlanDecision({
+					planId,
+					planType: PLAN_TYPE.TRIP,
+					range: [
+						decisionEditRange[0].toISOString(),
+						decisionEditRange[1].toISOString(),
+					]
+				})
 			);
-			// TODO: fire async call for decision range
 		}
 		setDecisionStart(null);
 		setDecisionCursor(null);

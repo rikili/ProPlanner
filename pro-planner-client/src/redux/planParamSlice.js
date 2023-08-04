@@ -3,10 +3,17 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { buildServerRoute } from '../helpers/Utils';
 import { PLAN_TYPE, LOAD_STATUS } from '../constants';
 
-export const setupParams = createAsyncThunk('parameters/get', async (tripId) => {
-    const response = await axios.get(buildServerRoute('plan',tripId));
+export const setupParams = createAsyncThunk('parameters/get', async (planId) => {
+    const response = await axios.get(buildServerRoute('plan', planId));
     return response.data;
 });
+
+export const setPlanDecision = createAsyncThunk('parameter/update/decision', async ({planId, planType, range}) => {
+    const response = await axios.put(buildServerRoute(planType, 'decision', planId), {
+        decision: range,
+    });
+    return response.data;
+})
 
 const planParamSlice = createSlice({
     name: 'parameters',
@@ -52,11 +59,8 @@ const planParamSlice = createSlice({
             state.budget = payload.budget;
             state.dateTimeRange = payload.dateTimeRange;
             state.planType = payload.planType;
+            state.decisionRange = payload.decision;
             state.isInitialized = true;
-        },
-
-        setDecisionRange(state, { payload }) {
-            state.decisionRange = payload;
         },
 
         setIsUploading(state, { payload }) {
@@ -75,7 +79,7 @@ const planParamSlice = createSlice({
             state.paramStatus = LOAD_STATUS.FAILED;
         });
         builder.addCase(setupParams.fulfilled, (state, action) =>  {
-            const {name, planType, dateTimeRange, dayOffset, budget, description, isAllDay, location} = action.payload;
+            const {name, planType, dateTimeRange, dayOffset, budget, description, isAllDay, location, decision} = action.payload;
             state.name = name;
             state.planType = planType;
             state.dateTimeRange = dateTimeRange;
@@ -84,11 +88,15 @@ const planParamSlice = createSlice({
             description && (state.description = description);
             state.isAllDay = isAllDay;
             state.location = location;
+            state.decisionRange = decision;
             state.paramStatus = LOAD_STATUS.SUCCESS;
             state.isInitialized = true;
+        });
+        builder.addCase(setPlanDecision.fulfilled, (state, { payload }) => {
+            state.decisionRange = payload.decision;
         });
     }
 });
 
-export const { changePlanType, updatePlan, setDecisionRange, setIsUploading, setIsEditing } = planParamSlice.actions;
+export const { changePlanType, updatePlan, setIsUploading, setIsEditing } = planParamSlice.actions;
 export default planParamSlice.reducer;
