@@ -1,8 +1,8 @@
 .nav-link {
-    text-decoration: none;
-    color: black;
-
-    &:hover {
-        color: lightgrey;
-    }
+	text-decoration: none;
+	color: black;
+	&:hover {
+		color: lightgrey;
+		transform: scale(1.1);
+	}
 }
