@@ -1,6 +1,9 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useSelector } from "react-redux";
 import ErrorToast from './ErrorToast';
+import { ToastContainer } from 'react-bootstrap';
+import './ErrorContainer.scss';
+import { assembleClass } from '../helpers/Utils';
 
 const handleOverlayClick = (event) => {
     event.stopPropagation();
@@ -24,6 +27,9 @@ const ErrorContainer = () => {
         document.addEventListener('keydown', handleKeyPress);
     }, [handleKeyPress]);
 
+    const adjustError = window.outerWidth <= 992;
+    console.log(adjustError);
+
     return <>
         {disableControl
             ? <>
@@ -38,7 +44,7 @@ const ErrorContainer = () => {
             </>
             : null
         }
-        {showErr && <div className="position-absolute bottom-0 end-0"><ErrorToast ref={closeButton}/></div>}
+        {showErr && <ToastContainer position={adjustError ? "bottom-center" : "bottom-end"} className="err-toast-container"><ErrorToast ref={closeButton}/></ToastContainer>}
     </>
 }
 

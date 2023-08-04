@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { IoWarning } from 'react-icons/io5';
 import { MdDangerous } from 'react-icons/md';
 import { BsInfoCircleFill } from 'react-icons/bs';
-import { CgClose } from 'react-icons/cg';
 
 import {resetError} from '../redux/errorSlice';
 import {ERR_TYPE} from '../constants';
@@ -42,16 +41,16 @@ const ErrorToast = forwardRef((props, ref) => {
     return <>
         {showError
             && <Toast
-                className="m-3 position-relative err-toast"
+                className="m-3 err-toast"
+                onClose={handleCloseToast}
+                // autohide
+                // delay={10000}
             >
-                <Toast.Header className="d-flex justify-content-between" closeButton={false}>
+                <Toast.Header className="d-flex justify-content-between">
                     <div className="d-flex align-items-center">
                         {errIcon}
                         <strong className="ms-2">{errType}</strong>
                     </div>
-                    <button className="toast-close" onClick={handleCloseToast} ref={ref}>
-                        <CgClose className="close-symbol"/>
-                    </button>
                 </Toast.Header>
                 <Toast.Body>
                     {errMsg}
