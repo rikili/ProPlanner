@@ -12,8 +12,8 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Clipboard from './Clipboard';
 import Checkmark from './Checkmark';
-
 import './NavigationBar.scss';
+import { setIsEditing } from '../redux/planParamSlice';
 
 const NavigationBar = () => {
 	const { tripId } = useParams();

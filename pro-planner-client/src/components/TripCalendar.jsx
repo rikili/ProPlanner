@@ -27,17 +27,17 @@ import {
 	completeInit,
 } from '../redux/tripSlice';
 import { setDetailedDay, setDetailedUsers } from '../redux/summarySlice';
-import { getMonthIndex } from '../helpers/Calendar';
+import { dayOffsetToDOW, getMonthIndex } from '../helpers/Calendar';
 import { getHalfDate, isFirstHalf } from '../helpers/TripCalendar';
 import { buildServerRoute, getTimezone } from '../helpers/Utils';
 import { setError } from '../redux/errorSlice';
-import { ERR_TYPE } from '../constants';
+import { ERR_TYPE, PLAN_TYPE } from '../constants';
 import './TripCalendar.scss';
 import TripDay from './TripDay';
 import TripCalendarLabel from './TripCalendarLabel';
 import TripWeekDayLabels from './TripWeekDayLabels';
 import TripMonthSelector from './TripMonthSelector';
-import { setDecisionRange } from '../redux/planParamSlice';
+import { setPlanDecision } from '../redux/planParamSlice';
 import CalendarControls from './CalendarControls';
 
 const addNameToDay = (fullDay, destArr, dayIndex, username) => {
@@ -233,19 +233,7 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	const [selectStart, setSelectStart] = useState(null);
 	const [selectCursor, setSelectCursor] = useState(null);
 
-	const validDOWs = useMemo(() => {
-		const startDay = startOfDay(new Date(plan.dateTimeRange[0]));
-		let result = [startDay.getDay()];
-		let iterDate = new Date(startDay);
-		const limitDate = addWeeks(startDay, 1);
-		let count = 0;
-		while (iterDate < limitDate && count < plan.dayOffset.length) {
-			iterDate = addDays(iterDate, plan.dayOffset[count]);
-			result.push(iterDate.getDay());
-			count++;
-		}
-		return result;
-	}, [plan]);
+	const validDOWs = useMemo(() => dayOffsetToDOW(new Date(plan.dateTimeRange[0]), plan.dayOffset), [plan]);
 
 	const isDateValid = date =>
 		validDOWs.includes(getDay(date)) && date >= startDate && date <= endDate;
@@ -469,12 +457,15 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	const confirmDecision = () => {
 		if (decisionEditRange) {
 			dispatch(
-				setDecisionRange([
-					decisionEditRange[0].toISOString(),
-					decisionEditRange[1].toISOString(),
-				])
+				setPlanDecision({
+					planId,
+					planType: PLAN_TYPE.TRIP,
+					range: [
+						decisionEditRange[0].toISOString(),
+						decisionEditRange[1].toISOString(),
+					]
+				})
 			);
-			// TODO: fire async call for decision range
 		}
 		setDecisionStart(null);
 		setDecisionCursor(null);

@@ -109,6 +109,17 @@ router.get('/:id/:userId', async (req, res) => {
   }
 });
 
+router.put('/decision/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const decision = req.body.decision;
+    const addedDecision = await planHelper.addDecision(id, decision);
+    res.status(200).json(addedDecision);
+  } catch (err) {
+    res.status(400).send({ err: err });
+  }
+});
+
 const modifyMultiMonth = (requestedMonth, offset, splitDate, nextMonth, prevMonth) => {
   let updatedMonth;
   if (requestedMonth.month[0] === null && requestedMonth.month[1] === null) {

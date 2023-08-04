@@ -2,15 +2,17 @@ import { Button, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import { isFirstHalf } from '../helpers/TripCalendar';
-import { setDecisionRange } from '../redux/planParamSlice';
+import { setPlanDecision } from '../redux/planParamSlice';
 import { PLAN_TYPE } from '../constants';
 import './DecisionInfo.scss';
+import { useParams } from 'react-router-dom';
 
 const halfFlair = (date) => {
     return isFirstHalf(date) ? '(Morning)' : '(Evening)';
 };
 
 const DecisionInfo = () => {
+    const { tripId } = useParams();
     const planType = useSelector((state) => state.planParameters.planType);
     const decisionRange = useSelector((state) => state.planParameters.decisionRange);
     const dispatch = useDispatch();
@@ -20,7 +22,11 @@ const DecisionInfo = () => {
     const rangeEnd = new Date(decisionRange[1]);
 
     const handleClear = () => {
-        dispatch(setDecisionRange([]));
+        dispatch(setPlanDecision({
+            planId: tripId,
+            planType,
+            range: []
+        }));
     };
 
     return (

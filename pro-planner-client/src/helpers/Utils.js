@@ -6,4 +6,10 @@ export const assembleClass = (...classes) => classes.filter(Boolean).join(' ');
 export const buildServerRoute = (...routes) => {
     return `${process.env.REACT_APP_SERVER_URL}/${routes.join('/')}`;
 }
-export const getTimezone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+export const getTimezone = () => {
+    try {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch (e) {
+        return 'America/Los_Angeles';
+    }
+}
