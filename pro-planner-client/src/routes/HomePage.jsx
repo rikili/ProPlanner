@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoaderData } from 'react-router-dom';
-import { setupParams, updatePlan } from '../redux/planParamSlice';
+import { updatePlan } from '../redux/planParamSlice';
 import { ERR_TYPE, LOAD_STATUS } from '../constants';
 import { setError } from "../redux/errorSlice";
 import NavigationBar from "../components/NavigationBar";
@@ -13,12 +13,12 @@ import './HomePage.scss';
 import { buildServerRoute } from '../helpers/Utils';
 
 const HomePage = () => {
+	const [paramStatus, setParamStatus] = useState(null);
 	const planId = useLoaderData();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const selectedUser = useSelector(state => state.user.selectedUser);
 	const isParamsInit = useSelector(state => state.planParameters.isInitialized);
-	const loadingState = useSelector(state => state.planParameters.paramStatus);
 
 	const isUserSelected = !!selectedUser;
 
@@ -26,12 +26,13 @@ const HomePage = () => {
 		if (!isUserSelected) {
 			navigate(`/user/${planId}`);
 		} else {
-			dispatch(setupParams(planId));
 			axios.get(buildServerRoute('plan', planId))
 				.then((result) => {
+					setParamStatus(LOAD_STATUS.SUCCESS);
 					dispatch(updatePlan(result.data));
 				})
 				.catch((err) => {
+					setParamStatus(LOAD_STATUS.FAILED);
 					if (err.response.status === 404) {
 						dispatch(setError({
 							errType: ERR_TYPE.ERR,
@@ -41,6 +42,7 @@ const HomePage = () => {
 						}));
 					}
 				});
+			setParamStatus(LOAD_STATUS.LOADING);
 		}
 	}, [dispatch, planId, isUserSelected, navigate]);
 
@@ -48,7 +50,7 @@ const HomePage = () => {
 		<div className='home-page'>
 			<NavigationBar planId={planId}/>
 			<div className='page-content'>
-				{ (loadingState === LOAD_STATUS.LOADING) && <LoadingDisplay /> }
+				{ (paramStatus === LOAD_STATUS.LOADING) && <LoadingDisplay /> }
 				{ isParamsInit && <Outlet /> }
 			</div>
 		</div>
