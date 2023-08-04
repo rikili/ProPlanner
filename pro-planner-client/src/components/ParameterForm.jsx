@@ -330,8 +330,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
             }));
             return;
         }
-        console.log('submit', formResult);
-        // onSubmit(formResult, isOuting ? PLAN_TYPE.OUTING : PLAN_TYPE.TRIP);
+        onSubmit(formResult, isOuting ? PLAN_TYPE.OUTING : PLAN_TYPE.TRIP);
     }
 
     return <Form className="w-50 mx-auto d-flex flex-column gap-3 pt-3" onSubmit={handleFormSubmission} noValidate validated={validated}>

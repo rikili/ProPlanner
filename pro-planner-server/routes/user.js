@@ -16,7 +16,7 @@ router.put('/', async (req, res) => {
 router.get('/', async (req, res) => {
   const eventId = req.query.eventId;
   const usersInfo = await userHelper.getUsers(eventId);
-  const users = Object.keys(usersInfo);
+  const users = usersInfo ? Object.keys(usersInfo) : [];
   res.status(200).json(users);
 });
 
