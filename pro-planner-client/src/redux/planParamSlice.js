@@ -1,12 +1,7 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { buildServerRoute } from '../helpers/Utils';
-import { PLAN_TYPE, LOAD_STATUS } from '../constants';
-
-export const setupParams = createAsyncThunk('parameters/get', async (planId) => {
-    const response = await axios.get(buildServerRoute('plan', planId));
-    return response.data;
-});
+import { PLAN_TYPE } from '../constants';
 
 export const setPlanDecision = createAsyncThunk('parameter/update/decision', async ({planId, planType, range}) => {
     const response = await axios.put(buildServerRoute(planType, 'decision', planId), {
@@ -30,7 +25,6 @@ const planParamSlice = createSlice({
         decisionRange: [],
 
         isUploading: false,
-        paramStatus: null,
         isInitialized: false,
         isEditing: false,
     },
@@ -69,29 +63,9 @@ const planParamSlice = createSlice({
 
         setIsEditing(state, { payload }) {
             state.isEditing = payload;
-        }
+        },
     },
     extraReducers: (builder) => {
-        builder.addCase(setupParams.pending, (state) => {
-            state.paramStatus = LOAD_STATUS.LOADING;
-        });
-        builder.addCase(setupParams.rejected, (state) => {
-            state.paramStatus = LOAD_STATUS.FAILED;
-        });
-        builder.addCase(setupParams.fulfilled, (state, action) =>  {
-            const {name, planType, dateTimeRange, dayOffset, budget, description, isAllDay, location, decision} = action.payload;
-            state.name = name;
-            state.planType = planType;
-            state.dateTimeRange = dateTimeRange;
-            state.dayOffset = dayOffset;
-            budget && (state.budget = budget);
-            description && (state.description = description);
-            state.isAllDay = isAllDay;
-            state.location = location;
-            state.decisionRange = decision;
-            state.paramStatus = LOAD_STATUS.SUCCESS;
-            state.isInitialized = true;
-        });
         builder.addCase(setPlanDecision.fulfilled, (state, { payload }) => {
             state.decisionRange = payload.decision;
         });

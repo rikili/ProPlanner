@@ -15,10 +15,11 @@ const CreatorPage = () => {
     const handleSubmit = (formResult, planType) => {
         axios.post(buildServerRoute(planType), formResult)
             .then((result) => {
-                dispatch(updatePlan({...formResult, planType}));
+                const {id, planParameters} = result.data;
+                dispatch(updatePlan(planParameters));
                 dispatch(setIsUploading(false));
                 dispatch(resetError());
-                navigate(`/user/${result.data['_id']}`);
+                navigate(`/user/${id}`);
             })
             .catch((err) => {
                 console.log(err);

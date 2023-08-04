@@ -26,6 +26,13 @@ async function createNewEvent(data, planType) {
       polls: {},
     });
     await pollModel.save();
+
+    // format return
+    savedData = {
+      id: savedData["_id"],
+      planParameters: savedData.planParameters
+    };
+
     return savedData;
   } catch (err) {
     return { err: err.message };
