@@ -1,0 +1,44 @@
+.edit-button {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-items: center;
+	height: 1.5em;
+	width: 2em;
+	background-color: rgb(202, 202, 202);
+	border-radius: 0.3em;
+	color: rgb(68, 68, 68);
+	&:hover {
+		background-color: rgb(150, 150, 150);
+	}
+
+	&.confirm {
+		background-color: rgb(233, 40, 40);
+		color: rgb(31, 68, 31);
+		&:hover {
+			background-color: rgb(94, 172, 94);
+		}
+	}
+
+	&.close {
+		background-color: rgb(175, 175, 175);
+		color: rgb(95, 22, 22);
+		&:hover {
+			background-color: rgb(211, 147, 147);
+		}
+	}
+
+	&.editing {
+		background-color: rgb(202, 202, 202);
+		color: rgb(207, 33, 33);
+		&:hover {
+			background-color: rgb(150, 150, 150);
+		}
+	}
+}
+
+.control-layer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.3em;
+}
