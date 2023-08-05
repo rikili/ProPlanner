@@ -6,7 +6,7 @@ import {
     Col,
     Container,
     Form,
-    Overlay,
+    OverlayTrigger,
     Row,
     Tooltip
 } from 'react-bootstrap';
@@ -20,6 +20,8 @@ import axios from "axios";
 import {buildServerRoute} from "../helpers/Utils";
 import Button from '../components/override/Button';
 import './LandingPage.scss';
+
+const renderTooltip = (text, id) => <Tooltip id={id} style={{position: "fixed"}}>{text}</Tooltip>;
 
 const LandingPage = () => {
     const [inputValue, setInputValue] = useState('');
@@ -141,23 +143,19 @@ const LandingPage = () => {
                                             onClick={() => handleCreate(PLAN_TYPE.TRIP)}
                                         >
                                             <div className="m-auto">Trip</div>
-                                            <span className="float-end"
-                                                  onMouseEnter={() => setShowTripTooltip(true)}
-                                                  onMouseLeave={() => setShowTripTooltip(false)}
-                                                  ref={tripButtonIcon}>
-                                                <FiInfo />
-                                            </span>
-                                            <Overlay
-                                                target={tripButtonIcon.current}
-                                                show={showTripTooltip}
+                                            <OverlayTrigger
                                                 placement="top"
+                                                overlay={renderTooltip(
+                                                    'Scheduling based on scale of half day increments. For planning longer trips/timeframes',
+                                                    'trip-tooltip')}
                                             >
-                                                {(props) => (
-                                                    <Tooltip {...props}>
-                                                        {'Scheduling based on scale of half day increments. For planning longer trips/timeframes'}
-                                                    </Tooltip>
-                                                )}
-                                            </Overlay>
+                                                <span className="float-end"
+                                                    onMouseEnter={() => setShowTripTooltip(true)}
+                                                    onMouseLeave={() => setShowTripTooltip(false)}
+                                                    ref={tripButtonIcon}>
+                                                    <FiInfo />
+                                                </span>
+                                            </OverlayTrigger>
                                         </Button>
                                     </Row>
                                     <Row className="text-center mb-3">
@@ -168,23 +166,19 @@ const LandingPage = () => {
                                             onClick={() => handleCreate(PLAN_TYPE.OUTING)}
                                         >
                                             <div className="m-auto">Outing</div>
-                                            <span className="float-end"
-                                                  onMouseEnter={() => setShowOutingTooltip(true)}
-                                                  onMouseLeave={() => setShowOutingTooltip(false)}
-                                                  ref={outingButtonIcon}>
-                                                <FiInfo />
-                                            </span>
-                                            <Overlay
-                                                target={outingButtonIcon.current}
-                                                show={showOutingTooltip}
-                                                placement="bottom"
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={renderTooltip(
+                                                    'Scheduling based on scale of half hour increments. For planning a one-day event',
+                                                    'outing-tooltip')}
                                             >
-                                                {(props) => (
-                                                    <Tooltip {...props}>
-                                                        {'Scheduling based on scale of half hour increments. For planning a one-day event'}
-                                                    </Tooltip>
-                                                )}
-                                            </Overlay>
+                                                <span className="float-end"
+                                                    onMouseEnter={() => setShowOutingTooltip(true)}
+                                                    onMouseLeave={() => setShowOutingTooltip(false)}
+                                                    ref={outingButtonIcon}>
+                                                    <FiInfo />
+                                                </span>
+                                            </OverlayTrigger>
                                         </Button>
                                     </Row>
                                     <div className="mt-3">
