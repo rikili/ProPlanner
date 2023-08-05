@@ -19,6 +19,12 @@ const OverviewPage = () => {
     const startDate = isOuting ? new Date(dateRange[0][0]) : new Date(dateRange[0]);
     const endDate = new Date(dateRange[1]);
 
+    const buildTimeString = (start, end) => `${format(new Date(start), 'hh:mm a')} - ${format(new Date(end), 'hh:mm a')}`;
+    const buildDateString = () => {
+        if (isSameDay(startDate, endDate)) return format(startDate, 'MMMM d yyyy');
+        return `${format(startDate, 'MMMM d yyyy')} - ${format(endDate, 'MMMM d yyyy')}`;
+    }
+
     function processDecidedDates(decidedDates) {
         if (!decidedDates || decidedDates.length !== 2) {
             return <i>A decision has not been made yet</i>
@@ -26,17 +32,13 @@ const OverviewPage = () => {
         const [startDate, endDate] = decidedDates;
         const processedStartDate = format(parseISO(startDate), 'EEE, MMM d yyyy');
         const processedEndDate = format(parseISO(endDate), 'EEE, MMM d yyyy');
-        return `${processedStartDate} - ${processedEndDate}`
+        return <div>
+            <div>{`${processedStartDate} - ${processedEndDate}`}</div>
+            {isOuting && <div>{buildTimeString(startDate, endDate)}</div>}
+        </div>
     }
 
     const processedDecidedDates = processDecidedDates(decidedDates);
-
-    const buildDateString = () => {
-        if (isSameDay(startDate, endDate)) return format(startDate, 'MMMM d yyyy');
-        return `${format(startDate, 'MMMM d yyyy')} - ${format(endDate, 'MMMM d yyyy')}`;
-    }
-
-    const buildTimeString = () => `${format(startDate, 'hh:mm a')} - ${format(endDate, 'hh:mm a')}`;
 
     return (
         <>
@@ -44,7 +46,7 @@ const OverviewPage = () => {
                 <div className="overview-header">
                     <div className="overview-header-title"><b>{tripName}</b></div>
                     <div className="overview-header-dates">{buildDateString()}</div>
-                    {isOuting && <div className="overview-header-times">{buildTimeString()}</div>}
+                    {isOuting && <div className="overview-header-times">{buildTimeString(startDate, endDate)}</div>}
                 </div>
                 <div className="overview-content">
                     <div className="overview-map-row">
@@ -57,7 +59,7 @@ const OverviewPage = () => {
                             <Card className="overview-details-card">
                                 <Card.Header as="h4">Details</Card.Header>
                                 <Card.Body>
-                                    <Card.Subtitle className="mt-1">Decided Dates:</Card.Subtitle>
+                                    <Card.Subtitle className="mt-1">{isOuting ? 'Decided Times: ' : 'Decidied Dates: '}</Card.Subtitle>
                                     <Card.Text>{processedDecidedDates}</Card.Text>
                                     <Card.Subtitle>Location:</Card.Subtitle>
                                     <Card.Text>{location}</Card.Text>

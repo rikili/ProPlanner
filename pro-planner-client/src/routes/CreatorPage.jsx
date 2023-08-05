@@ -6,11 +6,19 @@ import { resetError } from '../redux/errorSlice';
 import { buildServerRoute } from "../helpers/Utils";
 import { useNavigate } from "react-router-dom";
 import LoadingDisplay from "../components/LoadingDisplay";
+import { useEffect } from "react";
 
 const CreatorPage = () => {
     const isUploading = useSelector(state => state.planParameters.isUploading);
+    const planType = useSelector(state => state.planParameters.planType);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!planType) {
+            navigate('/');
+        }
+    }, []);
 
     const handleSubmit = (formResult, planType) => {
         axios.post(buildServerRoute(planType), formResult)

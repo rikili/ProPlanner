@@ -336,7 +336,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
     }
 
     return <Form className="w-50 mx-auto d-flex flex-column gap-3 pt-3" onSubmit={handleFormSubmission} noValidate validated={validated}>
-        <InputDetailsForm title={title} editDetails={editDetails} showBack={showBack} />
+        <InputDetailsForm title={title} editDetails={editDetails} showBack={showBack} isOuting={isOuting} />
         {isOuting && <TimeRangeForm editDetails={editDetails} />}
         <div className="text-center">
             <Button className="w-50 mb-3" variant="custom-success" size="md" type="submit">

@@ -133,11 +133,12 @@ const OutingDay = ({
 
                 );
             } else {
+                const isSegmentInDecision = inDecidedRange(segmentStart);
                 return assembleClass(
                     'available',
                     isSummaryDate && 'summary',
-                    isSelectedSegment && `outing-selected-${step}`,
-                    isDecision && (inDecidedRange(segmentStart) && `outing-decided-${step}`),
+                    !isSegmentInDecision && isSelectedSegment && `outing-selected-${step}`,
+                    isDecision && (isSegmentInDecision && `outing-decided-${step}`),
                 );
             }
         }

@@ -14,7 +14,7 @@ const planParamSlice = createSlice({
     name: 'parameters',
     initialState: {
         name: null,
-        planType: PLAN_TYPE.OUTING,
+        planType: null,
         dateTimeRange: [],
         dayOffset: [],
         isAllDay: false,

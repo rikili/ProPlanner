@@ -13,7 +13,7 @@ const dateToInputValue = (date) => {
     return format(date, 'yyyy-MM-dd');
 };
 
-const InputDetailsForm = ({ title = false, editDetails, showBack = false }) => {
+const InputDetailsForm = ({ title = false, editDetails, showBack = false, isOuting = false }) => {
     const [selectedDays, setSelectedDays] = useState({
         Su: true,
         Mo: true,
@@ -85,11 +85,13 @@ const InputDetailsForm = ({ title = false, editDetails, showBack = false }) => {
                             <button className="back-button" onClick={handleBack}><BiArrowBack /></button>
                         </div>
                     }
-                    <h4>{title}</h4>
+                    <h4 className="m-0">{title}</h4>
                 </Card.Header>
             )}
             <Card.Body className="p-4">
-                
+                {isOuting && <p style={{fontSize: '0.8em', color: 'grey'}}>
+                    <b>NOTE:</b> Outings do not support timezone conversion. Therefore, accessing an outing plan in another timezone will <b>not</b> change the timings of the plan.
+                </p>}
                 <h6>
                     <b>Details</b>
                 </h6>
