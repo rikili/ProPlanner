@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import Button from './override/Button';
 import { addUserAsync } from '../redux/userSlice';
 import { useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -85,7 +86,7 @@ const AddUserForm = () => {
 					/>
 				</div>
 				<div>
-					<Button className="mt-3" type="submit" style={{ width: '100%' }}>
+					<Button variant="custom-primary" className="mt-3" type="submit" style={{ width: '100%' }}>
 						Submit
 					</Button>
 				</div>

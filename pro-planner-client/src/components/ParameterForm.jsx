@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import Button from './override/Button';
 import { isAfter, eachDayOfInterval, isEqual, addMonths } from 'date-fns';
 import { START_DAY_TIME, END_DAY_TIME } from '../constants';
 import { addDays, format } from 'date-fns';
@@ -338,7 +339,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
         <InputDetailsForm title={title} editDetails={editDetails} showBack={showBack} />
         {isOuting && <TimeRangeForm editDetails={editDetails} />}
         <div className="text-center">
-            <Button className="w-50 mb-3" variant="success" size="md" type="submit">
+            <Button className="w-50 mb-3" variant="custom-success" size="md" type="submit">
                 <b>Submit</b>
             </Button>
         </div>

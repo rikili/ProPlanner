@@ -28,7 +28,6 @@ const ErrorContainer = () => {
     }, [handleKeyPress]);
 
     const adjustError = window.outerWidth <= 992;
-    console.log(adjustError);
 
     return <>
         {disableControl

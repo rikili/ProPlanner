@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { deleteUsersAsync, selectUser } from '../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { Button, Form, ToggleButton, Col, Row } from 'react-bootstrap';
+import { Form, ToggleButton, Col, Row } from 'react-bootstrap';
+import Button from './override/Button';
 import { MdModeEditOutline } from 'react-icons/md';
 import { RiCheckFill } from 'react-icons/ri';
 import { RiCloseFill } from 'react-icons/ri';
+
 import { setError, resetError } from '../redux/errorSlice';
 import { ERR_TYPE } from '../constants';
 import { useState } from 'react';
@@ -78,9 +80,9 @@ const UserList = () => {
 		setIsEditing(false);
 	};
 
-	return (
-		<>
-			<Form>
+    return (
+        <>
+            <Form>
 				<div style={{ width: '100%' }}>
 					<Row>
 						<Col>
@@ -143,13 +145,15 @@ const UserList = () => {
 						))}
 				</div>
 				{!isEditing && (
-					<Button style={{ width: '100%' }} onClick={handleContinueClick}>
+					<Button style={{width: '100%'}}
+							variant="custom-primary"
+							onClick={handleContinueClick}>
 						Continue
 					</Button>
 				)}
 			</Form>
-		</>
-	);
-};
+        </>
+    );
+}
 
 export default UserList;

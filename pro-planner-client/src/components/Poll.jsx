@@ -1,18 +1,19 @@
 import React from 'react';
 import Options from "./Options";
-import {Button, Accordion} from "react-bootstrap";
+import {Accordion} from "react-bootstrap";
+import Button from './override/Button';
 import {useState} from 'react';
 import AddOptionForm from "./AddOptionForm";
 import {useDispatch, useSelector} from 'react-redux';
 import {voteOptionAsync} from "../redux/pollSlice";
 import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
-
+import './Poll.scss';
 
 function Poll({poll, pollId}) {
 
-    // const currUser = 'user1'; // testing purpose
     const currUser = useSelector((state) => state.user.selectedUser);
+    const users = useSelector((state) => state.user.userList);
     const [showModal, setShowModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
     const dispatch = useDispatch();
@@ -48,23 +49,24 @@ function Poll({poll, pollId}) {
         <>
             <Accordion className='mt-2 p-2' style={{maxWidth: '700px', width: '100%'}}>
                 <Accordion.Item eventKey="0">
-                    <Accordion.Header>{poll.question}</Accordion.Header>
+                    <Accordion.Header className="poll-header">{poll.question}</Accordion.Header>
                     <Accordion.Body>
                         <Options style={{marginTop: '10px'}}
                                  poll={poll}
                                  pollId={pollId}
                                  currUser={currUser}
+                                 userCount={users.length}
                                  setSelectedOption={setSelectedOption}
                                  selectedOption={selectedOption}
                         />
                         <Button style={{marginTop: '10px'}}
-                                variant="primary"
+                                variant="custom-primary"
                                 size='sm'
                                 onClick={handleAddOption}>
                             Add Option
                         </Button>{' '}
                         <Button style={{marginTop: '10px'}}
-                                variant="primary"
+                                variant="custom-primary"
                                 size='sm'
                                 onClick={handleVote}>
                             Vote

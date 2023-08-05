@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Card, Form, Row, ButtonGroup, Button, Col } from 'react-bootstrap';
+import { Card, Form, Row, ButtonGroup, Col } from 'react-bootstrap';
+import Button from './override/Button';
 import { dayOffsetToDOW } from '../helpers/Calendar';
 import { PLAN_TYPE } from '../constants';
 import { format } from 'date-fns';
@@ -77,17 +78,18 @@ const InputDetailsForm = ({ title = false, editDetails, showBack = false }) => {
     }
 
     return (
-        <Card className="p-2">
-            {showBack && <div>
-                    <button className="back-button" onClick={handleBack}><BiArrowBack /></button>
-                </div>
-            }
+        <Card>
             {title && (
-                <Card.Title className="mb-1">
+                <Card.Header className="mb-1 d-flex flex-nowrap">
+                    {showBack && <div className="me-3">
+                            <button className="back-button" onClick={handleBack}><BiArrowBack /></button>
+                        </div>
+                    }
                     <h4>{title}</h4>
-                </Card.Title>
+                </Card.Header>
             )}
-            <Card.Body>
+            <Card.Body className="p-4">
+                
                 <h6>
                     <b>Details</b>
                 </h6>
@@ -136,7 +138,7 @@ const InputDetailsForm = ({ title = false, editDetails, showBack = false }) => {
                                 return (
                                     <Button
                                         className="rounded"
-                                        variant={`${isSelected ? 'primary' : 'secondary'}`}
+                                        variant={`${isSelected ? 'custom-primary' : 'custom-secondary'}`}
                                         active={isSelected}
                                         key={`${dayLabel}-${index}`}
                                         onClick={() => updateSelection(dayLabel)}

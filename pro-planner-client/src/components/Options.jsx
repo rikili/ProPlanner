@@ -3,7 +3,7 @@ import Option from "./Option";
 import {Form} from "react-bootstrap";
 
 
-function Options({poll, pollId, currUser, setSelectedOption, selectedOption}) {
+function Options({poll, pollId, currUser, setSelectedOption, selectedOption, userCount}) {
 
     if (poll.options === null || !poll.options) {
         return <p>Please add an option to vote.</p>;
@@ -19,6 +19,7 @@ function Options({poll, pollId, currUser, setSelectedOption, selectedOption}) {
                             poll={poll}
                             pollId={pollId}
                             currUser={currUser}
+                            userCount={userCount}
                             setSelectedOption={setSelectedOption}
                             selectedOption={selectedOption}
                     />)}

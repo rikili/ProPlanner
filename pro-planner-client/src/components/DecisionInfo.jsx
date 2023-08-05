@@ -1,4 +1,5 @@
-import { Button, Card } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
+import Button from './override/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import { isFirstHalf } from '../helpers/TripCalendar';
@@ -61,7 +62,7 @@ const DecisionInfo = () => {
             </Card.Body>
             {rangeSelected && (
                 <Card.Footer className="decision-footer">
-                    <Button variant="danger" size="sm" onClick={handleClear}>
+                    <Button variant="custom-danger" size="sm" onClick={handleClear}>
                         Clear Decision
                     </Button>
                 </Card.Footer>
