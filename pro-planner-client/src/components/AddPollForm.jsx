@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {InputGroup, Form, Card, Container} from "react-bootstrap";
+import {InputGroup, Form, Card} from "react-bootstrap";
 import Button from './override/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {addPollAsync} from "../redux/pollSlice";
@@ -55,25 +55,23 @@ function AddPollForm({polls}) {
 
     return (
         <>
-            <Container className='d-flex flex-column mt-4 justify-content-center align-items-center'>
-                <Card className='mt-4 p-4 d-flex' style={{maxWidth: '700px', width: '100%', height: '90px'}}>
-                    <InputGroup className="mb-3">
-                        <Form.Control
-                            placeholder="Poll Question"
-                            aria-label="Recipient's username"
-                            aria-describedby="basic-addon2"
-                            onChange={handleQuestionChange}
-                            value={newQuestion}
-                        />
-                        <Button variant="custom-outline-primary"
-                                id="button-addon2"
-                                type='submit'
-                                onClick={handleAddPoll}>
-                            Add
-                        </Button>
-                    </InputGroup>
-                </Card>
-            </Container>
+            <Card className='mt-4 p-4 d-flex' style={{maxWidth: '700px', width: '100%', height: '90px'}}>
+                <InputGroup className="mb-3">
+                    <Form.Control
+                        placeholder="Poll Question"
+                        aria-label="Recipient's username"
+                        aria-describedby="basic-addon2"
+                        onChange={handleQuestionChange}
+                        value={newQuestion}
+                    />
+                    <Button variant="custom-outline-primary"
+                            id="button-addon2"
+                            type='submit'
+                            onClick={handleAddPoll}>
+                        Add
+                    </Button>
+                </InputGroup>
+            </Card>
         </>
     );
 }
