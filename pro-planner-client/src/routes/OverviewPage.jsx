@@ -1,11 +1,11 @@
 import React from 'react';
-import {Card, Col, Container, Row} from 'react-bootstrap';
+import {Card, Container} from 'react-bootstrap';
 import './OverviewPage.scss';
 import ExpenseSplit from '../components/ExpenseSplit';
 import {useSelector} from 'react-redux';
 import Map from '../components/Map';
 import {format, isSameDay, parseISO} from "date-fns";
-import { PLAN_TYPE } from '../constants';
+import {PLAN_TYPE} from '../constants';
 
 const OverviewPage = () => {
     const tripName = useSelector((state) => state.planParameters.name);
@@ -54,9 +54,10 @@ const OverviewPage = () => {
                             <Card className="overview-details-card">
                                 <Card.Header as="h4">Details</Card.Header>
                                 <Card.Body>
-                                    <Card.Subtitle className="mt-1">{isOuting ? 'Decided Times: ' : 'Decidied Dates: '}</Card.Subtitle>
+                                    <Card.Subtitle
+                                        className="mt-1">{isOuting ? 'Decided Times: ' : 'Decided Dates: '}</Card.Subtitle>
                                     <Card.Text>
-                                        {processDecidedDates(decidedDates)} <br />
+                                        {processDecidedDates(decidedDates)} <br/>
                                         {isOuting && buildTimeString(startDate, endDate)}
                                     </Card.Text>
                                     <Card.Subtitle>Location:</Card.Subtitle>
