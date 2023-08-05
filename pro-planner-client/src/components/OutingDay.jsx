@@ -158,7 +158,7 @@ const OutingDay = ({
 			return acc;
 		}, null);
 		const segmentLogic = () => {
-			if (isEditing) {
+			if (isEditMode) {
 				return assembleClass(
 					'available',
 					inSelection ? 'editing' : isSelectedSegment && `outing-edit-select`
