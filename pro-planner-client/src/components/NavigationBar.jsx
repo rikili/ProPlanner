@@ -1,3 +1,5 @@
+// getting url references: https://www.freecodecamp.org/news/how-to-get-the-current-url-with-javascript/
+
 import {
 	Container,
 	Nav,
@@ -25,7 +27,7 @@ const NavigationBar = ({ planId }) => {
 	const [copied, setCopied] = useState(false);
 
 	const handleCopy = () => {
-		const URL = `http://localhost:3000/${planId}`;
+		const URL = `${window.location.origin}/${planId}`;
 		navigator.clipboard.writeText(URL);
 	};
 
