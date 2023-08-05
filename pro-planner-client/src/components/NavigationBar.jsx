@@ -8,6 +8,16 @@ import {
 	Row,
 	Col,
 } from 'react-bootstrap';
+import {
+	Container,
+	Nav,
+	Navbar,
+	NavDropdown,
+	Tooltip,
+	OverlayTrigger,
+	Row,
+	Col,
+} from 'react-bootstrap';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Clipboard from './Clipboard';
@@ -43,12 +53,11 @@ const NavigationBar = ({ planId }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleEdit = () => {
-        navigate('edit');
-        dispatch(setIsEditing(true));
-    };
+	const handleCopy = () => {
+		navigator.clipboard.writeText(URL);
+	};
 
-    const toUserSelect = () => navigate(`/user/${planId}`);
+	const renderTooltip = text => <Tooltip id="button-tooltip">{text}</Tooltip>;
 
     const handleEdit = () => {
         navigate('edit');
