@@ -2,7 +2,6 @@ import { Container } from 'react-bootstrap';
 import { getHalfDate } from '../helpers/TripCalendar';
 import TripHalfDay from './TripHalfDay';
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
 
 const TripDay = ({
 	fake,
@@ -45,11 +44,13 @@ const TripDay = ({
 	// responsible for filtering based on user selected in the sidebar.
 	if (selectedUser) {
 		let result = [];
-		for (let selection of selections) {
-			selection = selection.filter(user => user === selectedUser);
-			result.push(selection);
+		if (selections) {
+			for (let selection of selections) {
+				selection = selection.filter(user => user === selectedUser);
+				result.push(selection);
+			}
+			selections = result;
 		}
-		selections = result;
 	}
 
 	return (

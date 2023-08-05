@@ -234,7 +234,10 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	const [selectStart, setSelectStart] = useState(null);
 	const [selectCursor, setSelectCursor] = useState(null);
 
-	const validDOWs = useMemo(() => dayOffsetToDOW(new Date(plan.dateTimeRange[0]), plan.dayOffset), [plan]);
+	const validDOWs = useMemo(
+		() => dayOffsetToDOW(new Date(plan.dateTimeRange[0]), plan.dayOffset),
+		[plan]
+	);
 
 	const isDateValid = date =>
 		validDOWs.includes(getDay(date)) && date >= startDate && date <= endDate;
@@ -266,12 +269,14 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	};
 
 	const confirmEdits = () => {
-		dispatch(setUserSelectionsAsync({
-			tripId: planId,
-			userId: currUser,
-			newSelections: dateSelections,
-			months: monthsToUpdate,
-		}));
+		dispatch(
+			setUserSelectionsAsync({
+				tripId: planId,
+				userId: currUser,
+				newSelections: dateSelections,
+				months: monthsToUpdate,
+			})
+		);
 		setUpdateMonths([]);
 		resetSelecting();
 		toggleEdit();
@@ -379,15 +384,12 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 	};
 
 	// Compile final renderings of calendar grid
-	if (
-		!(
-			isInitDone &&
-			Object.values(combinedSelections).length
-		)
-	)
-		return <Card className="calendar-card">
-			<LoadingDisplay />
-		</Card>;
+	if (!(isInitDone && Object.values(combinedSelections).length))
+		return (
+			<Card className="calendar-card">
+				<LoadingDisplay />
+			</Card>
+		);
 
 	const maxUsers = Object.keys(calendar).length;
 	let iterDate = new Date(calendarStart);
@@ -466,7 +468,7 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 					range: [
 						decisionEditRange[0].toISOString(),
 						decisionEditRange[1].toISOString(),
-					]
+					],
 				})
 			);
 		}
@@ -476,65 +478,72 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 		setIsDeciding(false);
 	};
 
-    return (
-        <>
-            {isInitDone && (
-                <Card className="calendar-card">
-                    <Card.Body>
-                        <Col className="trip-calendar">
-                            <TripCalendarLabel
-                                date={currDateStart}
-                                onClick={handleChangeMonth}
-                                startRange={startDate}
-                                endRange={endDate}
-                            />
-                            <TripMonthSelector
-                                selectedMonth={currDateStart}
-                                setSelectedMonth={setCurrDateStart}
-                                rangeStart={startDate}
-                                rangeEnd={endDate}
-                            />
-                            <TripWeekDayLabels />
-                            <Container className="trip-calendar-container p-0">
-                                <div className="trip-border w-100" />
-                                {isLoading
-                                    ? Array(6)
-                                          .fill(0)
-                                          .map((_, index) => {
-                                              return (
-                                                  <div key={`week-${index}`} className="trip-day-container">
-                                                      {Array(6)
-                                                          .fill(0)
-                                                          .map((_, index) => (
-                                                              <TripDay
-                                                                  fake
-                                                                  className="trip-half-container"
-                                                                  key={`load-day-${index}`}
-                                                              />
-                                                          ))}
-                                                  </div>
-                                              );
-                                          })
-                                    : weekArr.map((week, index) => {
-                                          return (
-                                              <div key={`week-${index}`} className="trip-day-container">
-                                                  {week.map((day) => day)}
-                                              </div>
-                                          );
-                                      })}
-                            </Container>
-                            <CalendarControls toggleEdit={toggleEdit}
-                                                  editing={isEditMode}
-                                                  toggleDecision={toggleDecision}
-                                                  confirmDecisions={confirmDecision}
-                                                  deciding={isDeciding}
-                                                  confirmEdit={confirmEdits}
-                                                  />
-                        </Col>
-                    </Card.Body>
-                </Card>
-            )}
-        </>
-    );
+	return (
+		<>
+			{isInitDone && (
+				<Card className="calendar-card">
+					<Card.Body>
+						<Col className="trip-calendar">
+							<TripCalendarLabel
+								date={currDateStart}
+								onClick={handleChangeMonth}
+								startRange={startDate}
+								endRange={endDate}
+							/>
+							<TripMonthSelector
+								selectedMonth={currDateStart}
+								setSelectedMonth={setCurrDateStart}
+								rangeStart={startDate}
+								rangeEnd={endDate}
+							/>
+							<TripWeekDayLabels />
+							<Container className="trip-calendar-container p-0">
+								<div className="trip-border w-100" />
+								{isLoading
+									? Array(6)
+											.fill(0)
+											.map((_, index) => {
+												return (
+													<div
+														key={`week-${index}`}
+														className="trip-day-container"
+													>
+														{Array(6)
+															.fill(0)
+															.map((_, index) => (
+																<TripDay
+																	fake
+																	className="trip-half-container"
+																	key={`load-day-${index}`}
+																/>
+															))}
+													</div>
+												);
+											})
+									: weekArr.map((week, index) => {
+											return (
+												<div
+													key={`week-${index}`}
+													className="trip-day-container"
+												>
+													{week.map(day => day)}
+												</div>
+											);
+									  })}
+							</Container>
+							<CalendarControls
+								toggleEdit={toggleEdit}
+								editing={isEditMode}
+								toggleDecision={toggleDecision}
+								confirmDecisions={confirmDecision}
+								deciding={isDeciding}
+								confirmEdit={confirmEdits}
+							/>
+						</Col>
+					</Card.Body>
+				</Card>
+			)}
+		</>
+	);
 };
 export default TripCalendar;
