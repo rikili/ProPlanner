@@ -41,7 +41,7 @@ const NavigationBar = ({ planId }) => {
 		return () => clearTimeout(timeout);
 	}, [copied]);
 
-	const renderTooltip = text => <Tooltip id="button-tooltip">{text}</Tooltip>;
+	const renderTooltip = (text) => <Tooltip id="button-tooltip" style={{position: "fixed"}}>{text}</Tooltip>;
 
 	const handleEdit = () => {
 		navigate('edit');
