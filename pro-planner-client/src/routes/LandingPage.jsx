@@ -30,8 +30,7 @@ const LandingPage = () => {
 
         const [showTripTooltip, setShowTripTooltip] = useState(false);
         const [showOutingTooltip, setShowOutingTooltip] = useState(false);
-        // may remove the localhost regex once deployed
-        const planUrlRegex = /^((https?:\/\/[^/]+\/[^/]+)|(https?:\/\/localhost:3000\/[^/]+))$/;
+        const planUrlRegex = /^https?:\/\/(?:[^\/:]+[:.])?[^\/:]+\/[^/]+$/;
 
         const handleInput = e => {
             setInputValue(e.target.value);
@@ -73,7 +72,7 @@ const LandingPage = () => {
                     setError({
                         errType: ERR_TYPE.ERR,
                         message:
-                            "Invalid URL format: example of a valid URL format is 'https://proplanner.onrender.com/PLAN_ID'.",
+                            `Invalid URL format: example of a valid URL format is 'https://${process.env.REACT_APP_LIVE_DOMAIN}/PLAN_ID'.`,
                     })
                 );
                 return;
