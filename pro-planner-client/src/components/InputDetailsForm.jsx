@@ -1,147 +1,168 @@
-/* REFERENCES:
-
-Google Maps Geocoding API Docs: https://developers.google.com/maps/documentation/geocoding
-
-Google Maps Places Autocomplete API Docs: https://developers.google.com/maps/documentation/javascript/place-autocomplete
-
-*/
-
-import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useRef, useEffect } from 'react';
 import { Card, Form, Row, ButtonGroup, Button, Col } from 'react-bootstrap';
+import { dayOffsetToDOW } from '../helpers/Calendar';
+import { PLAN_TYPE } from '../constants';
+import { format } from 'date-fns';
+import { BiArrowBack } from 'react-icons/bi';
+
+import './InputDetailsForm.scss';
+import { useNavigate } from 'react-router-dom';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+const dateToInputValue = (date) => {
+    return format(date, 'yyyy-MM-dd');
+};
 
-const InputDetailsForm = forwardRef(({ title = false }, ref) => {
-	const { isLoaded } = useJsApiLoader({
-		googleMapsApiKey: process.env.REACT_APP_API_KEY,
-		libraries: ['places'],
-	});
+const InputDetailsForm = ({ title = false, editDetails, showBack = false }) => {
+  
+    const { isLoaded } = useJsApiLoader({
+      googleMapsApiKey: process.env.REACT_APP_API_KEY,
+      libraries: ['places'],
+    });
 
-	const [selectedDays, setSelectedDays] = useState({
-		Su: true,
-		Mo: true,
-		Tu: true,
-		We: true,
-		Th: true,
-		Fr: true,
-		Sa: true,
-	});
-	const formRef = useRef(null);
+    const [selectedDays, setSelectedDays] = useState({
+        Su: true,
+        Mo: true,
+        Tu: true,
+        We: true,
+        Th: true,
+        Fr: true,
+        Sa: true,
+    });
+    const navigate = useNavigate();
 
-	const formatSelectedDays = () => {
-		const result = [];
-		Object.entries(selectedDays).forEach(([_, isSelected], index) => {
-			if (isSelected) {
-				result.push(index);
-			}
-		});
-		return result;
-	};
+    const startDateInput = useRef(null);
+    const endDateInput = useRef(null);
+    const nameInput = useRef(null);
+    const locationInput = useRef(null);
+    const descriptionInput = useRef(null);
+    const budgetInput = useRef(null);
 
-	const reformatDateString = inpString => {
-		const splits = inpString.match(/[0-9]+/g);
-		return `${splits[1]}-${splits[2]}-${splits[0]}`;
-	};
+    const isEditing = !!editDetails;
 
-	useImperativeHandle(ref, () => {
-		return {
-			retrieveData: () => {
-				return {
-					name: formRef.current.formPlanName.value,
-					location: formRef.current.formPlanLoc.value,
-					budget: formRef.current.formPlanBudget.value,
-					dateRange: [
-						reformatDateString(formRef.current.formPlanStartDate.value),
-						reformatDateString(formRef.current.formPlanEndDate.value),
-					],
-					selectedDaysOfWeek: formatSelectedDays(),
-				};
-			},
-		};
-	});
+    let startDate;
+    let endDate;
+    if (isEditing) {
+        startDate = new Date(
+            editDetails.planType === PLAN_TYPE.OUTING ? editDetails.dateTimeRange[0][0] : editDetails.dateTimeRange[0]
+        );
+        endDate = new Date(editDetails.dateTimeRange[1]);
+    }
 
-	const updateSelection = async dayLabel => {
-		const newSelection = { ...selectedDays };
-		newSelection[dayLabel] = !selectedDays[dayLabel];
-		setSelectedDays(newSelection);
-	};
+    useEffect(() => {
+        if (isEditing) {
+            const daysOfWeek = dayOffsetToDOW(startDate, editDetails.dayOffset);
 
-	const [modalShow, setModalShow] = useState(true);
+            const newEditState = {};
+            Object.keys(selectedDays).forEach((weekDayIndex, index) => {
+                if (daysOfWeek.includes(index)) {
+                    newEditState[weekDayIndex] = true;
+                } else {
+                    newEditState[weekDayIndex] = false;
+                }
+            });
+            setSelectedDays(newEditState);
 
-	if (!isLoaded) {
-		return <> Loading.. </>;
-	}
+            startDateInput.current.value = dateToInputValue(startDate);
+            endDateInput.current.value = dateToInputValue(endDate);
+            nameInput.current.value = editDetails.name;
+            locationInput.current.value = editDetails.location;
+            editDetails.description && (descriptionInput.current.value = editDetails.description);
+            editDetails.budget && (budgetInput.current.value = editDetails.budget);
+        }
+    }, [editDetails, isEditing]);
 
-	return (
-		<Card className="m-3">
-			{title && (
-				<Card.Title className="m-3 mb-0">
-					<h2>{title}</h2>
-				</Card.Title>
-			)}
-			<Card.Body className="ps-5 pe-5">
-				<h6>
-					<b>Details</b>
-				</h6>
-				<Form
-					className="d-flex flex-column"
-					ref={formRef}
-					onSubmit={e => e.preventDefault()}
-				>
-					<Form.Group controlId="formPlanName" className="mb-2">
-						<Form.Label>Plan Name </Form.Label>
-						<Form.Control type="text" placeholder="Name your plan" />
-					</Form.Group>
+    const updateSelection = (dayLabel) => {
+        const newSelection = { ...selectedDays };
+        newSelection[dayLabel] = !selectedDays[dayLabel];
+        setSelectedDays(newSelection);
+    };
 
-					<Form.Group controlId="formPlanLoc" className="mb-2">
-						<Form.Label>Location </Form.Label>
-						<Autocomplete>
-							<Form.Control type="text" placeholder="Name your destination" />
-						</Autocomplete>
-					</Form.Group>
+    const handleBack = (e) => {
+        e.preventDefault();
+        navigate('/');
+    }
+  
+    if (!isLoaded) {
+      return <> Loading.. </>;
+    }
 
-					<Form.Group controlId="formPlanBudget" className="mb-2">
-						<Form.Label>Budget </Form.Label>
-						<Form.Control type="number" placeholder="Choose your budget" />
-					</Form.Group>
+    return (
+        <Card className="p-2">
+            {showBack && <div>
+                    <button className="back-button" onClick={handleBack}><BiArrowBack /></button>
+                </div>
+            }
+            {title && (
+                <Card.Title className="mb-1">
+                    <h4>{title}</h4>
+                </Card.Title>
+            )}
+            <Card.Body>
+                <h6>
+                    <b>Details</b>
+                </h6>
+                <p className="detail-form-instruct">* - Required fields</p>
+                <div>
+                    <Form.Group controlId="planName" className="mb-2">
+                        <Form.Label>Plan Name* </Form.Label>
+                        <Form.Control type="text" placeholder="Name your plan" ref={nameInput} required />
+                    </Form.Group>
 
-					<Row className="d-flex flex-row">
-						<Form.Group as={Col} controlId="formPlanStartDate" className="mb-2">
-							<Form.Label>Start Date </Form.Label>
-							<Form.Control type="date" />
-						</Form.Group>
+                    <Form.Group controlId="planLocation" className="mb-2">
+                        <Form.Label>Location* </Form.Label>
+                        <Autocomplete>
+                          <Form.Control type="text" placeholder="Name your destination" ref={locationInput} required />
+                        </Autocomplete>
+                    </Form.Group>
 
-						<Form.Group as={Col} controlId="formPlanEndDate" className="mb-4">
-							<Form.Label>End Date </Form.Label>
-							<Form.Control type="date" />
-						</Form.Group>
-					</Row>
+                    <Form.Group controlId="planDescription" className="mb-2">
+                        <Form.Label>Description </Form.Label>
+                        <Form.Control as="textarea" placeholder="Make a description" ref={descriptionInput} />
+                    </Form.Group>
 
-					<ButtonGroup
-						size="sm"
-						className="d-flex flex-wrap gap-1 mx-auto w-100"
-						style={{ maxWidth: '50%' }}
-					>
-						{Object.entries(selectedDays).map(
-							([dayLabel, isSelected], index) => {
-								return (
-									<Button
-										className="rounded"
-										variant={`${isSelected ? 'primary' : 'secondary'}`}
-										active={isSelected}
-										key={`${dayLabel}-${index}`}
-										onClick={() => updateSelection(dayLabel)}
-									>
-										{dayLabel}
-									</Button>
-								);
-							}
-						)}
-					</ButtonGroup>
-				</Form>
-			</Card.Body>
-		</Card>
-	);
-});
+                    <Form.Group controlId="planBudget" className="mb-2">
+                        <Form.Label>Budget </Form.Label>
+                        <Form.Control type="number" placeholder="Choose your budget" ref={budgetInput} />
+                    </Form.Group>
+
+                    <Row className="d-flex flex-row">
+                        <Form.Group as={Col} controlId="planStartDate" className="mb-2">
+                            <Form.Label>Start Date* </Form.Label>
+                            <Form.Control type="date" ref={startDateInput} required />
+                        </Form.Group>
+
+                        <Form.Group as={Col} controlId="planEndDate" className="mb-4">
+                            <Form.Label>End Date* </Form.Label>
+                            <Form.Control type="date" ref={endDateInput} required />
+                        </Form.Group>
+                    </Row>
+
+                    <Form.Group controlId="planDOWs">
+                        <Form.Control style={{ display: 'none' }} value={JSON.stringify(selectedDays)} readOnly />
+                        <ButtonGroup
+                            size="sm"
+                            className="d-flex flex-wrap gap-1 mx-auto w-100"
+                            style={{ maxWidth: '50%' }}
+                        >
+                            {Object.entries(selectedDays).map(([dayLabel, isSelected], index) => {
+                                return (
+                                    <Button
+                                        className="rounded"
+                                        variant={`${isSelected ? 'primary' : 'secondary'}`}
+                                        active={isSelected}
+                                        key={`${dayLabel}-${index}`}
+                                        onClick={() => updateSelection(dayLabel)}
+                                    >
+                                        {dayLabel}
+                                    </Button>
+                                );
+                            })}
+                        </ButtonGroup>
+                    </Form.Group>
+                </div>
+            </Card.Body>
+        </Card>
+    );
+};
 
 export default InputDetailsForm;

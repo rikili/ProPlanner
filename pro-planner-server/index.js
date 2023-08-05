@@ -16,6 +16,7 @@ const trip = require('./routes/trip');
 const outing = require('./routes/outing');
 const user = require('./routes/user');
 const poll = require('./routes/poll');
+const cost = require('./routes/cost');
 const plan = require('./routes/plan');
 
 //  middleware
@@ -23,6 +24,7 @@ app.use('/trip', trip);
 app.use('/outing', outing);
 app.use('/user', user);
 app.use('/poll', poll);
+app.use('/cost', cost);
 app.use('/plan', plan);
 
 app.listen(5001, () => {

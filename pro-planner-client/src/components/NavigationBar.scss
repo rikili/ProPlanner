@@ -1,8 +1,24 @@
 .nav-link {
-    text-decoration: none;
-    color: black;
+	text-decoration: none;
+	color: black;
 
-    &:hover {
-        color: lightgrey;
-    }
+	&:hover {
+		color: lightgrey;
+		transform: scale(1.1);
+	}
+
+	&:hover &.on-bar {
+		color: lightgrey;
+	}
+
+	&.in-dropdown {
+		padding-left: 1em;
+		&:hover {
+			background-color: rgb(231, 231, 231);
+		}
+
+		&:active {
+			background-color: grey;
+		}
+	}
 }

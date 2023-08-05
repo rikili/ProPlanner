@@ -3,8 +3,9 @@ import {FaMinus, FaPlus} from "react-icons/fa6";
 import {CiSquarePlus} from "react-icons/ci";
 import {Form, Button, Card, Col, InputGroup, ListGroup, Row, Modal} from "react-bootstrap";
 import {useDispatch} from "react-redux";
-import {addExpense, removeExpense} from "../redux/costSlice";
-import {v4 as uuidv4} from "uuid";
+import { addExpenseAsync, removeExpenseAsync} from "../redux/costSlice";
+import { useLocation } from "react-router";
+// import {v4 as uuidv4} from "uuid";
 import {setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 
@@ -20,8 +21,8 @@ const UserExpense = ({user, userId, currUserId}) => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [deleteExpenseId, setDeleteExpenseId] = useState(null);
     const dispatch = useDispatch();
-
     const handleClose = () => setShowDeleteConfirmation(false);
+    const tripId = useLocation().pathname.split('/')[1];
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
@@ -39,8 +40,8 @@ const UserExpense = ({user, userId, currUserId}) => {
 
     const handleAddExpense = () => {
         let formResult = {
-            expenseId: uuidv4(), // TODO: replace with mongoId
-            userId: userId, // TODO: replace with mongoId
+            tripId: tripId,
+            userId: userId,
             newItem: newItem,
             newItemAmount: newItemAmount,
         }
@@ -71,7 +72,8 @@ const UserExpense = ({user, userId, currUserId}) => {
             return null;
         }
 
-        dispatch(addExpense(formResult));
+        // dispatch(addExpense(formResult));
+        dispatch(addExpenseAsync(formResult));
         setNewItem('');
         setNewItemAmount(0);
         setIsAddingExpenseDisplay(false);
@@ -86,10 +88,11 @@ const UserExpense = ({user, userId, currUserId}) => {
     const handleDeleteExpense = () => {
         if (deleteExpenseId) {
             let target = {
+                tripId: tripId,
                 userId: userId,
                 expenseId: deleteExpenseId,
             }
-            dispatch(removeExpense(target));
+            dispatch(removeExpenseAsync(target));
         }
         setDeleteExpenseId(null);
         setShowDeleteConfirmation(false);

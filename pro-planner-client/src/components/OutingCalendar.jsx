@@ -22,7 +22,7 @@ import {
 } from 'date-fns';
 import { Card } from 'react-bootstrap';
 import { getMonthIndex } from '../helpers/Calendar';
-import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay, isTimeBefore } from '../helpers/OutingCalendar';
+import { generateSlots, selectToInterval, getTime, getEndOfSegment, isLooseEndOfDay, isTimeBefore, makeOutingDate } from '../helpers/OutingCalendar';
 import { resetUpdateFailed, setLoading, setUserSelections, updateOutings } from '../redux/outingSlice';
 
 import OutingDay from './OutingDay';
@@ -30,11 +30,11 @@ import OutingHourLabels from './OutingHourLabels';
 import './OutingCalendar.scss';
 import CalendarControls from './CalendarControls';
 import OutingCalendarLabel from './OutingCalendarLabel';
-import { setDecisionRange } from '../redux/planParamSlice';
+import { setPlanDecision } from '../redux/planParamSlice';
 import axios from 'axios';
 import { buildServerRoute } from '../helpers/Utils';
 import { setError } from '../redux/errorSlice';
-import { ERR_TYPE } from '../constants';
+import { ERR_TYPE, PLAN_TYPE } from '../constants';
 
 // Update working selections for current user
 const updateSelections = (currSelects, selectStart, selectEnd, slots, isAdding, setUpdateMonths, updateMonths) => {
@@ -227,7 +227,6 @@ function OutingCalendar({ planId }) {
     );
     const [isEditing, setEditing] = useState(false);
     const [monthsToUpdate, setUpdateMonths] = useState([]);
-    const [firstLoad, setFirstLoad] = useState(false);
     const dispatch = useDispatch();
 
     let slots = useMemo(() => generateSlots(params), [params]);
@@ -350,7 +349,16 @@ function OutingCalendar({ planId }) {
     }
 
     const confirmDecision = () => {
-        dispatch(setDecisionRange([decisionPreview[0].toISOString(), decisionPreview[1].toISOString()]));
+        dispatch(
+            setPlanDecision({
+                planId,
+                planType: PLAN_TYPE.OUTING,
+                range: [
+                    makeOutingDate(decisionPreview[0]),
+                    makeOutingDate(decisionPreview[1]),
+                ]
+            })
+        );
         toggleDecision();
     }
 

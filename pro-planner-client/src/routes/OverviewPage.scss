@@ -1,0 +1,59 @@
+.overview-container {
+  margin-top: 20px;
+}
+
+.overview-header-row {
+  font-size: 35px;
+}
+
+.overview-map-row {
+  margin-top: 10px;
+}
+
+.overview-map-card {
+  padding: 0px;
+  margin: 0px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.overview-details-cost-row {
+  margin-top: 10px;
+  display: flex;
+}
+
+.overview-details-col {
+  padding: 0px;
+  margin-right: 5px;
+  display: flex;
+}
+
+.overview-details-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .card-title {
+    margin-bottom: 35px;
+  }
+
+  .card-subtitle {
+    margin-top: 25px;
+    font-size: 14px;
+  }
+
+  .card-text {
+    font-size: 13px;
+  }
+}
+
+.overview-cost-col {
+  padding: 0px;
+  margin-left: 5px;
+  display: flex;
+}
+
+.overview-cost-card {
+  flex: 1;
+}

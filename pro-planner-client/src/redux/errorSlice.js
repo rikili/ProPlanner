@@ -2,12 +2,18 @@ import { createSlice } from '@reduxjs/toolkit';
 import { updateOutings } from './outingSlice';
 import { ERR_TYPE } from '../constants';
 import { setUserSelectionsAsync } from './tripSlice';
+import { setPlanDecision } from './planParamSlice';
 
 // Custom Errors
 const selectionUpdateFailure = (state) => {
     const errMsg = 'Updating of selections have partially or completely failed.';
     buildError(state, ERR_TYPE.WARN, errMsg, false, false);
 };
+
+const decisionUpdateFailure = (state) => {
+    const errMsg = 'Setting of decision has failed.';
+    buildError(state, ERR_TYPE.WARN, errMsg);
+}
 
 
 // State update helper
@@ -63,7 +69,11 @@ const errorSlice = createSlice({
         });
 
         builder.addCase(setUserSelectionsAsync.rejected, (state) => {
-            selectionUpdateFailure(state)
+            selectionUpdateFailure(state);
+        });
+
+        builder.addCase(setPlanDecision.rejected, (state) => {
+            decisionUpdateFailure(state);
         });
     },
 });
