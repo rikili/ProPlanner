@@ -58,13 +58,10 @@ router.get('/:id/:userId', async (req, res) => {
       }
     );
     queryMonth = queryMonth.toJSON();
-    if (queryMonth.month[0] !== null) {
-      res.status(200).json(queryMonth);
-    } else {
-      res.status(404).send('Not Found');
-    }
+    queryMonth = queryMonth.month[0] !== null ? queryMonth : { month: [] };
+    res.status(200).json(queryMonth);
   } catch (err) {
-    res.status(404).send('Not Found');
+    res.status(404).send({ err: err });
   }
 });
 
