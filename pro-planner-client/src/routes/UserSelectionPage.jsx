@@ -5,6 +5,7 @@ import { Card, Container } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 import { getUserAsync } from '../redux/userSlice';
+import './UserSelectionPage.scss';
 
 const UserSelectionPage = () => {
 	const dispatch = useDispatch();
@@ -16,19 +17,13 @@ const UserSelectionPage = () => {
 
 	return (
 		<>
-			<Container className="d-flex vh-100 justify-content-center align-items-center flex-column">
+			<Container className="d-flex h-75 align-items-center flex-column pt-5">
 				<h2 className="fw-bold">ProPlanner</h2>
-				<div className="d-flex gap-4">
-					<Card
-						className="mt-4 p-4"
-						style={{ width: '500px', height: '500px' }}
-					>
+				<div className="user-select-card-container">
+					<Card className="user-list-card">
 						<UserList />
 					</Card>
-					<Card
-						className="mt-4 p-4"
-						style={{ width: '400px', height: '200px' }}
-					>
+					<Card className="add-user-card">
 						<AddUserForm />
 					</Card>
 				</div>
