@@ -21,14 +21,17 @@ const { ObjectId } = require('mongodb');
 const planHelper = require('../helpers/plan');
 
 router.post('/', async (req, res) => {
-  const savedData = await planHelper.createNewEvent(req.body, 'trip');
-  const pollModel = new poll({
-    eventId: new ObjectId(savedData._id),
-    polls: {},
-  });
-  await pollModel.save();
-
-  res.status(200).json(savedData);
+  try {
+    const savedData = await planHelper.createNewEvent(req.body, 'trip');
+    const pollModel = new poll({
+      eventId: new ObjectId(savedData._id),
+      polls: {},
+    });
+    await pollModel.save();
+    res.status(200).json(savedData);
+  } catch (err) {
+    res.status(400).send({ err: err });
+  }
 });
 
 router.put('/:id', async (req, res) => {
@@ -37,39 +40,42 @@ router.put('/:id', async (req, res) => {
   const userId = req.body.userId;
   let userSelection = timezone.makeAvailabilityDates(req.body.selections, userTimezone);
   const selectionMonths = Object.keys(userSelection);
+  try {
+    if (selectionMonths.length > 1) {
+      const offset = timezone.getOffset(userTimezone);
 
-  if (selectionMonths.length > 1) {
-    const offset = timezone.getOffset(userTimezone);
-
-    let currPrevNextMonth = await getMonth(tripId, userId, [`$userInfo.${userId}.${selectionMonths[1]}`]);
-    if (currPrevNextMonth !== null) {
-      currPrevNextMonth = currPrevNextMonth.toJSON();
-      if (currPrevNextMonth.month[0] !== null) {
-        if (offset >= 6) {
-          currPrevNextMonth.month[0][0][0] = userSelection[selectionMonths[1]][0][0];
-        } else {
-          currPrevNextMonth.month[0][currPrevNextMonth.month[0].length - 1][1] =
-            userSelection[selectionMonths[1]][userSelection[selectionMonths[1]].length - 1][1];
+      let currPrevNextMonth = await getMonth(tripId, userId, [`$userInfo.${userId}.${selectionMonths[1]}`]);
+      if (currPrevNextMonth !== null) {
+        currPrevNextMonth = currPrevNextMonth.toJSON();
+        if (currPrevNextMonth.month[0] !== null) {
+          if (offset >= 6) {
+            currPrevNextMonth.month[0][0][0] = userSelection[selectionMonths[1]][0][0];
+          } else {
+            currPrevNextMonth.month[0][currPrevNextMonth.month[0].length - 1][1] =
+              userSelection[selectionMonths[1]][userSelection[selectionMonths[1]].length - 1][1];
+          }
+          userSelection[selectionMonths[1]] = currPrevNextMonth.month[0];
         }
-        userSelection[selectionMonths[1]] = currPrevNextMonth.month[0];
-      }
-      // swapping order for convertCalendarLocal() to work
-      if (offset <= -6) {
-        const swapOrder = {
-          [selectionMonths[1]]: null,
-          [selectionMonths[0]]: null,
-        };
-        userSelection = Object.assign(swapOrder, userSelection);
+        // swapping order for convertCalendarLocal() to work
+        if (offset <= -6) {
+          const swapOrder = {
+            [selectionMonths[1]]: null,
+            [selectionMonths[0]]: null,
+          };
+          userSelection = Object.assign(swapOrder, userSelection);
+        }
       }
     }
-  }
 
-  let addedNewUserInfo = await addSelection(tripId, userId, userSelection);
-  addedNewUserInfo = addedNewUserInfo.toJSON();
-  if (addedNewUserInfo.month[1].length > 3) {
-    addedNewUserInfo.month = timezone.convertCalendarLocal(addedNewUserInfo.month, timezone.getOffset(userTimezone));
+    let addedNewUserInfo = await addSelection(tripId, userId, userSelection);
+    addedNewUserInfo = addedNewUserInfo.toJSON();
+    if (addedNewUserInfo.month[1].length > 3) {
+      addedNewUserInfo.month = timezone.convertCalendarLocal(addedNewUserInfo.month, timezone.getOffset(userTimezone));
+    }
+    res.status(200).send({ month: addedNewUserInfo.month });
+  } catch (err) {
+    res.status(400).send({ err: err });
   }
-  res.status(200).send({ month: addedNewUserInfo.month });
 });
 
 router.get('/:id/:userId', async (req, res) => {
@@ -77,7 +83,6 @@ router.get('/:id/:userId', async (req, res) => {
   const userId = req.params.userId;
   const userTimezone = req.query.timezone;
   let monthProjection = [`$userInfo.${userId}.${monthQuery}`];
-
   const offset = timezone.getOffset(userTimezone);
   const nextMonth = timezone.createDateShift(monthQuery, 'next');
   const prevMonth = timezone.createDateShift(monthQuery, 'prev');
@@ -86,26 +91,30 @@ router.get('/:id/:userId', async (req, res) => {
   } else if (offset <= -6) {
     monthProjection.unshift(`$userInfo.${userId}.${parseInt(prevMonth[0])}-${prevMonth[1]}`);
   }
-  let requestedMonth = await getMonth(req.params.id, userId, monthProjection);
-  const splitDate = monthQuery.split('-');
-  const month = splitDate[0];
-  const year = splitDate[1];
-  if (requestedMonth) {
-    requestedMonth = requestedMonth.toJSON();
-    if (requestedMonth.month.length > 1) {
-      let updatedMonth = modifyMultiMonth(requestedMonth, offset, splitDate, nextMonth, prevMonth);
-      res.status(200).send({ month: updatedMonth });
-    } else {
-      if (!requestedMonth.month[0]) {
-        const newMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
-        res.status(200).send({ month: newMonth });
+  try {
+    let requestedMonth = await getMonth(req.params.id, userId, monthProjection);
+    const splitDate = monthQuery.split('-');
+    const month = splitDate[0];
+    const year = splitDate[1];
+    if (requestedMonth) {
+      requestedMonth = requestedMonth.toJSON();
+      if (requestedMonth.month.length > 1) {
+        let updatedMonth = modifyMultiMonth(requestedMonth, offset, splitDate, nextMonth, prevMonth);
+        res.status(200).send({ month: updatedMonth });
       } else {
-        res.status(200).send({ month: requestedMonth.month[0] });
+        if (!requestedMonth.month[0]) {
+          const newMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
+          res.status(200).send({ month: newMonth });
+        } else {
+          res.status(200).send({ month: requestedMonth.month[0] });
+        }
       }
+    } else {
+      const fakeMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
+      res.status(200).send({ month: fakeMonth });
     }
-  } else {
-    const fakeMonth = timezone.createMonth(new Date(`${parseInt(month) + 1}-2-${year}`));
-    res.status(200).send({ month: fakeMonth });
+  } catch (err) {
+    res.status(400).send({ err: err });
   }
 });
 
