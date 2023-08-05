@@ -9,7 +9,6 @@ import {useLocation} from "react-router";
 
 const VotePage = () => {
 
-    // const planId = '64c5cbf8b6cdc4ef3c78be6a'; // testing purpose
     const planId = useLocation().pathname.split('/')[1];
     const polls = useSelector((state) => state.poll.polls);
     const loadingState = useSelector((state) => state.poll.pollStatus);
