@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoaderData } from 'react-router-dom';
 import { updatePlan } from '../redux/planParamSlice';
-import { LOAD_STATUS } from '../constants';
+import { LOAD_STATUS, PLAN_TYPE } from '../constants';
 import { setInvalidPlanError } from '../redux/errorSlice';
 import NavigationBar from '../components/NavigationBar';
 import LoadingDisplay from '../components/LoadingDisplay';
 import { Outlet, useNavigate } from 'react-router';
 import axios from 'axios';
-
+import { clearTripSelections } from '../redux/tripSlice';
+import { clearOutingSelections } from '../redux/outingSlice';
 import './HomePage.scss';
 import { buildServerRoute } from '../helpers/Utils';
 
@@ -19,6 +20,7 @@ const HomePage = () => {
 	const dispatch = useDispatch();
 	const selectedUser = useSelector(state => state.user.selectedUser);
 	const isParamsInit = useSelector(state => state.planParameters.isInitialized);
+	const planType = useSelector(state => state.planParameters.planType);
 
 	const isUserSelected = !!selectedUser;
 
@@ -39,6 +41,10 @@ const HomePage = () => {
 					}
 				});
 			setParamStatus(LOAD_STATUS.LOADING);
+			planType === PLAN_TYPE.TRIP
+				? dispatch(clearTripSelections())
+				: dispatch(clearOutingSelections());
+			//call dispatch and reset user selections
 		}
 	}, [dispatch, planId, isUserSelected, navigate]);
 
