@@ -17,7 +17,6 @@ const makeAvailabilityDates = (date, timezone) => {
   if (offset <= -6) {
     // holds first day of first beginning month
     const isFirstMonthDaySelected = date[months[0]][0][0] === true;
-    // todo: will refactor this with convertCalendarLocal()
     for (let i = 0; i < months.length; i++) {
       const monthDateSplit = months[i].split('-');
       const daysOfMonth = date_fns.getDaysInMonth(new Date(`${parseInt(monthDateSplit[0]) + 1}-2-${monthDateSplit[1]}`));
@@ -44,7 +43,6 @@ const makeAvailabilityDates = (date, timezone) => {
     }
   } else if (offset >= 6) {
     let replaceFirstHalfDayValue = date[months[0]][0][1] ? true : false;
-    // todo: will refactor this with convertCalendarLocal()
     for (let i = 0; i < months.length; i++) {
       const monthDateSplit = months[i].split('-');
       daysOfMonth = date_fns.getDaysInMonth(new Date(`${parseInt(monthDateSplit[0]) + 1}-2-${monthDateSplit[1]}`));

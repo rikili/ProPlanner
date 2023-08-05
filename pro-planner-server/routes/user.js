@@ -6,27 +6,39 @@ const router = express.Router();
 const userHelper = require('../helpers/user');
 
 router.put('/', async (req, res) => {
-	const eventId = req.body.eventId;
-	const userName = req.body.userName;
-	const usersInfo = await userHelper.addUser(eventId, userName);
-	const users = usersInfo ? Object.keys(usersInfo) : [];
-	res.status(200).json(users);
+  const eventId = req.body.eventId;
+  const userName = req.body.userName;
+  try {
+    const usersInfo = await userHelper.addUser(eventId, userName);
+    const users = usersInfo ? Object.keys(usersInfo) : [];
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(400).send({ err: err });
+  }
 });
 
 router.delete('/', async (req, res) => {
-	const eventId = req.body.eventId;
-	const users = req.body.users;
-	for (let user of users) {
-		await userHelper.deleteUser(eventId, user);
-	}
-	res.status(200).json(users);
+  try {
+    const eventId = req.body.eventId;
+    const users = req.body.users;
+    for (let user of users) {
+      await userHelper.deleteUser(eventId, user);
+    }
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(400).send({ err: err });
+  }
 });
 
 router.get('/', async (req, res) => {
-	const eventId = req.query.eventId;
-	const usersInfo = await userHelper.getUsers(eventId);
-	const users = usersInfo ? Object.keys(usersInfo) : [];
-	res.status(200).json(users);
+  try {
+    const eventId = req.query.eventId;
+    const usersInfo = await userHelper.getUsers(eventId);
+    const users = usersInfo ? Object.keys(usersInfo) : [];
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(400).send({ err: err });
+  }
 });
 
 module.exports = router;
