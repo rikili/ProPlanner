@@ -1,5 +1,4 @@
 import { Button as BaseButton } from 'react-bootstrap';
-import '../../customStyling.scss';
 
 const Button = (props) => {
     return <>
