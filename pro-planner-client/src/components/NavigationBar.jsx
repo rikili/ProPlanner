@@ -104,7 +104,7 @@ const NavigationBar = ({ planId }) => {
 										}}
 									/>
 									<Checkmark
-										isVisible={copied}
+										visibility={String(copied)}
 										style={{
 											color: 'rgb(116, 212, 106)',
 											position: 'absolute',

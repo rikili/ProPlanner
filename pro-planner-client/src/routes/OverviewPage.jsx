@@ -32,13 +32,8 @@ const OverviewPage = () => {
         const [startDate, endDate] = decidedDates;
         const processedStartDate = format(parseISO(startDate), 'EEE, MMM d yyyy');
         const processedEndDate = format(parseISO(endDate), 'EEE, MMM d yyyy');
-        return <div>
-            <div>{`${processedStartDate} - ${processedEndDate}`}</div>
-            {isOuting && <div>{buildTimeString(startDate, endDate)}</div>}
-        </div>
+        return `${processedStartDate} - ${processedEndDate}`
     }
-
-    const processedDecidedDates = processDecidedDates(decidedDates);
 
     return (
         <>
@@ -60,7 +55,10 @@ const OverviewPage = () => {
                                 <Card.Header as="h4">Details</Card.Header>
                                 <Card.Body>
                                     <Card.Subtitle className="mt-1">{isOuting ? 'Decided Times: ' : 'Decidied Dates: '}</Card.Subtitle>
-                                    <Card.Text>{processedDecidedDates}</Card.Text>
+                                    <Card.Text>
+                                        {processDecidedDates(decidedDates)} <br />
+                                        {isOuting && buildTimeString(startDate, endDate)}
+                                    </Card.Text>
                                     <Card.Subtitle>Location:</Card.Subtitle>
                                     <Card.Text>{location}</Card.Text>
                                     {description ? <Card.Subtitle>Description:</Card.Subtitle> : null}
