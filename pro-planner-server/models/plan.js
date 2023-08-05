@@ -13,6 +13,7 @@ const planSchema = new Schema(
       dateTimeRange: Schema.Types.Array,
       description: Schema.Types.String,
       decision: Schema.Types.Array,
+      budget: Schema.Types.Number,
     },
     userInfo: Schema.Types.Mixed,
   },
