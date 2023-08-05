@@ -25,7 +25,6 @@ function TripExpense({ className }) {
         const userExists = (currUser) => {
             for (const key in users) {
                 if (users[key].userName === currUser) {
-                    console.log("true")
                     return true;
                 }
             }
@@ -33,8 +32,6 @@ function TripExpense({ className }) {
         };
 
         if (!userExists(currUser)) {
-            console.log("currUser: " + currUser)
-            console.log("users: " + users)
             let userInfo = {
                 id: currUser, 
                 name: currUser
