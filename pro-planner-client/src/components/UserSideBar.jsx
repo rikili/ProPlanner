@@ -33,6 +33,7 @@ const UserSideBar = ({ isEditMode, selectedUser, setSelectedUser }) => {
 												className="text-center"
 												active={user === loggedInUser}
 												disabled={user !== loggedInUser}
+												key={user}
 											>
 												{user}
 											</ListGroup.Item>
@@ -63,6 +64,7 @@ const UserSideBar = ({ isEditMode, selectedUser, setSelectedUser }) => {
 												className="text-center"
 												onClick={() => setSelectedUser(user)}
 												active={user === selectedUser}
+												key={user}
 											>
 												{user}
 											</ListGroup.Item>

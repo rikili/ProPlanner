@@ -4,6 +4,7 @@ import axios from "axios";
 import { buildServerRoute } from "../helpers/Utils";
 
 export const getCostAsync = createAsyncThunk('cost/get', async({tripId}) => {
+    console.log('sending get request: ');
     const response = await axios.get(buildServerRoute('cost', tripId));
     return response.data;
 });
@@ -14,7 +15,6 @@ export const addExpenseAsync = createAsyncThunk('cost/addExpense', async({tripId
         itemName: newItem,
         itemAmount: newItemAmount
     }
-
     const response = await axios.put(buildServerRoute('cost', 'addExpense', tripId), data);
     return response.data;
 });
@@ -32,59 +32,8 @@ export const removeExpenseAsync = createAsyncThunk('cost/removeExpense', async({
 const costSlice = createSlice({
     name: 'cost',
     initialState: {
-        costsID: null, 
-        costsStatus: null,
-        costs: {
-            user1: {
-                userName: 'User 1',
-                expenses: {
-                    expense1: {
-                        item: "Go Kart tickets",
-                        amount: 120
-                    },
-                    expense2: {
-                        item: "Movies",
-                        amount: 80
-                    }
-                },
-            },
-            user2: {
-                userName: 'User 2',
-                expenses: {},
-            },
-            user3: {
-                userName: 'User 3',
-                expenses: {
-                    expense1: {
-                        item: "PNE tickets",
-                        amount: 200
-                    },
-                    expense2: {
-                        item: "Coffee",
-                        amount: 10
-                    }
-                },
-            },
-            user4: {
-                userName: 'User 4',
-                expenses: {
-                    expense1: {
-                        item: "Parking",
-                        amount: 30
-                    }
-                },
-            }  
-        },
     },
     reducers: {
-        addUser: (state, action) => {
-            const input = action.payload
-            const newUser = {
-                userName: input.name,
-                expenses: {}
-            }
-            state.costs[input.id] = newUser
-        }
     },
     extraReducers: (builder) => {
         builder.addCase(getCostAsync.pending, (state, action) => {

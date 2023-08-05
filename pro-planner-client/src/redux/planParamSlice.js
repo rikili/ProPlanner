@@ -59,7 +59,7 @@ const planParamSlice = createSlice({
             state.budget = payload.budget;
             state.dateTimeRange = payload.dateTimeRange;
             state.planType = payload.planType;
-            state.decisionRange = payload.decision;
+            state.decisionRange = payload.decision ?? [];
             state.isInitialized = true;
         },
 
