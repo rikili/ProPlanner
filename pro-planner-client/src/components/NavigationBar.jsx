@@ -8,23 +8,12 @@ import {
 	Row,
 	Col,
 } from 'react-bootstrap';
-import {
-	Container,
-	Nav,
-	Navbar,
-	NavDropdown,
-	Tooltip,
-	OverlayTrigger,
-	Row,
-	Col,
-} from 'react-bootstrap';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Clipboard from './Clipboard';
 import Checkmark from './Checkmark';
 
 import './NavigationBar.scss';
-import { setIsEditing } from '../redux/planParamSlice';
 
 const NavigationBar = () => {
 	const { tripId } = useParams();
@@ -48,23 +37,6 @@ const NavigationBar = () => {
 	};
 
 	const renderTooltip = text => <Tooltip id="button-tooltip">{text}</Tooltip>;
-const NavigationBar = ({ planId }) => {
-    const selectedUser = useSelector((state) => state.user.selectedUser);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-	const handleCopy = () => {
-		navigator.clipboard.writeText(URL);
-	};
-
-	const renderTooltip = text => <Tooltip id="button-tooltip">{text}</Tooltip>;
-
-    const handleEdit = () => {
-        navigate('edit');
-        dispatch(setIsEditing(true));
-    };
-
-    const toUserSelect = () => navigate(`/user/${planId}`);
 
 	return (
 		<>
