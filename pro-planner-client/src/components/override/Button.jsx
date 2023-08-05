@@ -56,15 +56,15 @@ const Button = (props) => {
                 }
 
                 .btn-custom-danger {
-                    color: rgb(129, 29, 29);
+                    color: white;
                     background-color: rgb(218, 80, 80);
                 }
                 .btn-custom-danger:hover {
-                    color: rgb(119, 23, 23);
+                    color: white;
                     background-color: rgb(179, 49, 49);
                 }
                 .btn-custom-danger:active {
-                    color: rgb(201, 51, 51) !important;
+                    color: white !important;
                     background-color: rgb(153, 24, 24) !important;
                 }
                 .btn-custom-danger:focus-visible {
@@ -72,7 +72,7 @@ const Button = (props) => {
                     background-color: rgb(179, 49, 49) !important;
                 }
                 .btn-custom-danger:hover:active {
-                    color: rgb(201, 51, 51);
+                    color: white;
                     background-color: rgb(153, 24, 24);
                 }
                 
