@@ -37,7 +37,11 @@ const outingSlice = createSlice({
 	reducers: {
 		setUserSelections(state, action) {
 			const { user, selections } = action.payload;
-			state.selections[user] = selections;
+
+            if (!state.selections[user]) state.selections[user] = {};
+            Object.entries(selections).forEach(([monthIndex, selections]) => {
+                state.selections[user][monthIndex] = selections;
+            });
 		},
 		setLoading(state, { payload }) {
 			state.isLoading = payload;
@@ -49,9 +53,9 @@ const outingSlice = createSlice({
 			state.selections = {};
 		},
 	},
-	extraReducers: builder => {
-		builder.addCase(updateOutings.fulfilled, (state, { payload }) => {
-			const { result, hasUpdateFailed, months, user } = payload;
+    extraReducers: (builder) => {
+        builder.addCase(updateOutings.fulfilled, (state, { payload }) => {
+            const { result, months, user } = payload;
 
 			months.forEach((monthIndex, index) => {
 				const userSelections = state.selections[user];

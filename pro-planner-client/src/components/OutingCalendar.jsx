@@ -304,51 +304,38 @@ function OutingCalendar({ planId, selectedUser, isEditMode, setIsEditMode }) {
 				for (let resIndex = 0; resIndex < numOfMonths; resIndex++) {
 					const result = results[resIndex + index * numOfMonths];
 
-					if (!result.reason) {
-						dispatch(
-							setUserSelections({
-								user,
-								selections: {
-									[getMonthIndex(startOfMonths[resIndex])]:
-										result.value.data.month[0],
-								},
-							})
-						);
-						return;
-					}
+                        if (!result.reason) {
+                            dispatch(setUserSelections({user, selections: {
+                                [getMonthIndex(startOfMonths[resIndex])]: result.value.data.month,
+                            }}));
+                            continue;
+                        }
 
-					// axios error (aka cancelled request)
-					const request = result.reason.request;
-					if (request) {
-						if (request.status === 0) {
-							return;
-						}
-					}
+                        // axios error (aka cancelled request)
+                        const request = result.reason.request;
+                        if (request) {
+                            if (request.status === 0) {
+                                continue;
+                            }
+                        }
 
-					// error from backend
-					const response = result.reason.response;
-					if (response) {
-						if (response.status === 404) {
-							dispatch(setUserSelections({ user, selections: {} }));
-						}
-					} else {
-						dispatch(
-							setError({
-								errType: ERR_TYPE.ERR,
-								message:
-									'Month information could not be fetched, please try again later. Close this notification to be redirected to the landing page.',
-								redirect: '/',
-								disableControl: true,
-							})
-						);
-					}
-				}
-			});
-		});
-		return () => {
-			controller.abort();
-		};
-	}, [selectWeek, planId, users]);
+                        dispatch(
+                            setError({
+                                errType: ERR_TYPE.ERR,
+                                message:
+                                    'Month information could not be fetched, please try again later. Close this notification to be redirected to the landing page.',
+                                redirect: '/',
+                                disableControl: true,
+                            })
+                        );
+                        return;
+                    }
+                });
+            });
+        return () => {
+            controller.abort();
+        }
+    }, [selectWeek, planId, users]);
 
 	if (updateFailed) {
 		dispatch(
