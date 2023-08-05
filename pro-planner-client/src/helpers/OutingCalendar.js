@@ -12,12 +12,13 @@ import {
     subMinutes,
     set,
     subWeeks,
+    isEqual,
 } from 'date-fns';
 import { getMonthIndex } from './Calendar';
 
 export const SEGMENT_TIME = 30;
 
-export const isLooseEndOfDay = (date) => date.getHours() === 23 && date.getMinutes() === 59;
+export const isLooseEndOfDay = (date) => isEqual(subMinutes(addDays(startOfDay(date), 1), SEGMENT_TIME), date);
 
 // get dateTime of the end of a segment, unless it is the last segment of the day
 export const getEndOfSegment = (date) => {
