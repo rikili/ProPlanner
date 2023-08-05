@@ -4,7 +4,6 @@ import axios from "axios";
 import { buildServerRoute } from "../helpers/Utils";
 
 export const getCostAsync = createAsyncThunk('cost/get', async({tripId}) => {
-    console.log('sending get request: ');
     const response = await axios.get(buildServerRoute('cost', tripId));
     return response.data;
 });
@@ -50,7 +49,10 @@ const costSlice = createSlice({
             state.costsStatus = LOAD_STATUS.LOADING;
         });
         builder.addCase(addExpenseAsync.fulfilled, (state, action) => {
-            state.costs = action.payload.costs;
+            const { costs } = action.payload;
+            Object.entries(costs).forEach(([userName, expenses]) => {
+                state.costs[userName] = expenses;
+            });
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(addExpenseAsync.rejected, (state, action) => {
