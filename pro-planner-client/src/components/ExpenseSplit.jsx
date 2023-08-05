@@ -15,16 +15,18 @@ const ExpenseSplit = () => {
 
 
     const processExpenses = () => {
-        Object.values(cost).forEach((user) => {
-            const userName = user.userName;
-            const userInputs = Object.values(user.expenses);
-            const userExpenses = userInputs.reduce((total, expense) => total + expense.amount, 0);
-            userSpendings.push([userName, userExpenses])
-            totalSpendings += userExpenses;
-        });
-
-        costPerUser =  parseFloat((totalSpendings / Object.keys(cost).length).toFixed(2));
-        spentToAvailableRatio = Math.round(totalSpendings / budget * 100);
+        if (cost) {
+            Object.values(cost).forEach((user) => {
+                const userName = user.userName;
+                const userInputs = Object.values(user.expenses);
+                const userExpenses = userInputs.reduce((total, expense) => total + expense.amount, 0);
+                userSpendings.push([userName, userExpenses])
+                totalSpendings += userExpenses;
+            });
+    
+            costPerUser =  parseFloat((totalSpendings / Object.keys(cost).length).toFixed(2));
+            spentToAvailableRatio = Math.round(totalSpendings / budget * 100);
+        }
     }
 
     const processCostSplit = () => {

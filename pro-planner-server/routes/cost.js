@@ -4,32 +4,49 @@
 const express = require('express');
 const router = express.Router();
 const {Cost, UserExpense, Expense} = require("../models/cost");
-const trip = require('../models/trip'); // TODO: change this to plan
-const cost = require('../models/cost');
+const plan = require('../models/plan'); 
 const {ObjectId} = require('mongodb');
 
 router.get('/:id', async (req, res) => {    
     try {
         const getUserExpense = async () => {
-            const plan = await trip.find({_id: req.params.id}, {"userInfo": 1, "_id": 0});
+            const planResults = await plan.find({_id: req.params.id}, {"userInfo": 1, "_id": 0});
             const results = new Map();
-    
-            Object.values(plan).forEach((userInfo) => {
+            Object.values(planResults).forEach((userInfo) => {
                 if (userInfo["userInfo"]){
-                    Object.keys(userInfo["userInfo"]).forEach((name) => {
+                    Object.entries(userInfo["userInfo"]).forEach(([name, val]) => {
                         const userToAdd = {
+                            _id: val.id,
                             userName: name,
                             expenses: {}
                         }
-                        results.set(name, userToAdd);
+                        results.set(name, UserExpense(userToAdd));
                     })
                 }
             });
-            return UserExpense(results);
+            return results;
         }
-    
-        let costs = await Cost.findOne({ _id: req.params.id });
+
+        const getUpdateUserExpense = async (costs) => {
+            const planResults = await plan.find({_id: req.params.id}, {"userInfo": 1, "_id": 0});
+            Object.values(planResults).forEach((userInfo) => {
+                if (userInfo["userInfo"]){
+                    Object.entries(userInfo["userInfo"]).forEach(([name, val]) => {
+                        if (!costs.costs.has(name)) {
+                            const userToAdd = {
+                                _id: val.id,
+                                userName: name,
+                                expenses: {}
+                            }
+                            costs.costs.set(name, UserExpense(userToAdd))
+                        }
+                    });
+                }
+            });
+            return costs;
+        }
         
+        let costs = await Cost.findOne({ _id: req.params.id });
         if (!costs) {
             const costData = {
                 _id: req.params.id,
@@ -38,7 +55,10 @@ router.get('/:id', async (req, res) => {
             newCost = new Cost(costData)
             const savedCost = await newCost.save()
             costs = savedCost;
+        } else {
+            const updatedGetExpense = await getUpdateUserExpense(costs)
         }
+
         res.status(200).json(costs);
     } catch (error) {
         res.status(500).send(`Unexpected error: ${error}`)
@@ -51,10 +71,10 @@ router.put('/addExpense/:id', async (req, res) => {
         item: req.body.itemName,
         amount: req.body.itemAmount
     })
-    
     let costDocument;
     try {
         costDocument = await Cost.findOne({ _id: req.params.id });
+        const cument = await Cost.find({ _id: req.params.id });
         const expenseId = new ObjectId();
         costDocument.costs.get(req.body.userName).expenses.set(expenseId, newExpense)
         const savedCosts = await costDocument.save();
