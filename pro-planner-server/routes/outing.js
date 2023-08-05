@@ -1,5 +1,6 @@
 // express routing references https://expressjs.com/en/guide/using-middleware.html
 // mongoose references https://mongoosejs.com/docs/index.html
+// checking if object is empty references: https://www.freecodecamp.org/news/check-if-an-object-is-empty-in-javascript/
 
 const express = require('express');
 const router = express.Router();
@@ -49,7 +50,7 @@ router.get('/:id/:userId', async (req, res) => {
   const userId = req.params.userId;
   const month = req.query.month;
   try {
-    const monthPath = [`$userInfo.${userId}.${month}`];
+    const monthPath = `$userInfo.${userId}.${month}`;
     let queryMonth = await plan.findOne(
       { _id: new ObjectId(outingId), [`userInfo.${userId}`]: { $exists: true } },
       {
@@ -58,7 +59,9 @@ router.get('/:id/:userId', async (req, res) => {
       }
     );
     queryMonth = queryMonth.toJSON();
-    queryMonth = queryMonth.month[0] !== null ? queryMonth : { month: [] };
+    if (Object.keys(queryMonth).length === 0) {
+      queryMonth = { month: {} };
+    }
     res.status(200).json(queryMonth);
   } catch (err) {
     res.status(404).send({ err: err });
