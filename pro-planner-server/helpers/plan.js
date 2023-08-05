@@ -17,6 +17,7 @@ async function createNewEvent(data, planType) {
         dateTimeRange: data.dateTimeRange,
         description: data.description,
         decision: [],
+        budget: data.budget,
       },
     });
     let savedData = await event.save();
@@ -29,8 +30,8 @@ async function createNewEvent(data, planType) {
 
     // format return
     savedData = {
-      id: savedData["_id"],
-      planParameters: savedData.planParameters
+      id: savedData['_id'],
+      planParameters: savedData.planParameters,
     };
 
     return savedData;
