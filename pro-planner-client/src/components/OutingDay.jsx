@@ -47,11 +47,11 @@ const OutingDay = ({
 	// responsible for filtering based on user selected in the sidebar.
 	if (selectedUser) {
 		let result = [];
-		console.log(selections);
 		if (selections) {
-			for (let selection of selections) {
-				selection = selection.filter(user => user === selectedUser);
-				result.push(selection);
+			for (let i in selections) {
+				if (selections[i] && i === selectedUser) {
+					result.push(selections[i]);
+				}
 			}
 			selections = result;
 		}
