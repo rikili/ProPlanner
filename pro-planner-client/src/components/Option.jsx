@@ -1,7 +1,7 @@
 import React from 'react';
 import {Col, Container, Form, ProgressBar, Row} from "react-bootstrap";
 
-function Option({option, optionId, poll, pollId, currUser, setSelectedOption}) {
+function Option({option, optionId, poll, pollId, currUser, setSelectedOption, userCount}) {
 
     const handleRadioChange = (e) => {
         setSelectedOption(e.target.id);
@@ -16,6 +16,8 @@ function Option({option, optionId, poll, pollId, currUser, setSelectedOption}) {
 
         return false;
     }
+
+    const percentageFull = Math.floor((poll.options[optionId].voteCount / userCount) * 100);
 
     return (
         <>
@@ -36,7 +38,7 @@ function Option({option, optionId, poll, pollId, currUser, setSelectedOption}) {
                     </Col>
                     <Col>
                         <ProgressBar
-                            now={poll.options[optionId].voteCount}
+                            now={percentageFull}
                         />
                     </Col>
                 </Row>

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {Modal, Button, Form} from "react-bootstrap";
+import {Modal, Form} from "react-bootstrap";
+import Button from './override/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {addOptionAsync} from "../redux/pollSlice";
 import {resetError, setError} from "../redux/errorSlice";
@@ -20,7 +21,6 @@ function AddOptionForm({poll, pollId, showModal, setShowModal}) {
         if (formattedNewOption.length === 0) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
-                disableControl: true,
                 message: 'Option is invalid. Option must contain at least one character.',
             }));
             return;
@@ -39,7 +39,6 @@ function AddOptionForm({poll, pollId, showModal, setShowModal}) {
         if (optionsArray.find(option => option.option === newOption)) {
             dispatch(setError({
                 errType: ERR_TYPE.ERR,
-                disableControl: true,
                 message: 'Option already exists, please add a different option.',
             }));
             return;
@@ -77,6 +76,7 @@ function AddOptionForm({poll, pollId, showModal, setShowModal}) {
             </Modal.Body>
             <Modal.Footer>
                 <Button type='submit'
+                        variant="custom-primary"
                         onClick={handleAddOption}>
                     Add
                 </Button>

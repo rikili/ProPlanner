@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {InputGroup, Button, Form, Card, Container} from "react-bootstrap";
+import {InputGroup, Form, Card, Container} from "react-bootstrap";
+import Button from './override/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import {addPollAsync} from "../redux/pollSlice";
 import {resetError, setError} from "../redux/errorSlice";
@@ -64,7 +65,7 @@ function AddPollForm({polls}) {
                             onChange={handleQuestionChange}
                             value={newQuestion}
                         />
-                        <Button variant="outline-primary"
+                        <Button variant="custom-outline-primary"
                                 id="button-addon2"
                                 type='submit'
                                 onClick={handleAddPoll}>

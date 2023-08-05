@@ -42,7 +42,7 @@ const OverviewPage = () => {
         <>
             <Container className="overview-container">
                 <div className="overview-header">
-                    <div className="overview-header-title">{tripName}</div>
+                    <div className="overview-header-title"><b>{tripName}</b></div>
                     <div className="overview-header-dates">{buildDateString()}</div>
                     {isOuting && <div className="overview-header-times">{buildTimeString()}</div>}
                 </div>

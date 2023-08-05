@@ -43,8 +43,8 @@ const ErrorToast = forwardRef((props, ref) => {
             && <Toast
                 className="m-3 err-toast"
                 onClose={handleCloseToast}
-                // autohide
-                // delay={10000}
+                autohide
+                delay={10000}
             >
                 <Toast.Header className="d-flex justify-content-between">
                     <div className="d-flex align-items-center">

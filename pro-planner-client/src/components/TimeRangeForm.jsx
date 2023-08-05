@@ -1,5 +1,6 @@
-import { useState, useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
-import { Card, Form, Button, Row, Col } from 'react-bootstrap';
+import { useState, useRef, useEffect } from 'react';
+import { Card, Form, Row, Col } from 'react-bootstrap';
+import Button from './override/Button';
 import { getTime } from '../helpers/OutingCalendar';
 
 const roundingSteps = [0, 30, 60];
@@ -93,7 +94,7 @@ const TimeRangeForm = ({ editDetails }) => {
                             <Form.Control value={isAllDay || ''} style={{ display: 'none' }} readOnly />
                             <Button
                                 className="w-100"
-                                variant={`${isAllDay ? 'primary' : 'secondary'}`}
+                                variant={`${isAllDay ? 'custom-primary' : 'custom-secondary'}`}
                                 active={isAllDay}
                                 onClick={() => toggleIsAllDay()}
                             >

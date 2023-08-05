@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
 import {FaMinus, FaPlus} from "react-icons/fa6";
 import {CiSquarePlus} from "react-icons/ci";
-import {Form, Button, Card, Col, InputGroup, ListGroup, Row, Modal} from "react-bootstrap";
+import {Form, Card, Col, InputGroup, ListGroup, Row, Modal} from "react-bootstrap";
 import {useDispatch} from "react-redux";
 import { addExpenseAsync, removeExpenseAsync} from "../redux/costSlice";
 import { useLocation } from "react-router";
 // import {v4 as uuidv4} from "uuid";
 import {setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
+import Button from './override/Button';
 
 const MAX_ITEM_LIMIT = 40;
 
@@ -119,8 +120,8 @@ const UserExpense = ({user, userId, currUserId}) => {
                 </Card.Header>
                 <Card.Body>
                     {Object.entries(user.expenses).map(([key, expense]) =>
-                        <Row className="d-flex align-items-center mt-1" key={key}>
-                            <Col className="pe-0" xs={10}>
+                        <Row className="d-flex align-items-center mt-1 flex-nowrap" key={key}>
+                            <Col xs={!isDisabled ? 10 : null}>
                                 <ListGroup>
                                     <ListGroup.Item>
                                         <Row>
@@ -130,16 +131,16 @@ const UserExpense = ({user, userId, currUserId}) => {
                                     </ListGroup.Item>
                                 </ListGroup>
                             </Col>
-                            <Col style={{textAlign: 'right'}}>
+                            {!isDisabled && <Col style={{textAlign: 'right'}}>
                                 <Button onClick={() => handleConfirmationModal(key)}
-                                        disabled={isDisabled}>
+                                        variant="custom-danger">
                                     <FaMinus style={{margin: 'auto'}}/>
                                 </Button>
-                            </Col>
+                            </Col>}
                         </Row>
                     )}
                     {isAddingExpenseDisplay && (
-                        <Row className="d-flex align-items-center mt-4 mb-3">
+                        <Row className="d-flex align-items-center mt-2 mb-3">
                             <Col className="pe-0" sm={7}>
                                 <InputGroup>
                                     <Form.Control placeholder="Item"
@@ -158,13 +159,13 @@ const UserExpense = ({user, userId, currUserId}) => {
                                 </InputGroup>
                             </Col>
                             <Col style={{textAlign: 'right'}}>
-                                <Button onClick={handleAddExpense}>
+                                <Button onClick={handleAddExpense} variant="custom-primary">
                                     <FaPlus style={{margin: 'auto'}}/>
                                 </Button>
                             </Col>
                         </Row>
                     )}
-                    <Row>
+                    {!isDisabled && <Row>
                         <Col className="d-grid align-items-center mt-2">
                             <Button className="d-flex align-items-center"
                                     variant="outline-secondary"
@@ -175,16 +176,16 @@ const UserExpense = ({user, userId, currUserId}) => {
                                 <CiSquarePlus style={{margin: 'auto'}} size={25}/>
                             </Button>
                         </Col>
-                    </Row>
+                    </Row>}
                 </Card.Body>
             </Card>
             <Modal show={showDeleteConfirmation} onHide={handleClose}>
                 <Modal.Body>Do you want to delete the expense?</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="custom-secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleDeleteExpense}>
+                    <Button variant="custom-primary" onClick={handleDeleteExpense}>
                         Delete
                     </Button>
                 </Modal.Footer>

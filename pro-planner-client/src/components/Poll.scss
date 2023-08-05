@@ -1,0 +1,7 @@
+.poll-header {
+    > button {
+        &:not(.collapsed) {
+            background-color: rgb(106, 129, 158) !important;
+        }
+    }
+}
