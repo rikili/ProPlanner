@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {LOAD_STATUS} from "../constants";
 import LoadingDisplay from "../components/LoadingDisplay";
 import {useLocation} from "react-router";
+import {Container} from "react-bootstrap";
 
 const VotePage = () => {
 
@@ -21,8 +22,10 @@ const VotePage = () => {
 
     return <>
         {(loadingState === LOAD_STATUS.LOADING) && <LoadingDisplay/>}
-        <AddPollForm polls={polls}/>
-        <Polls polls={polls}/>
+        <Container className='d-flex flex-column mt-4 align-items-center'>
+            <AddPollForm polls={polls}/>
+            <Polls polls={polls}/>
+        </Container>
     </>
 };
 
