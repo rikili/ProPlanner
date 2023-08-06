@@ -174,7 +174,7 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
 });
 
 
-// handles upon user(s) deletion (updates the voteCount under options & removes user's object under voteUsers)
+// handles upon user(s) deletion (updates the voteCount under options & removes user's in voteUsers array)
 router.patch('/:id', async (req, res) => {
     const id = req.params.id;
     const usersToDelete = req.body.usersToDelete; // example: ["User 1", "User 2"]
