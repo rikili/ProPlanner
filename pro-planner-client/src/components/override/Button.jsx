@@ -20,14 +20,14 @@ const Button = (props) => {
                     color: white !important;
                     background-color: rgb(22, 55, 94) !important;
                 }
+                .btn-custom-primary:focus-visible {
+                    color: white !important;
+                    background-color: rgb(43, 92, 148) !important;
+                }
                 .btn-custom-primary:disabled {
                     color: rgb(180, 180, 180);
                     background-color: rgb(43, 92, 148);
                     border-color: rgb(43, 92, 148);
-                }
-
-                .btn-custom-primary .active {
-                    background-color: blue;
                 }
 
                 .btn-custom-secondary {
@@ -46,6 +46,10 @@ const Button = (props) => {
                     color: darkgrey;
                     background-color: rgb(87, 87, 87);
                 }
+                .btn-custom-secondary:focus-visible {
+                    color: black;
+                    background-color: rgb(182, 182, 182);   
+                }
                 .btn-custom-secondary:disabled {
                     color: grey;
                     background-color: rgb(207, 207, 207);
@@ -63,10 +67,15 @@ const Button = (props) => {
                     color: rgb(201, 51, 51) !important;
                     background-color: rgb(153, 24, 24) !important;
                 }
+                .btn-custom-danger:focus-visible {
+                    color: rgb(119, 23, 23) !important;
+                    background-color: rgb(179, 49, 49) !important;
+                }
                 .btn-custom-danger:hover:active {
                     color: rgb(201, 51, 51);
                     background-color: rgb(153, 24, 24);
                 }
+                
                 .btn-custom-danger:disabled {
                     color: rgb(226, 119, 119);
                     border-color: rgb(235, 190, 190);
@@ -88,6 +97,10 @@ const Button = (props) => {
                 .btn-custom-success:hover:active {
                     color: rgb(178, 231, 191);
                     background-color: rgb(53, 148, 76);
+                }
+                .btn-custom-success:focus-visible {
+                    color: white !important;
+                    background-color: rgb(79, 173, 103) !important;
                 }
                 .btn-custom-success:disabled {
                     color: rgb(60, 167, 86);

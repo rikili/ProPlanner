@@ -195,6 +195,7 @@ const InputDetailsForm = ({
 											active={isSelected}
 											key={`${dayLabel}-${index}`}
 											onClick={() => updateSelection(dayLabel)}
+											type="button"
 										>
 											{dayLabel}
 										</Button>
