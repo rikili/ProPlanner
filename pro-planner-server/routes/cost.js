@@ -28,6 +28,7 @@ router.get('/:id', async (req, res) => {
         }
 
         const getUpdateUserExpense = async (costs) => {
+            console.log("updating...")
             const planResults = await plan.find({_id: req.params.id}, {"userInfo": 1, "_id": 0});
             Object.values(planResults).forEach((userInfo) => {
                 if (userInfo["userInfo"]){
@@ -57,6 +58,7 @@ router.get('/:id', async (req, res) => {
             costs = savedCost;
         } else {
             const updatedGetExpense = await getUpdateUserExpense(costs)
+            await Cost.updateOne({_id: req.params.id }, {$set: {costs: updatedGetExpense.costs.toObject()}}) 
         }
 
         res.status(200).json(costs);
@@ -74,7 +76,6 @@ router.put('/addExpense/:id', async (req, res) => {
     let costDocument;
     try {
         costDocument = await Cost.findOne({ _id: req.params.id });
-        const cument = await Cost.find({ _id: req.params.id });
         const expenseId = new ObjectId();
         costDocument.costs.get(req.body.userName).expenses.set(expenseId, newExpense)
         const savedCosts = await costDocument.save();
