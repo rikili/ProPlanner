@@ -100,7 +100,7 @@ const InputDetailsForm = ({
 				<Card.Header className="mb-1 d-flex flex-nowrap">
 					{showBack && (
 						<div className="me-3">
-							<button className="back-button" onClick={handleBack}>
+							<button className="back-button" onClick={handleBack} type="button">
 								<BiArrowBack />
 							</button>
 						</div>
