@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const userHelper = require('../helpers/user');
+const { doesPlanExist } = require('../helpers/plan');
 
 router.put('/', async (req, res) => {
   const eventId = req.body.eventId;
@@ -31,8 +32,14 @@ router.delete('/', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
+  const eventId = req.query.eventId;
+
+  if (!await doesPlanExist(eventId)) {
+    res.status(404).send('Plan does not exist');
+    return;
+  }
+
   try {
-    const eventId = req.query.eventId;
     const usersInfo = await userHelper.getUsers(eventId);
     const users = usersInfo ? Object.keys(usersInfo) : [];
     res.status(200).json(users);
