@@ -2,12 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { Card, Form, Row, ButtonGroup, Col } from 'react-bootstrap';
 import Button from './override/Button';
 import { dayOffsetToDOW } from '../helpers/Calendar';
-import { PLAN_TYPE } from '../constants';
+import { PLAN_TYPE, MAP_LIBRARIES } from '../constants';
 import { format } from 'date-fns';
 import { BiArrowBack } from 'react-icons/bi';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 import './InputDetailsForm.scss';
 import { useNavigate } from 'react-router-dom';
+import LoadingDisplay from './LoadingDisplay';
 
 const dateToInputValue = date => {
 	return format(date, 'yyyy-MM-dd');
@@ -21,7 +22,7 @@ const InputDetailsForm = ({
 }) => {
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey: process.env.REACT_APP_API_KEY,
-		libraries: ['places'],
+		libraries: MAP_LIBRARIES,
 	});
 	const [selectedDays, setSelectedDays] = useState({
 		Su: true,
@@ -45,7 +46,7 @@ const InputDetailsForm = ({
 
 	let startDate;
 	let endDate;
-	if (isEditing) {
+	if (isEditing && isLoaded) {
 		startDate = new Date(
 			editDetails.planType === PLAN_TYPE.OUTING
 				? editDetails.dateTimeRange[0][0]
@@ -55,7 +56,7 @@ const InputDetailsForm = ({
 	}
 
 	useEffect(() => {
-		if (isEditing) {
+		if (isEditing && isLoaded) {
 			const daysOfWeek = dayOffsetToDOW(startDate, editDetails.dayOffset);
 
 			const newEditState = {};
@@ -76,7 +77,7 @@ const InputDetailsForm = ({
 				(descriptionInput.current.value = editDetails.description);
 			editDetails.budget && (budgetInput.current.value = editDetails.budget);
 		}
-	}, [editDetails, isEditing]);
+	}, [editDetails, isEditing, isLoaded]);
 
 	const updateSelection = dayLabel => {
 		const newSelection = { ...selectedDays };
@@ -90,7 +91,7 @@ const InputDetailsForm = ({
 	};
 
 	if (!isLoaded) {
-		return <> Loading.. </>;
+		return <LoadingDisplay />;
 	}
 
 	return (
