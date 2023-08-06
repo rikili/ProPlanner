@@ -7,7 +7,7 @@ import {
 } from '@react-google-maps/api';
 import { useSelector, useDispatch } from 'react-redux';
 import { setError } from '../redux/errorSlice';
-import { ERR_TYPE } from '../constants';
+import { ERR_TYPE, MAP_LIBRARIES } from '../constants';
 
 const containerStyle = {
 	width: '2000px',
@@ -38,12 +38,10 @@ const getLatLng = address => {
 	});
 };
 
-const libraries = ['places'];
-
 const Map = () => {
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey: apiKey,
-		libraries,
+		libraries: MAP_LIBRARIES,
 	});
 
 	const location = useSelector(state => state.planParameters.location);
