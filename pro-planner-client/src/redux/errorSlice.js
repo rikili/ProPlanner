@@ -33,6 +33,7 @@ const buildError = (state, errType, errMsg, redir=null, disable=false) => {
     state.errorMessage = errMsg;
     state.redirect = redir;
     state.disableControl = disable;
+    state.timestamp = Date.now();
 };
 
 const errorSlice = createSlice({
@@ -43,6 +44,7 @@ const errorSlice = createSlice({
         errorType: null,
         redirect: null,
         errorMessage: '',
+        timestamp: null,
     },
     reducers: {
         /* 
@@ -68,6 +70,7 @@ const errorSlice = createSlice({
             state.errorType = null;
             state.errorMessage = '';
             state.redirect = null;
+            state.timestamp = null;
         },
 
         setInvalidPlanError(state) {

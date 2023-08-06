@@ -1,6 +1,9 @@
 @import "../styles.scss";
 
 .err-toast-container {
-    top: $navbar-height;
+    &.offset {
+        top: $navbar-height;
+    }
+    top: 0;
     right: 0;
 }
