@@ -52,7 +52,7 @@ const NavigationBar = ({ planId }) => {
 
     return <>
         <Navbar className="navigation-bar" collapseOnSelect expand="lg">
-            <Container>
+            <Container className="nav-container">
                 <Link to={`/${planId}`} className="navlink">
                     <Navbar.Brand as="h4" bsPrefix="nav-brand">ProPlanner</Navbar.Brand>
                 </Link>
@@ -60,17 +60,17 @@ const NavigationBar = ({ planId }) => {
                 <Navbar.Collapse id="responsive-navbar-nav" className="navbar-collapse">
                     <Nav className="nav-content">
                         <div className="navbar-divider-vertical"/>
-                        <Link to={`/${planId}`} className="navlink">
-                            <Nav.Item>Overview</Nav.Item>
+                        <Link to={`/${planId}`} className="navlink on-bar">
+                            <Nav.Item className="navtext">Overview</Nav.Item>
                         </Link>
-                        <Link to={'schedule'} className="navlink">
-                            <Nav.Item>Scheduling</Nav.Item>
+                        <Link to={'schedule'} className="navlink on-bar">
+                            <Nav.Item className="navtext">Scheduling</Nav.Item>
                         </Link>
-                        <Link to={'vote'} className="navlink">
-                            <Nav.Item>Voting</Nav.Item>
+                        <Link to={'vote'} className="navlink on-bar">
+                            <Nav.Item className="navtext">Voting</Nav.Item>
                         </Link>
-                        <Link to={'cost'} className="navlink">
-                            <Nav.Item>Cost</Nav.Item>
+                        <Link to={'cost'} className="navlink on-bar">
+                            <Nav.Item className="navtext">Cost</Nav.Item>
                         </Link>
                     </Nav>
                     <div className="navbar-divider-horizontal"/>

@@ -7,15 +7,16 @@
 
 .nav-brand {
     color: white;
+
+    &:hover {
+        color: rgb(181, 199, 214)
+    }
+    transition: color 200ms ease-in;
 }
 
 .navlink {
     text-decoration: none;
     color: white;
-
-    &:hover &.on-bar {
-        color: lightgrey;
-    }
 
     &.in-dropdown {
         padding-left: 1em;
@@ -31,6 +32,17 @@
     &:active {
         color: grey;
     }
+}
+
+.nav-container {
+    >.toggle-button {
+        display: none;
+    }
+}
+
+.navtext:hover {
+    color: lightgrey;
+    transform: scale(1.08);
 }
 
 .navbar-collapse {
@@ -96,6 +108,16 @@
 
     .navbar-collapse {
         display: block;
+    }
+
+    .nav-container {
+        >.toggle-button {
+            display: block;
+            &:hover {
+                transform: scale(1.05);
+                transition: transform 50ms ease-in;
+            }
+        }
     }
 
     .nav-content {
