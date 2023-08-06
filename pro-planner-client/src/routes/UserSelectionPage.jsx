@@ -51,9 +51,8 @@ const UserSelectionPage = () => {
 							/>
 							<strong className="ms-2">ProPlanner</strong>
 						</div>
-						<small>Just Now</small>
 					</Toast.Header>
-					<Toast.Body style={{ color: 'black' }}>Plan Link Copied</Toast.Body>
+					<Toast.Body style={{ color: 'black' }}>Plan link copied to your clipboard.</Toast.Body>
 				</Toast>
 			</ToastContainer>
 			<Container className="d-flex h-75 align-items-center flex-column pt-5">
