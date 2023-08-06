@@ -9,6 +9,7 @@ const express = require('express');
 const router = express.Router();
 const poll = require('../models/poll');
 const {ObjectId} = require('mongodb');
+const pollHelper = require('../helpers/poll.js')
 
 // gets the entire poll document, needs the eventId (id of trip/outing)
 router.get('/:eventId', async (req, res) => {
@@ -178,8 +179,12 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
 router.patch('/:id', async (req, res) => {
     const id = req.params.id;
     const usersToDelete = req.body.usersToDelete; // example: ["User 1", "User 2"]
-
-    // TODO...
+    try {
+      const updatedPoll = await pollHelper.updateDeletedUserPolls(id, usersToDelete)
+      res.status(200).json(updatedPoll)
+    } catch (error) {
+      res.status(500).send(`Unexpected error: ${error}`)
+    }
 });
 
 module.exports = router;
