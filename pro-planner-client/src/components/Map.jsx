@@ -59,7 +59,7 @@ const Map = () => {
 				dispatch(
 					setError({
 						errType: ERR_TYPE.INFO,
-						message: 'Location could not be found.',
+						message: 'The location of this plan could not be found.',
 					})
 				);
 			} else {
