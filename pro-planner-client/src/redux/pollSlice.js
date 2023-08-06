@@ -45,6 +45,16 @@ export const voteOptionAsync = createAsyncThunk(
         return response.data;
     });
 
+export const updatePollAsync = createAsyncThunk(
+    'poll/update',
+    async ({pollDocumentId, usersToDelete}) => {
+        const response = await axios.patch(buildServerRoute('poll', pollDocumentId),
+            {
+                usersToDelete: usersToDelete
+            });
+        return response.data;
+    });
+
 
 const pollSlice = createSlice({
     name: 'poll',
@@ -132,6 +142,16 @@ const pollSlice = createSlice({
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(voteOptionAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+        builder.addCase(updatePollAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(updatePollAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(updatePollAsync.rejected, (state) => {
             state.pollStatus = LOAD_STATUS.FAILED;
         });
     }
