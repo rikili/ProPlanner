@@ -8,13 +8,21 @@
 const express = require('express');
 const router = express.Router();
 const poll = require('../models/poll');
+const { shortToObjectId } = require('../helpers/plan');
 const {ObjectId} = require('mongodb');
 const pollHelper = require('../helpers/poll.js')
 
 // gets the entire poll document, needs the eventId (id of trip/outing)
 router.get('/:eventId', async (req, res) => {
+    const shortPlanId = req.params.eventId;
+    const planOID = await shortToObjectId(shortPlanId);
+  
+    if (!planOID) {
+        res.status(404).send('Invalid plan ID');
+        return;
+    }
     try {
-        const polls = await poll.findOne({eventId: new Object(req.params.eventId)}, {__v: false});
+        const polls = await poll.findOne({eventId: new Object(planOID)}, {__v: false});
         res.status(200).json(polls);
     } catch (error) {
         res.status(500).send(`Unexpected error: ${error}`)
