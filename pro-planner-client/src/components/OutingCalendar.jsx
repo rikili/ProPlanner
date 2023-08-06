@@ -54,8 +54,7 @@ const updateSelections = (
 	selectEnd,
 	slots,
 	isAdding,
-	setUpdateMonths,
-	updateMonths
+	monthsToUpdate,
 ) => {
 	eachDayOfInterval({
 		start: selectStart,
@@ -65,8 +64,8 @@ const updateSelections = (
 		const isEndDay = isSameDay(dayStart, selectEnd);
 
 		const monthIndex = getMonthIndex(dayStart);
-		if (!updateMonths.includes(monthIndex))
-			setUpdateMonths([...updateMonths, monthIndex]);
+		if (!monthsToUpdate.includes(monthIndex))
+			monthsToUpdate.push(monthIndex);
 		const dateIndex = dayStart.getDate();
 
 		if (!currSelects[monthIndex]) currSelects[monthIndex] = {};
@@ -88,6 +87,15 @@ const updateSelections = (
 		currSelects[monthIndex][dateIndex] = mergeNeighbours(updatedDay);
 	});
 };
+
+const clearEmptyContainers = (selectionProfile, monthsToUpdate) => {
+	monthsToUpdate.forEach((monthIndex) => {
+		if (!selectionProfile[monthIndex]) return;
+		Object.entries(selectionProfile[monthIndex]).forEach(([day, daySelects]) => {
+			if (!daySelects.length) delete selectionProfile[monthIndex][day];
+		});
+	});
+}
 
 // Compile new selections for a particular date based on anchor/cursor of selection
 const makeSelectsOfDate = (date, selections, slots, start, end, isAdding) => {
@@ -411,15 +419,17 @@ function OutingCalendar({ planId, selectedUser, isEditMode, setIsEditMode }) {
 			} else {
 				const updateCopy = JSON.parse(JSON.stringify(currentSelects));
 				if (isAfter(editCursor, editAnchor)) {
+					const newUpdateMonths = [...monthsToUpdate];
 					updateSelections(
 						updateCopy,
 						editAnchor,
 						editCursor,
 						slots,
 						isAdding,
-						setUpdateMonths,
-						monthsToUpdate
+						newUpdateMonths,
 					);
+					clearEmptyContainers(updateCopy, newUpdateMonths);
+					setUpdateMonths(newUpdateMonths);
 				}
 				setCurrSelects(updateCopy);
 				setIsSelecting(false);
