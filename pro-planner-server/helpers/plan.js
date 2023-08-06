@@ -58,7 +58,12 @@ async function addDecision(id, decision) {
 }
 
 async function doesPlanExist(id) {
-  return !!await planModel.findOne({ _id: new ObjectId(id) });
+  try {
+    const plan = await planModel.findOne({ _id: new ObjectId(id) });
+    return !!plan;
+  } catch {
+    return false;
+  }
 }
 
 module.exports = {
