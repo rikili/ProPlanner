@@ -29,9 +29,11 @@ const HomePage = () => {
 
 	const isUserSelected = !!selectedUser;
 
+	const tripId = useLocation().pathname.split('/')[1];
+
+
 	useEffect(() => {
-		dispatch(getCostAsync({tripId: planId}))
-		dispatch(getCostAsync({tripId: planId}))
+		dispatch(getCostAsync({tripId}))
 		
 		if (!isUserSelected) {
 			navigate(`/user/${planId}`);
@@ -54,8 +56,9 @@ const HomePage = () => {
 				: dispatch(clearOutingSelections());
 			//call dispatch and reset user selections
 		}
-	}, [dispatch, planId, isUserSelected, navigate]);
-
+	}, [dispatch, planId, tripId, isUserSelected, navigate]);
+	
+	
 	return (
 		<>
 			<div className="home-page">
