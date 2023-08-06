@@ -8,10 +8,13 @@ import NavigationBar from '../components/NavigationBar';
 import LoadingDisplay from '../components/LoadingDisplay';
 import { Outlet, useNavigate } from 'react-router';
 import axios from 'axios';
+import { getCostAsync } from "../redux/costSlice";
+import { useLocation } from "react-router";
 import { clearTripSelections } from '../redux/tripSlice';
 import { clearOutingSelections } from '../redux/outingSlice';
 import './HomePage.scss';
 import { buildServerRoute } from '../helpers/Utils';
+
 
 const HomePage = () => {
 	const [paramStatus, setParamStatus] = useState(null);
@@ -24,7 +27,12 @@ const HomePage = () => {
 
 	const isUserSelected = !!selectedUser;
 
+	const tripId = useLocation().pathname.split('/')[1];
+
+
 	useEffect(() => {
+		dispatch(getCostAsync({tripId}))
+		
 		if (!isUserSelected) {
 			navigate(`/user/${planId}`);
 		} else {
@@ -46,8 +54,9 @@ const HomePage = () => {
 				: dispatch(clearOutingSelections());
 			//call dispatch and reset user selections
 		}
-	}, [dispatch, planId, isUserSelected, navigate]);
-
+	}, [dispatch, planId, tripId, isUserSelected, navigate]);
+	
+	
 	return (
 		<>
 			<div className="home-page">
