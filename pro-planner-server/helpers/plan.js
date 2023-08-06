@@ -2,12 +2,12 @@
 // removing object field referenecs: https://www.w3schools.com/howto/howto_js_remove_property_object.asp
 
 const poll = require('../models/poll');
-const eventModel = require('../models/plan');
+const planModel = require('../models/plan');
 const { ObjectId } = require('mongodb');
 
 async function createNewEvent(data, planType) {
   try {
-    const event = new eventModel({
+    const event = new planModel({
       planParameters: {
         name: data.name,
         planType: planType,
@@ -42,7 +42,7 @@ async function createNewEvent(data, planType) {
 
 async function addDecision(id, decision) {
   const decisionPath = 'planParameters.decision';
-  let newDecision = await eventModel.findOneAndUpdate(
+  let newDecision = await planModel.findOneAndUpdate(
     { _id: new ObjectId(id) },
     { $set: { [decisionPath]: decision } },
     {
@@ -57,7 +57,12 @@ async function addDecision(id, decision) {
   return newDecision;
 }
 
+async function doesPlanExist(id) {
+  return !!await planModel.findOne({ _id: new ObjectId(id) });
+}
+
 module.exports = {
   createNewEvent,
   addDecision,
+  doesPlanExist
 };

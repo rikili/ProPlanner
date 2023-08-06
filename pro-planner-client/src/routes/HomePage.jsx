@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoaderData } from 'react-router-dom';
 import { updatePlan } from '../redux/planParamSlice';
-import { ERR_TYPE, LOAD_STATUS } from '../constants';
-import { setError } from '../redux/errorSlice';
+import { LOAD_STATUS } from '../constants';
+import { setInvalidPlanError } from '../redux/errorSlice';
 import NavigationBar from '../components/NavigationBar';
 import LoadingDisplay from '../components/LoadingDisplay';
 import { Outlet, useNavigate } from 'react-router';
@@ -35,15 +35,7 @@ const HomePage = () => {
 				.catch(err => {
 					setParamStatus(LOAD_STATUS.FAILED);
 					if (err.response.status === 404) {
-						dispatch(
-							setError({
-								errType: ERR_TYPE.ERR,
-								message:
-									'Information of this plan is invalid, malformed, or missing. Close this notification to be redirected to the landing page.',
-								redirect: '/',
-								disableControl: true,
-							})
-						);
+						dispatch(setInvalidPlanError());
 					}
 				});
 			setParamStatus(LOAD_STATUS.LOADING);

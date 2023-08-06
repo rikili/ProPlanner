@@ -3,9 +3,10 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { LOAD_STATUS } from '../constants';
 import { buildServerRoute } from '../helpers/Utils';
 
-export const getUserAsync = createAsyncThunk('user/get', async ({ planId }) => {
-	const response = await axios.get(buildServerRoute(`user?eventId=${planId}`));
-	return response.data;
+export const getUserAsync = createAsyncThunk('user/get', async ({ planId }, { rejectWithValue }) => {
+	return axios.get(buildServerRoute('user'), {params: {eventId: planId}})
+		.then((result) => result.data)
+		.catch((e) => rejectWithValue(e.response.status));
 });
 
 export const addUserAsync = createAsyncThunk(

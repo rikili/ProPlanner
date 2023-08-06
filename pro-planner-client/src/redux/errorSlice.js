@@ -3,6 +3,7 @@ import { updateOutings } from './outingSlice';
 import { ERR_TYPE } from '../constants';
 import { setUserSelectionsAsync } from './tripSlice';
 import { setPlanDecision } from './planParamSlice';
+import { getUserAsync } from './userSlice';
 
 // Custom Errors
 const selectionUpdateFailure = (state) => {
@@ -15,6 +16,15 @@ const decisionUpdateFailure = (state) => {
     buildError(state, ERR_TYPE.WARN, errMsg);
 }
 
+const invalidPlanError = (state) => {
+    const errMsg = 'Information of this plan is invalid, malformed, or missing. Close this notification to be redirected to the landing page, or you will be redirected shortly.';
+    buildError(state, ERR_TYPE.ERR, errMsg, '/', true);
+}
+
+const userGetFailure = (state) => {
+    const errMsg = 'Retrieval of user information has failed. Close this notification to be redirected to the landing page, or you will be redirected shortly.';
+    buildError(state, ERR_TYPE.ERR, errMsg, '/', true);
+}
 
 // State update helper
 const buildError = (state, errType, errMsg, redir=null, disable=false) => {
@@ -51,19 +61,21 @@ const errorSlice = createSlice({
             }
             buildError(state, errType, message, redirect, disableControl);
         },
-        /* 
-
-        */
+        
         resetError(state) {
             state.isShowError = false;
             state.disableControl = false;
             state.errorType = null;
             state.errorMessage = '';
             state.redirect = null;
+        },
+
+        setInvalidPlanError(state) {
+            invalidPlanError(state);
         }
     },
+    // Custom error cases
     extraReducers: (builder) => {
-        // Custom error cases
         builder.addCase(updateOutings.rejected, (state) => {
             selectionUpdateFailure(state);
         });
@@ -75,8 +87,15 @@ const errorSlice = createSlice({
         builder.addCase(setPlanDecision.rejected, (state) => {
             decisionUpdateFailure(state);
         });
+        builder.addCase(getUserAsync.rejected, (state, { statusCode }) => {
+            if (statusCode === 404) {
+                invalidPlanError(state);
+            } else {
+                userGetFailure(state);
+            }
+        });
     },
 });
 
-export const { setError, resetError } = errorSlice.actions;
+export const { setError, resetError, setInvalidPlanError } = errorSlice.actions;
 export default errorSlice.reducer;
