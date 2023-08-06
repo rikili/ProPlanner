@@ -28,7 +28,6 @@ router.get('/:id', async (req, res) => {
         }
 
         const getUpdateUserExpense = async (costs) => {
-            console.log("updating...")
             const planResults = await plan.find({_id: req.params.id}, {"userInfo": 1, "_id": 0});
             Object.values(planResults).forEach((userInfo) => {
                 if (userInfo["userInfo"]){
