@@ -6,7 +6,6 @@ import './ExpenseSplit.scss';
 const ExpenseSplit = ({ className }) => { 
     const budget = useSelector(state => state.planParameters.budget);
     const costs  = useSelector(state => state.cost.costs);
-    const costs  = useSelector(state => state.cost.costs);
     const userSpendings = [];
     let totalSpendings = 0;
     let costPerUser;
@@ -16,8 +15,6 @@ const ExpenseSplit = ({ className }) => {
     const processExpenses = () => {
         if (costs) {
             Object.values(costs).forEach((user) => {
-        if (costs) {
-            Object.values(costs).forEach((user) => {
                 const userName = user.userName;
                 const userInputs = Object.values(user.expenses);
                 const userExpenses = userInputs.reduce((total, expense) => total + expense.amount, 0);
@@ -25,7 +22,6 @@ const ExpenseSplit = ({ className }) => {
                 totalSpendings += userExpenses;
             });
     
-            costPerUser =  parseFloat((totalSpendings / Object.keys(costs).length).toFixed(2));
             costPerUser =  parseFloat((totalSpendings / Object.keys(costs).length).toFixed(2));
             spentToAvailableRatio = Math.round(totalSpendings / budget * 100);
         }
@@ -117,9 +113,11 @@ const ExpenseSplit = ({ className }) => {
                                 <Col as="h5"> Availble </Col>
                                 <Col as="h5" className="text-end"> ${ budget - totalSpendings } </Col>
                             </Row>
+                            <>{console.log("spentToAvailableRatio " + spentToAvailableRatio)}</>
                             <ProgressBar 
                                 style={{margin: '9px'}}
                                 striped variant={ calcVariant() }
+                                now={spentToAvailableRatio || 0} label={`${spentToAvailableRatio || 0}%`} /> </>
                                 now={spentToAvailableRatio || 0} label={`${spentToAvailableRatio || 0}%`} /> </>
                     }
                 </Card.Footer>
