@@ -60,16 +60,16 @@ const NavigationBar = ({ planId }) => {
                 <Navbar.Collapse id="responsive-navbar-nav" className="navbar-collapse">
                     <Nav className="nav-content">
                         <div className="navbar-divider-vertical"/>
-                        <Link to={`overview`} className="navlink">
+                        <Link to={`/${planId}`} className="navlink">
                             <Nav.Item>Overview</Nav.Item>
                         </Link>
-                        <Link to={`/${planId}`} className="navlink">
+                        <Link to={'schedule'} className="navlink">
                             <Nav.Item>Scheduling</Nav.Item>
                         </Link>
-                        <Link to={`vote`} className="navlink">
+                        <Link to={'vote'} className="navlink">
                             <Nav.Item>Voting</Nav.Item>
                         </Link>
-                        <Link to={`cost`} className="navlink">
+                        <Link to={'cost'} className="navlink">
                             <Nav.Item>Cost</Nav.Item>
                         </Link>
                     </Nav>

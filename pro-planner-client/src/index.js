@@ -49,11 +49,11 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: '',
-                        element: <SchedulePage />
+                        element: <OverviewPage />
                     },
                     {
-                        path: 'overview',
-                        element: <OverviewPage />
+                        path: 'schedule',
+                        element: <SchedulePage />
                     },
                     {
                         path: 'vote',
@@ -79,9 +79,9 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-        <Provider store={store}>
-            <RouterProvider router={router} />
-        </Provider>
+    <Provider store={store}>
+        <RouterProvider router={router} />
+    </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
