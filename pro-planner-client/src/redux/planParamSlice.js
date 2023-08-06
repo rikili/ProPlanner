@@ -33,6 +33,8 @@ const planParamSlice = createSlice({
 		isUploading: false,
 		isInitialized: false,
 		isEditing: false,
+
+		codeReadyToCopy: false,
 	},
 	reducers: {
 		// payload should be a string of either 'Trip' or 'Outing'
@@ -70,6 +72,10 @@ const planParamSlice = createSlice({
 		setIsEditing(state, { payload }) {
 			state.isEditing = payload;
 		},
+
+		setCodeReadyToCopy(state, { payload }) {
+			state.codeReadyToCopy = payload;
+		},
 	},
 	extraReducers: builder => {
 		builder.addCase(setPlanDecision.fulfilled, (state, { payload }) => {
@@ -78,6 +84,6 @@ const planParamSlice = createSlice({
 	},
 });
 
-export const { changePlanType, updatePlan, setIsUploading, setIsEditing } =
+export const { changePlanType, updatePlan, setIsUploading, setIsEditing, setCodeReadyToCopy } =
 	planParamSlice.actions;
 export default planParamSlice.reducer;
