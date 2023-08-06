@@ -3,9 +3,27 @@
 
 const poll = require('../models/poll');
 const planModel = require('../models/plan');
+const { customAlphabet, nanoid } = require('nanoid');
 const { ObjectId } = require('mongodb');
 
+const nanoidCustom = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 6);
+const ID_COLLISION_LIMIT = 200;
+
+async function generateShortId() {
+  let resultId = nanoidCustom();
+  let collision = await planModel.findOne({shortId: resultId});
+  let collisionLimit = ID_COLLISION_LIMIT;
+
+  while (collision) {
+    resultId = (collisionLimit > 0) ? nanoidCustom() : nanoid(8);
+    collision = await planModel.findOne({shortId: resultId});
+    collisionLimit--;
+  }
+  return resultId;
+}
+
 async function createNewEvent(data, planType) {
+  const shortId = await generateShortId();
   try {
     const event = new planModel({
       planParameters: {
@@ -19,9 +37,11 @@ async function createNewEvent(data, planType) {
         decision: [],
         budget: data.budget,
       },
+      shortId
     });
     let savedData = await event.save();
     savedData = savedData.toJSON();
+
     const pollModel = new poll({
       eventId: new ObjectId(savedData._id),
       polls: {},
@@ -30,7 +50,7 @@ async function createNewEvent(data, planType) {
 
     // format return
     savedData = {
-      id: savedData['_id'],
+      id: shortId,
       planParameters: savedData.planParameters,
     };
 
@@ -66,8 +86,14 @@ async function doesPlanExist(id) {
   }
 }
 
+async function shortToObjectId(shortId) {
+  const fetchedId = await planModel.findOne({shortId}, {_id: 1});
+  return fetchedId ? fetchedId.toJSON()['_id'] : null;
+}
+
 module.exports = {
   createNewEvent,
   addDecision,
-  doesPlanExist
+  doesPlanExist,
+  shortToObjectId
 };

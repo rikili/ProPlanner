@@ -15,6 +15,7 @@ const planSchema = new Schema(
       decision: Schema.Types.Array,
       budget: Schema.Types.Number,
     },
+    shortId: Schema.Types.String,
     userInfo: Schema.Types.Mixed,
   },
   {

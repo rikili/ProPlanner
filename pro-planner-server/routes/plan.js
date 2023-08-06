@@ -1,17 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const plan = require('../models/plan');
+const { shortToObjectId } = require("../helpers/plan");
 const { ObjectId } = require('mongodb');
 
 router.get('/:id', async (req, res) => {
-  try {
-    new ObjectId(req.params.id);
-  } catch (e) {
+  const shortPlanId = req.params.id;
+  const planOID = await shortToObjectId(shortPlanId);
+  
+  if (!planOID) {
     res.status(404).send('Invalid plan ID');
     return;
   }
-  if (findParams(req.params.id)) {
-    const fetchedParams = await getParams(req.params.id);
+
+  if (findParams(planOID)) {
+    const fetchedParams = await getParams(planOID);
     if (fetchedParams) {
       const params = fetchedParams.planParameters.toObject();
       res.status(200).send(params);
@@ -22,7 +25,14 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-  const id = req.params.id;
+  const shortPlanId = req.params.id;
+  const planOID = await shortToObjectId(shortPlanId);
+  
+  if (!planOID) {
+    res.status(404).send('Plan does not exist.');
+    return;
+  }
+
   const data = req.body;
   const newParams = {
     name: data.name,
@@ -35,9 +45,10 @@ router.put('/:id', async (req, res) => {
     decision: data.decision,
     budget: data.budget,
   };
+
   try {
     let updatedParams = await plan.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(planOID) },
       {
         $set: { planParameters: newParams },
       },

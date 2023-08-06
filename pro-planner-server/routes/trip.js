@@ -18,6 +18,7 @@ const plan = require('../models/plan');
 const poll = require('../models/poll');
 const timezone = require('../helpers/timezone');
 const { ObjectId } = require('mongodb');
+const { shortToObjectId } = require("../helpers/plan");
 const planHelper = require('../helpers/plan');
 
 router.post('/', async (req, res) => {
@@ -36,15 +37,23 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const userTimezone = req.body.timezone;
-  const tripId = req.params.id;
   const userId = req.body.userId;
+
+  const shortPlanId = req.params.id;
+  const planOID = await shortToObjectId(shortPlanId);
+  
+  if (!planOID) {
+      res.status(404).send('Plan does not exist.');
+      return;
+  }
+
   let userSelection = timezone.makeAvailabilityDates(req.body.selections, userTimezone);
   const selectionMonths = Object.keys(userSelection);
   try {
     if (selectionMonths.length > 1) {
       const offset = timezone.getOffset(userTimezone);
 
-      let currPrevNextMonth = await getMonth(tripId, userId, [`$userInfo.${userId}.${selectionMonths[1]}`]);
+      let currPrevNextMonth = await getMonth(planOID, userId, [`$userInfo.${userId}.${selectionMonths[1]}`]);
       if (currPrevNextMonth !== null) {
         currPrevNextMonth = currPrevNextMonth.toJSON();
         if (currPrevNextMonth.month[0] !== null) {
@@ -67,7 +76,7 @@ router.put('/:id', async (req, res) => {
       }
     }
 
-    let addedNewUserInfo = await addSelection(tripId, userId, userSelection);
+    let addedNewUserInfo = await addSelection(planOID, userId, userSelection);
     addedNewUserInfo = addedNewUserInfo.toJSON();
     if (addedNewUserInfo.month[1].length > 3) {
       addedNewUserInfo.month = timezone.convertCalendarLocal(addedNewUserInfo.month, timezone.getOffset(userTimezone));
@@ -82,6 +91,15 @@ router.get('/:id/:userId', async (req, res) => {
   const monthQuery = req.query.month;
   const userId = req.params.userId;
   const userTimezone = req.query.timezone;
+
+  const shortPlanId = req.params.id;
+  const planOID = await shortToObjectId(shortPlanId);
+    
+  if (!planOID) {
+      res.status(404).send('Plan does not exist.');
+      return;
+  }
+
   let monthProjection = [`$userInfo.${userId}.${monthQuery}`];
   const offset = timezone.getOffset(userTimezone);
   const nextMonth = timezone.createDateShift(monthQuery, 'next');
@@ -92,7 +110,7 @@ router.get('/:id/:userId', async (req, res) => {
     monthProjection.unshift(`$userInfo.${userId}.${parseInt(prevMonth[0])}-${prevMonth[1]}`);
   }
   try {
-    let requestedMonth = await getMonth(req.params.id, userId, monthProjection);
+    let requestedMonth = await getMonth(planOID, userId, monthProjection);
     const splitDate = monthQuery.split('-');
     const month = splitDate[0];
     const year = splitDate[1];
@@ -119,10 +137,18 @@ router.get('/:id/:userId', async (req, res) => {
 });
 
 router.put('/decision/:id', async (req, res) => {
+
+  const shortPlanId = req.params.id;
+  const planOID = await shortToObjectId(shortPlanId);
+  
+  if (!planOID) {
+      res.status(404).send('Plan does not exist.');
+      return;
+  }
+
   try {
-    const id = req.params.id;
     const decision = req.body.decision;
-    const addedDecision = await planHelper.addDecision(id, decision);
+    const addedDecision = await planHelper.addDecision(planOID, decision);
     res.status(200).json(addedDecision);
   } catch (err) {
     res.status(400).send({ err: err });

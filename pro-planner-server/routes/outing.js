@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const plan = require('../models/plan');
 const { ObjectId } = require('mongodb');
+const { shortToObjectId } = require("../helpers/plan");
 const planHelper = require('../helpers/plan');
 
 router.post('/', async (req, res) => {
@@ -21,11 +22,19 @@ router.put('/:id', async (req, res) => {
   const outingId = req.params.id;
   const userId = req.body.userId;
   const selection = req.body.selections;
+
+  const planOID = await shortToObjectId(outingId);
+  
+  if (!planOID) {
+      res.status(404).send('Plan does not exist.');
+      return;
+  }
+
   const month = Object.keys(selection);
   const monthPath = `$userInfo.${userId}.${month}`;
   try {
     const addMonth = await plan.findOneAndUpdate(
-      { _id: new ObjectId(outingId) },
+      { _id: new ObjectId(planOID) },
       {
         $set: {
           [`userInfo.${userId}.${month}`]: selection[month],
@@ -49,10 +58,18 @@ router.get('/:id/:userId', async (req, res) => {
   const outingId = req.params.id;
   const userId = req.params.userId;
   const month = req.query.month;
+
+  const planOID = await shortToObjectId(outingId);
+  
+  if (!planOID) {
+      res.status(404).send('Plan does not exist.');
+      return;
+  }
+
   try {
     const monthPath = `$userInfo.${userId}.${month}`;
     let queryMonth = await plan.findOne(
-      { _id: new ObjectId(outingId), [`userInfo.${userId}`]: { $exists: true } },
+      { _id: new ObjectId(planOID), [`userInfo.${userId}`]: { $exists: true } },
       {
         _id: 0,
         month: monthPath,
@@ -69,10 +86,17 @@ router.get('/:id/:userId', async (req, res) => {
 });
 
 router.put('/decision/:id', async (req, res) => {
+  const shortPlanId = req.params.id;
+  const planOID = await shortToObjectId(shortPlanId);
+  
+  if (!planOID) {
+      res.status(404).send('Plan does not exist.');
+      return;
+  }
+
   try {
-    const id = req.params.id;
     const decision = req.body.decision;
-    const addedDecision = await planHelper.addDecision(id, decision);
+    const addedDecision = await planHelper.addDecision(planOID, decision);
     res.status(200).json(addedDecision);
   } catch (err) {
     res.status(400).send({ err: err });
