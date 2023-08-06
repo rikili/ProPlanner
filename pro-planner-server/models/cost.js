@@ -3,19 +3,29 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const expenseSchema = new Schema({
+const expenseSchema = new Schema(
+  {
     item: Schema.Types.String,
     amount: Schema.Types.Number
-  });
-  
-const userExpenseSchema = new Schema({
-  userName: Schema.Types.String,
-  expenses: {
-    type: Map,
-    of: expenseSchema,
-    default: {},
   },
-});
+  {
+    autoCreate: false
+  }
+  );
+  
+const userExpenseSchema = new Schema(
+  {
+    userName: Schema.Types.String,
+    expenses: {
+      type: Map,
+      of: expenseSchema,
+      default: {},
+    },
+  },
+  {
+    autoCreate: false
+  }
+);
 
 const costSchema = new Schema(
     {
