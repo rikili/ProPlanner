@@ -1,11 +1,11 @@
 import React from 'react';
 import Options from "./Options";
-import {Accordion} from "react-bootstrap";
+import {Accordion, Modal} from "react-bootstrap";
 import Button from './override/Button';
 import {useState} from 'react';
 import AddOptionForm from "./AddOptionForm";
 import {useDispatch, useSelector} from 'react-redux';
-import {voteOptionAsync} from "../redux/pollSlice";
+import {deletePollAsync, voteOptionAsync} from "../redux/pollSlice";
 import {resetError, setError} from "../redux/errorSlice";
 import {ERR_TYPE} from "../constants";
 import './Poll.scss';
@@ -16,8 +16,11 @@ function Poll({poll, pollId}) {
     const users = useSelector((state) => state.user.userList);
     const [showModal, setShowModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const dispatch = useDispatch();
     const pollDocumentId = useSelector((state) => state.poll.pollsId);
+
+    const handleClose = () => setShowDeleteConfirmation(false);
 
     const handleAddOption = () => {
         setShowModal(true);
@@ -34,12 +37,30 @@ function Poll({poll, pollId}) {
 
         dispatch(resetError());
 
-        const votedUser = poll.votedUsers.find((u) => u.user === currUser);
+        let votedOptionId = null;
+
+        for (const optionId in poll.options) {
+            if (poll.options[optionId].votedUsers.includes(currUser)) {
+                votedOptionId = optionId;
+                break;
+            }
+        }
 
         dispatch(voteOptionAsync({
             currUser: currUser,
-            votedOptionId: votedUser ? votedUser.votedOptionId : null,
+            votedOptionId: votedOptionId,
             newVotedOptionId: selectedOption,
+            pollDocumentId: pollDocumentId,
+            pollId: pollId
+        }))
+    }
+
+    const handleConfirmationModal = () => {
+        setShowDeleteConfirmation(true);
+    }
+
+    const handleDelete = () => {
+        dispatch(deletePollAsync({
             pollDocumentId: pollDocumentId,
             pollId: pollId
         }))
@@ -70,6 +91,12 @@ function Poll({poll, pollId}) {
                                 size='sm'
                                 onClick={handleVote}>
                             Vote
+                        </Button>{' '}
+                        <Button style={{marginTop: '10px'}}
+                                variant="danger"
+                                size='sm'
+                                onClick={handleConfirmationModal}>
+                            Delete Poll
                         </Button>
                     </Accordion.Body>
                 </Accordion.Item>
@@ -79,6 +106,17 @@ function Poll({poll, pollId}) {
                            showModal={showModal}
                            setShowModal={setShowModal}
             />
+            <Modal show={showDeleteConfirmation} onHide={handleClose}>
+                <Modal.Body>Do you want to delete the poll?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="custom-secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="custom-primary" onClick={handleDelete}>
+                        Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 }
