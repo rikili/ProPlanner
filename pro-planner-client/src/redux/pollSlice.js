@@ -21,6 +21,14 @@ export const addPollAsync = createAsyncThunk(
         return response.data;
     });
 
+
+export const deletePollAsync = createAsyncThunk(
+    'poll/delete',
+    async ({pollDocumentId, pollId}) => {
+        const response = await axios.put(buildServerRoute('poll', pollDocumentId, pollId));
+        return response.data;
+    });
+
 export const addOptionAsync = createAsyncThunk(
     'poll/option/add',
     async ({newOption, pollDocumentId, pollId}) => {
@@ -120,6 +128,17 @@ const pollSlice = createSlice({
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(addPollAsync.rejected, (state) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+
+        builder.addCase(deletePollAsync.pending, (state) => {
+            state.pollStatus = LOAD_STATUS.LOADING;
+        });
+        builder.addCase(deletePollAsync.fulfilled, (state, action) => {
+            state.polls = action.payload.polls;
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(deletePollAsync.rejected, (state) => {
             state.pollStatus = LOAD_STATUS.FAILED;
         });
 

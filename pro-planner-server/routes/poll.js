@@ -32,7 +32,6 @@ router.put('/:id', async (req, res) => {
                     [`polls.${pollId}`]: {
                         question: req.body.question,
                         options: {},
-                        votedUsers: [],
                     },
                 },
             },
@@ -53,6 +52,34 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// deletes poll in the polls
+// needs id of the poll document and pollId
+router.put('/:id/:pollId', async (req, res) => {
+    try {
+        const updatedPoll = await poll.findOneAndUpdate(
+            {_id: new ObjectId(req.params.id)},
+            {
+                $unset: {
+                    [`polls.${req.params.pollId}`]: 1,
+                },
+            },
+            {
+                new: true,
+                projection: {
+                    __v: false,
+                },
+            }
+        );
+        if (updatedPoll) {
+            res.status(200).json(updatedPoll);
+        } else {
+            res.status(404).send("Poll not added")
+        }
+    } catch (error) {
+        res.status(500).send(`Unexpected error: ${error}`)
+    }
+});
+
 // adds a new option
 // needs id of the poll document and the poll id under polls
 router.put('/option/:id/:pollId', async (req, res) => {
@@ -61,6 +88,7 @@ router.put('/option/:id/:pollId', async (req, res) => {
         const optionToAdd = {
             option: req.body.option,
             voteCount: 0,
+            votedUsers: [],
         };
 
 
@@ -108,19 +136,8 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
                     $inc: {
                         [`polls.${pollId}.options.${votedOptionId}.voteCount`]: -1,
                     },
-                }
-            );
-        } else {
-            // new user vote (adds to the voteUsers array)
-            const userInfo = {
-                user: currUser,
-                votedOptionId: null,
-            };
-            await poll.updateOne(
-                {_id: new ObjectId(id)},
-                {
-                    $push: {
-                        [`polls.${pollId}.votedUsers`]: userInfo,
+                    $pull: {
+                        [`polls.${pollId}.options.${votedOptionId}.votedUsers`]: currUser,
                     },
                 }
             );
@@ -128,10 +145,10 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
 
         // update new user votedOptionId & inc voteCount for selected option
         const updatedPoll = await poll.findOneAndUpdate(
-            {_id: new Object(id), [`polls.${pollId}.votedUsers.user`]: currUser},
+            {_id: new ObjectId(id)},
             {
-                $set: {
-                    [`polls.${pollId}.votedUsers.$.votedOptionId`]: new ObjectId(newVotedOptionId),
+                $push: {
+                    [`polls.${pollId}.options.${newVotedOptionId}.votedUsers`]: currUser,
                 },
                 $inc: {
                     [`polls.${pollId}.options.${newVotedOptionId}.voteCount`]: 1,
@@ -156,10 +173,18 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
     }
 });
 
+
 // handles upon user(s) deletion (updates the voteCount under options & removes user's object under voteUsers)
-router.patch('/poll/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
     const id = req.params.id;
-    const usersToDelete = req.params.usersToDelete;
+    const usersToDelete = req.body.usersToDelete; // example: ["User 1", "User 2"]
+
+    // TODO...
 });
 
 module.exports = router;
+
+
+
+
+

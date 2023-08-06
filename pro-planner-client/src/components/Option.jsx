@@ -7,14 +7,8 @@ function Option({option, optionId, poll, pollId, currUser, setSelectedOption, us
         setSelectedOption(e.target.id);
     }
 
-    const isOptionDisabled = (optionId) => {
-        const votedUser = poll.votedUsers.find((u) => u.user === currUser);
-
-        if (votedUser) {
-            return votedUser.votedOptionId === optionId;
-        }
-
-        return false;
+    const isOptionDisabled = () => {
+        return option.votedUsers.includes(currUser);
     }
 
     const percentageFull = Math.floor((poll.options[optionId].voteCount / userCount) * 100);
@@ -25,7 +19,7 @@ function Option({option, optionId, poll, pollId, currUser, setSelectedOption, us
                 <Row>
                     <Col>
                         <Form.Check
-                            disabled={isOptionDisabled(optionId)}
+                            disabled={isOptionDisabled()}
                             type={'radio'}
                             label={option.option}
                             name={pollId}
