@@ -28,3 +28,17 @@
         flex-direction: column;
     }
 }
+
+@import "../styles.scss";
+
+.icon {
+    width: 1.7em;
+    height: 1.7em;
+    color: green;
+}
+
+.toast {
+    z-index: 2;
+    position: sticky;
+    top: $navbar-height;
+}

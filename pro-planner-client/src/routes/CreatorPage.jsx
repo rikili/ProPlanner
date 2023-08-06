@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import ParameterForm from "../components/ParameterForm"
 import axios from "axios";
-import { setIsUploading, updatePlan } from '../redux/planParamSlice';
+import { setIsUploading, updatePlan, setCodeReadyToCopy } from '../redux/planParamSlice';
 import { resetError } from '../redux/errorSlice';
 import { buildServerRoute } from "../helpers/Utils";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +34,7 @@ const CreatorPage = () => {
                 dispatch(setIsUploading(false));
             });
         dispatch(setIsUploading(true));
+        dispatch(setCodeReadyToCopy(true));
     }
 
     return <>
