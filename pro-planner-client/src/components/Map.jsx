@@ -54,13 +54,22 @@ const Map = () => {
 			setLat(lat);
 			setLng(lng);
 		})
-		.catch(() => {
-			dispatch(
-				setError({
-					errType: ERR_TYPE.WARN,
-					message: 'Maps integration has failed. Please try again later.',
-				})
-			);
+		.catch((err) => {
+			if (err.message === 'no result found.') {
+				dispatch(
+					setError({
+						errType: ERR_TYPE.INFO,
+						message: 'Location could not be found.',
+					})
+				);
+			} else {
+				dispatch(
+					setError({
+						errType: ERR_TYPE.WARN,
+						message: 'Maps has failed to load properly. Please try again later.',
+					})
+				);
+			}
 		});
 
 	return (
