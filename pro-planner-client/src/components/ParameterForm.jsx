@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Form } from 'react-bootstrap';
 import Button from './override/Button';
-import { isAfter, eachDayOfInterval, isEqual, addMonths } from 'date-fns';
-import { START_DAY_TIME, END_DAY_TIME } from '../constants';
-import { addDays, format } from 'date-fns';
+import { isAfter, eachDayOfInterval, isEqual, addMonths, startOfDay, endOfDay, set } from 'date-fns';
+import { addDays } from 'date-fns';
 
 import InputDetailsForm from '../components/InputDetailsForm';
 import TimeRangeForm from '../components/TimeRangeForm';
@@ -16,6 +15,18 @@ const MAX_TRIP_MONTH_RANGE = 12;
 const MAX_OUTING_MONTH_RANGE = 5;
 
 // Helper functions
+
+// convert format mm-dd-yyyy to date object
+const convInputToDate = (dateString) => {
+    const dateSegments = dateString.match(/[0-9]+/g).map(Number);
+    return new Date(dateSegments[2], dateSegments[0] - 1, dateSegments[1]);
+}
+
+// convert hh:mm format to numbers
+const convInputToTime = (timeString) => {
+    const timeSegments = timeString.match(/[0-9]+/g).map(Number);
+    return {hours: timeSegments[0], minutes: timeSegments[1]}
+}
 
 // Parameter details format check
 const isProperSubmission = (formData, isOuting) => {
@@ -207,8 +218,8 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
             return;
         }
         
-        const convStart = new Date(detailResults.dateRange[0]);
-        const convEnd = new Date(detailResults.dateRange[1]);
+        const convStart = convInputToDate(detailResults.dateRange[0]);
+        const convEnd = convInputToDate(detailResults.dateRange[1]);
 
         if (!isTimingProper(convStart, convEnd)) {
             dispatch(setError({
@@ -250,23 +261,23 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
             detailResults.selectedDaysOfWeek,
         );
 
-        const startString = format(roundedStart, 'MM-dd-yyyy');
-        const endString = format(roundedEnd, 'MM-dd-yyyy');
-
         let startDateTime;
         if (isOuting) {
-            let startTime;
-            let endTime;
+            let startEndTime;
+            let endDate;
+
             if (timeResults.isAllDay) {
-                startTime = START_DAY_TIME;
-                endTime = END_DAY_TIME;
+                startDateTime = startOfDay(roundedStart);
+                startEndTime = endOfDay(roundedStart);
+                endDate = endOfDay(roundedEnd);
             } else {
-                startTime = timeResults.timeRange[0];
-                endTime = timeResults.timeRange[1];
+                const startTime = convInputToTime(timeResults.timeRange[0]);
+                const endTime = convInputToTime(timeResults.timeRange[1]);
+
+                startDateTime = set(roundedStart, {hours: startTime.hours, minutes: startTime.minutes});
+                startEndTime = set(roundedStart, {hours: endTime.hours, minutes: endTime.minutes});
+                endDate = set(roundedEnd, {hours: endTime.hours, minutes: endTime.minutes});
             }
-            startDateTime = new Date(`${startString}, ${startTime}`);
-            const startEndTime = new Date(`${startString}, ${endTime}`);
-            const endDate = new Date(`${endString}, ${endTime}`);
 
             if (!isTimingProper(startDateTime, endDate, startEndTime, true)) {
                 dispatch(setError({
@@ -279,8 +290,8 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
             formResult.isAllDay = false;
             formResult.dateTimeRange = [[makeOutingDate(startDateTime), makeOutingDate(startEndTime)], makeOutingDate(endDate)];
         } else {
-            startDateTime = new Date(`${startString}, ${START_DAY_TIME}`);
-            const endDate = new Date(`${endString}, ${END_DAY_TIME}`);
+            startDateTime = startOfDay(roundedStart);
+            const endDate = endOfDay(roundedEnd);
 
             formResult.dateTimeRange = [startDateTime.toISOString(), endDate.toISOString()];
         }

@@ -16,7 +16,4 @@ export const LOAD_STATUS = {
     FAILED: 0,
 }
 
-export const START_DAY_TIME = "00:00:00:00";
-export const END_DAY_TIME = "23:59:59:99";
-
 export const MAP_LIBRARIES = ['places'];
