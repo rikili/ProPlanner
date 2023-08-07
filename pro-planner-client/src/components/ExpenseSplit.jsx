@@ -117,7 +117,6 @@ const ExpenseSplit = ({ className }) => {
                                 <Col as="h5"> Availble </Col>
                                 <Col as="h5" className="text-end"> ${ budget - totalSpendings } </Col>
                             </Row>
-                            <>{console.log("spentToAvailableRatio " + spentToAvailableRatio)}</>
                             <ProgressBar 
                                 style={{margin: '9px'}}
                                 striped variant={ calcVariant() }
