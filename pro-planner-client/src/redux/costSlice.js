@@ -30,7 +30,7 @@ export const removeExpenseAsync = createAsyncThunk('cost/removeExpense', async (
 
 export const updateCostAsync = createAsyncThunk('cost/removeUser', async ({planId, usersToDelete}) => {
     const response = await axios.patch(buildServerRoute('cost', 'removeUser', planId),
-        {userToDelete: usersToDelete[0]});
+        {userToDelete: usersToDelete});
     return response.data;
 });
 
@@ -39,17 +39,18 @@ const costSlice = createSlice({
     initialState: {},
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(getCostAsync.pending, (state, action) => {
+        builder.addCase(getCostAsync.pending, (state) => {
             state.costsStatus = LOAD_STATUS.LOADING;
         });
         builder.addCase(getCostAsync.fulfilled, (state, action) => {
             state.costs = action.payload.costs;
-            state.pollStatus = LOAD_STATUS.SUCCESS;
+            state.costsStatus = LOAD_STATUS.SUCCESS;
         });
-        builder.addCase(getCostAsync.rejected, (state, action) => {
-            state.pollStatus = LOAD_STATUS.FAILED;
+        builder.addCase(getCostAsync.rejected, (state) => {
+            state.costsStatus = LOAD_STATUS.FAILED;
         });
-        builder.addCase(addExpenseAsync.pending, (state, action) => {
+
+        builder.addCase(addExpenseAsync.pending, (state) => {
             state.costsStatus = LOAD_STATUS.LOADING;
         });
         builder.addCase(addExpenseAsync.fulfilled, (state, action) => {
@@ -57,26 +58,28 @@ const costSlice = createSlice({
             Object.entries(costs).forEach(([userName, expenses]) => {
                 state.costs[userName] = expenses;
             });
-            state.pollStatus = LOAD_STATUS.SUCCESS;
+            state.costsStatus = LOAD_STATUS.SUCCESS;
         });
-        builder.addCase(addExpenseAsync.rejected, (state, action) => {
-            state.pollStatus = LOAD_STATUS.FAILED;
+        builder.addCase(addExpenseAsync.rejected, (state) => {
+            state.costsStatus = LOAD_STATUS.FAILED;
         });
-        builder.addCase(removeExpenseAsync.pending, (state, action) => {
+
+        builder.addCase(removeExpenseAsync.pending, (state) => {
             state.costsStatus = LOAD_STATUS.LOADING;
         });
         builder.addCase(removeExpenseAsync.fulfilled, (state, action) => {
             state.costs = action.payload.costs;
-            state.pollStatus = LOAD_STATUS.SUCCESS;
+            state.costsStatus = LOAD_STATUS.SUCCESS;
         });
-        builder.addCase(removeExpenseAsync.rejected, (state, action) => {
-            state.pollStatus = LOAD_STATUS.FAILED;
+        builder.addCase(removeExpenseAsync.rejected, (state) => {
+            state.costsStatus = LOAD_STATUS.FAILED;
         });
-        builder.addCase(updateCostAsync.fulfilled, (state, action) => {
-            state.pollStatus = LOAD_STATUS.SUCCESS;
+
+        builder.addCase(updateCostAsync.fulfilled, (state) => {
+            state.costsStatus = LOAD_STATUS.SUCCESS;
         });
-        builder.addCase(updateCostAsync.rejected, (state, action) => {
-            state.pollStatus = LOAD_STATUS.FAILED;
+        builder.addCase(updateCostAsync.rejected, (state) => {
+            state.costsStatus = LOAD_STATUS.FAILED;
         });
     }
 })
