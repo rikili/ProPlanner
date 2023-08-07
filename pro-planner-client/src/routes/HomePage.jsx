@@ -9,9 +9,6 @@ import LoadingDisplay from '../components/LoadingDisplay';
 import { Outlet, useNavigate } from 'react-router';
 import axios from 'axios';
 import { getCostAsync } from "../redux/costSlice";
-import { useLocation } from "react-router";
-import { getCostAsync } from "../redux/costSlice";
-import { useLocation } from "react-router";
 import { clearTripSelections } from '../redux/tripSlice';
 import { clearOutingSelections } from '../redux/outingSlice';
 import './HomePage.scss';
@@ -53,7 +50,7 @@ const HomePage = () => {
 				: dispatch(clearOutingSelections());
 			//call dispatch and reset user selections
 		}
-	}, [dispatch, planId, planId, isUserSelected, navigate]);
+	}, [dispatch, planType, planId, isUserSelected, navigate]);
 	
 	
 	return (
