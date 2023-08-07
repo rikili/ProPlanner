@@ -117,7 +117,6 @@ const ExpenseSplit = ({ className }) => {
                                 style={{margin: '9px'}}
                                 striped variant={ calcVariant() }
                                 now={spentToAvailableRatio || 0} label={`${spentToAvailableRatio || 0}%`} /> </>
-                                now={spentToAvailableRatio || 0} label={`${spentToAvailableRatio || 0}%`} /> </>
                     }
                 </Card.Footer>
             </Card>
