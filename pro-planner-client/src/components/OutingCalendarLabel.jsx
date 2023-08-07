@@ -5,16 +5,9 @@ import { assembleClass } from '../helpers/Utils';
 import './CalendarLabel.scss';
 
 const OutingCalendarLabel = ({ dateRange, isPrevDisabled, isNextDisabled, onClick }) => {
+    const prevMonthClass = assembleClass('nav-button', isPrevDisabled && 'nav-disabled');
 
-    const prevMonthClass = assembleClass(
-        'nav-button',
-        isPrevDisabled && 'nav-disabled',
-    );
-
-    const nextMonthClass = assembleClass(
-        'nav-button',
-        isNextDisabled && 'nav-disabled',
-    );
+    const nextMonthClass = assembleClass('nav-button', isNextDisabled && 'nav-disabled');
 
     return (
         <Container>
@@ -26,7 +19,7 @@ const OutingCalendarLabel = ({ dateRange, isPrevDisabled, isNextDisabled, onClic
                     <div className="calendar-outing-year">{format(dateRange[0], 'yyyy')}</div>
                     <div className="calendar-outing-label">
                         <span>{format(dateRange[0], 'MMM dd')}</span>
-                        <span>{" - "}</span>
+                        <span>{' - '}</span>
                         <span>{format(dateRange[1], 'MMM dd')}</span>
                     </div>
                 </div>

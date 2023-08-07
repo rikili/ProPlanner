@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { eachMonthOfInterval, format, startOfYear, endOfYear, isSameMonth, addYears, subYears } from 'date-fns';
+import {
+    eachMonthOfInterval,
+    format,
+    startOfYear,
+    endOfYear,
+    isSameMonth,
+    addYears,
+    subYears,
+} from 'date-fns';
 import { Container } from 'react-bootstrap';
 import { assembleClass } from '../helpers/Utils';
 import './TripMonthSelector.scss';
@@ -21,7 +29,9 @@ const TripMonthSelector = ({ selectedMonth, setSelectedMonth, rangeStart, rangeE
 
     const inRange = (month) => {
         return (
-            (month >= rangeStart && month <= rangeEnd) || isSameMonth(month, rangeStart) || isSameMonth(month, rangeEnd)
+            (month >= rangeStart && month <= rangeEnd) ||
+            isSameMonth(month, rangeStart) ||
+            isSameMonth(month, rangeEnd)
         );
     };
 
@@ -29,19 +39,26 @@ const TripMonthSelector = ({ selectedMonth, setSelectedMonth, rangeStart, rangeE
         <Container className="trip-month-selector">
             <div className="trip-year-selector">
                 {!isAtEarliestYear && (
-                    <button className="trip-year-select-button" onClick={() => handleYearChange(false)}>
+                    <button
+                        className="trip-year-select-button"
+                        onClick={() => handleYearChange(false)}>
                         {'<'}
                     </button>
                 )}
                 <div className="trip-year-selector-label">{format(viewYear, 'yyyy')}</div>
                 {!isAtLatestYear && (
-                    <button className="trip-year-select-button" onClick={() => handleYearChange(true)}>
+                    <button
+                        className="trip-year-select-button"
+                        onClick={() => handleYearChange(true)}>
                         {'>'}
                     </button>
                 )}
             </div>
             <span className="trip-month-list">
-                {eachMonthOfInterval({ start: startOfYear(viewYear), end: endOfYear(viewYear) }).map((month) => {
+                {eachMonthOfInterval({
+                    start: startOfYear(viewYear),
+                    end: endOfYear(viewYear),
+                }).map((month) => {
                     const monthInRange = inRange(month);
                     const buttonClass = assembleClass(
                         'trip-month-button',
@@ -50,7 +67,10 @@ const TripMonthSelector = ({ selectedMonth, setSelectedMonth, rangeStart, rangeE
                     );
 
                     return (
-                        <div className={buttonClass} onClick={monthInRange ? () => setSelectedMonth(month) : null} key={`month-selector-${format(month, 'MMMM')}`}>
+                        <div
+                            className={buttonClass}
+                            onClick={monthInRange ? () => setSelectedMonth(month) : null}
+                            key={`month-selector-${format(month, 'MMMM')}`}>
                             {format(month, 'MMM')}
                         </div>
                     );

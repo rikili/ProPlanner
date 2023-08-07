@@ -8,16 +8,19 @@
 const express = require('express');
 const router = express.Router();
 const poll = require('../models/poll');
-const {ObjectId} = require('mongodb');
-const pollHelper = require('../helpers/poll.js')
+const { ObjectId } = require('mongodb');
+const pollHelper = require('../helpers/poll.js');
 
 // gets the entire poll document, needs the eventId (id of trip/outing)
 router.get('/:eventId', async (req, res) => {
     try {
-        const polls = await poll.findOne({eventId: new Object(req.params.eventId)}, {__v: false});
+        const polls = await poll.findOne(
+            { eventId: new Object(req.params.eventId) },
+            { __v: false }
+        );
         res.status(200).json(polls);
     } catch (error) {
-        res.status(500).send(`Unexpected error: ${error}`)
+        res.status(500).send(`Unexpected error: ${error}`);
     }
 });
 
@@ -27,7 +30,7 @@ router.put('/:id', async (req, res) => {
     try {
         const pollId = new ObjectId();
         const addedPoll = await poll.findOneAndUpdate(
-            {_id: new ObjectId(req.params.id)},
+            { _id: new ObjectId(req.params.id) },
             {
                 $set: {
                     [`polls.${pollId}`]: {
@@ -46,10 +49,10 @@ router.put('/:id', async (req, res) => {
         if (addedPoll) {
             res.status(200).json(addedPoll);
         } else {
-            res.status(404).send("Poll not added")
+            res.status(404).send('Poll not added');
         }
     } catch (error) {
-        res.status(500).send(`Unexpected error: ${error}`)
+        res.status(500).send(`Unexpected error: ${error}`);
     }
 });
 
@@ -58,7 +61,7 @@ router.put('/:id', async (req, res) => {
 router.put('/:id/:pollId', async (req, res) => {
     try {
         const updatedPoll = await poll.findOneAndUpdate(
-            {_id: new ObjectId(req.params.id)},
+            { _id: new ObjectId(req.params.id) },
             {
                 $unset: {
                     [`polls.${req.params.pollId}`]: 1,
@@ -74,10 +77,10 @@ router.put('/:id/:pollId', async (req, res) => {
         if (updatedPoll) {
             res.status(200).json(updatedPoll);
         } else {
-            res.status(404).send("Poll not added")
+            res.status(404).send('Poll not added');
         }
     } catch (error) {
-        res.status(500).send(`Unexpected error: ${error}`)
+        res.status(500).send(`Unexpected error: ${error}`);
     }
 });
 
@@ -92,9 +95,8 @@ router.put('/option/:id/:pollId', async (req, res) => {
             votedUsers: [],
         };
 
-
         const addedPoll = await poll.findOneAndUpdate(
-            {_id: new ObjectId(req.params.id)},
+            { _id: new ObjectId(req.params.id) },
             {
                 $set: {
                     [`polls.${req.params.pollId}.options.${optionId}`]: optionToAdd,
@@ -111,11 +113,10 @@ router.put('/option/:id/:pollId', async (req, res) => {
         if (addedPoll) {
             res.status(200).json(addedPoll);
         } else {
-            res.status(404).send("Option not added");
+            res.status(404).send('Option not added');
         }
-
     } catch (error) {
-        res.status(500).send(`Unexpected error: ${error}`)
+        res.status(500).send(`Unexpected error: ${error}`);
     }
 });
 
@@ -132,7 +133,7 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
         // decrements prev user vote in options
         if (votedOptionId || votedOptionId !== null) {
             await poll.updateOne(
-                {_id: new ObjectId(id)},
+                { _id: new ObjectId(id) },
                 {
                     $inc: {
                         [`polls.${pollId}.options.${votedOptionId}.voteCount`]: -1,
@@ -146,7 +147,7 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
 
         // update new user votedOptionId & inc voteCount for selected option
         const updatedPoll = await poll.findOneAndUpdate(
-            {_id: new ObjectId(id)},
+            { _id: new ObjectId(id) },
             {
                 $push: {
                     [`polls.${pollId}.options.${newVotedOptionId}.votedUsers`]: currUser,
@@ -166,30 +167,23 @@ router.patch('/vote/:id/:pollId', async (req, res) => {
         if (updatedPoll) {
             res.status(200).json(updatedPoll);
         } else {
-            res.status(404).send("Not voted");
+            res.status(404).send('Not voted');
         }
-
     } catch (error) {
-        res.status(500).send(`Unexpected error: ${error}`)
+        res.status(500).send(`Unexpected error: ${error}`);
     }
 });
-
 
 // handles upon user(s) deletion (updates the voteCount under options & removes user's in voteUsers array)
 router.patch('/:id', async (req, res) => {
     const id = req.params.id;
     const usersToDelete = req.body.usersToDelete;
     try {
-        const updatedPoll = await pollHelper.updateDeletedUserPolls(id, usersToDelete)
-        res.status(200).json(updatedPoll)
+        const updatedPoll = await pollHelper.updateDeletedUserPolls(id, usersToDelete);
+        res.status(200).json(updatedPoll);
     } catch (error) {
-        res.status(500).send(`Unexpected error: ${error}`)
+        res.status(500).send(`Unexpected error: ${error}`);
     }
 });
 
 module.exports = router;
-
-
-
-
-

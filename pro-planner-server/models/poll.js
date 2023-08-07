@@ -3,13 +3,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const pollSchema = new Schema(
-  {
-    eventId: Schema.Types.ObjectId,
-    polls: Schema.Types.Mixed,
-  },
-  {
-    collection: 'Poll',
-  }
+    {
+        eventId: Schema.Types.ObjectId,
+        polls: Schema.Types.Mixed,
+    },
+    {
+        collection: 'Poll',
+    }
 );
 
 module.exports = mongoose.model('Poll', pollSchema);

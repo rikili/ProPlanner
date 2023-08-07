@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider, redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 import CreatorPage from './routes/CreatorPage';
 import LandingPage from './routes/LandingPage';
@@ -14,10 +12,11 @@ import ErrorPage from './routes/ErrorPage';
 import store from './store';
 import HomePage from './routes/HomePage';
 import UserSelectionPage from './routes/UserSelectionPage';
-import './index.scss';
 import EditPage from './routes/EditPage';
 import WrapperPage from './routes/WrapperPage';
-import OverviewPage from "./routes/OverviewPage";
+import OverviewPage from './routes/OverviewPage';
+import './index.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const router = createBrowserRouter([
     {
@@ -43,37 +42,37 @@ const router = createBrowserRouter([
             },
             {
                 path: '/:tripId',
-                loader: ({ params }) => params.tripId, // TODO: can be made to cause an API call to fetch ID, passing it for now
+                loader: ({ params }) => params.tripId,
                 element: <HomePage />,
                 errorElement: <ErrorPage />,
                 children: [
                     {
                         path: '',
-                        element: <OverviewPage />
+                        element: <OverviewPage />,
                     },
                     {
                         path: 'schedule',
-                        element: <SchedulePage />
+                        element: <SchedulePage />,
                     },
                     {
                         path: 'vote',
-                        element: <VotePage />
+                        element: <VotePage />,
                     },
                     {
                         path: 'cost',
-                        element: <CostPage />
+                        element: <CostPage />,
                     },
                     {
                         path: 'edit',
-                        element: <EditPage />
-                    }
-                ]
+                        element: <EditPage />,
+                    },
+                ],
             },
             {
                 path: '/:tridId/',
-                element: redirect('..')
-            }
-        ]
+                element: redirect('..'),
+            },
+        ],
     },
 ]);
 
@@ -83,8 +82,3 @@ root.render(
         <RouterProvider router={router} />
     </Provider>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

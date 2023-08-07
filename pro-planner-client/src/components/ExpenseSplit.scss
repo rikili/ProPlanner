@@ -1,13 +1,12 @@
-@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
 .cost-row {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    
 }
 
-.cost-left-user{
+.cost-left-user {
     display: flex;
 }
 
@@ -17,14 +16,15 @@
 
 @include media-breakpoint-between(xs, sm) {
     .cost-row {
-        >.col, .col-lg-2 {
+        > .col,
+        .col-lg-2 {
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        >.col-lg-2 {
-            margin: 0 0.5em
+        > .col-lg-2 {
+            margin: 0 0.5em;
         }
     }
 

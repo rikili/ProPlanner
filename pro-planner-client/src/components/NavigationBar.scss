@@ -1,4 +1,4 @@
-@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
 .navigation-bar {
     color: white;
@@ -9,7 +9,7 @@
     color: white;
 
     &:hover {
-        color: rgb(181, 199, 214)
+        color: rgb(181, 199, 214);
     }
     transition: color 200ms ease-in;
 }
@@ -35,7 +35,7 @@
 }
 
 .nav-container {
-    >.toggle-button {
+    > .toggle-button {
         display: none;
     }
 }
@@ -78,7 +78,7 @@
 
 .user-dropdown {
     > div {
-        background-color: rgb(219, 225, 231)
+        background-color: rgb(219, 225, 231);
     }
 }
 
@@ -95,7 +95,8 @@
         width: 2.3em;
         border-radius: 0.5em;
         // url below refernced from bootstrap scss
-        background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='lightgrey' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>") no-repeat center;
+        background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='lightgrey' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>")
+            no-repeat center;
     }
 
     .navbar-divider-vertical {
@@ -111,7 +112,7 @@
     }
 
     .nav-container {
-        >.toggle-button {
+        > .toggle-button {
             display: block;
             &:hover {
                 transform: scale(1.05);

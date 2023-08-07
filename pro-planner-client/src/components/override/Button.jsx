@@ -1,9 +1,12 @@
+// references for styling override: https://react-bootstrap.netlify.app/docs/getting-started/theming/
+
 import { Button as BaseButton } from 'react-bootstrap';
 
 const Button = (props) => {
-    return <>
-        <style type="text/css">
-            {`
+    return (
+        <>
+            <style type="text/css">
+                {`
                 .btn-custom-primary {
                     color: white !important;
                     background-color: rgb(23, 69, 126) !important;
@@ -152,10 +155,10 @@ const Button = (props) => {
                     box-shadow: 0 0 1px 0.2em rgba(9, 108, 181, 0.4) !important;
                 }
             `}
-        </style>
-
-        <BaseButton {...props} />
-    </>
+            </style>
+            <BaseButton {...props} />
+        </>
+    );
 };
 
 export default Button;

@@ -1,15 +1,23 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Form } from 'react-bootstrap';
-import Button from './override/Button';
-import { isAfter, eachDayOfInterval, isEqual, addMonths, startOfDay, endOfDay, set } from 'date-fns';
+import {
+    isAfter,
+    eachDayOfInterval,
+    isEqual,
+    addMonths,
+    startOfDay,
+    endOfDay,
+    set,
+} from 'date-fns';
 import { addDays } from 'date-fns';
+import { setError } from '../redux/errorSlice';
+import { makeOutingDate } from '../helpers/OutingCalendar';
+import { ERR_TYPE, PLAN_TYPE } from '../constants';
 
+import Button from './override/Button';
 import InputDetailsForm from '../components/InputDetailsForm';
 import TimeRangeForm from '../components/TimeRangeForm';
-import { setError } from '../redux/errorSlice';
-import { ERR_TYPE, PLAN_TYPE } from '../constants';
-import { makeOutingDate } from '../helpers/OutingCalendar';
 
 const MAX_TRIP_MONTH_RANGE = 12;
 const MAX_OUTING_MONTH_RANGE = 5;
@@ -20,61 +28,50 @@ const MAX_OUTING_MONTH_RANGE = 5;
 const convInputToDate = (dateString) => {
     const dateSegments = dateString.match(/[0-9]+/g).map(Number);
     return new Date(dateSegments[2], dateSegments[0] - 1, dateSegments[1]);
-}
+};
 
 // convert hh:mm format to numbers
 const convInputToTime = (timeString, isEndTime) => {
     const timeSegments = timeString.match(/[0-9]+/g).map(Number);
     if (isEndTime && !timeSegments[0] && !timeSegments[1]) {
-        return {hours: 23, minutes: 59};
+        return { hours: 23, minutes: 59 };
     }
-    return {hours: timeSegments[0], minutes: timeSegments[1]};
-}
+    return { hours: timeSegments[0], minutes: timeSegments[1] };
+};
 
 // Parameter details format check
 const isProperSubmission = (formData, isOuting) => {
     if (!(formData.name && formData.location)) return false;
     if (isOuting) {
         if (formData.isAllDay) return true;
-        return (formData.dateTimeRange[0]
-            && formData.dateTimeRange[0][0]
-            && formData.dateTimeRange[0][1]
-            && formData.dateTimeRange[1]
+        return (
+            formData.dateTimeRange[0] &&
+            formData.dateTimeRange[0][0] &&
+            formData.dateTimeRange[0][1] &&
+            formData.dateTimeRange[1]
         );
     }
     return true;
-}
+};
 
 // Utility function to map values to Infinity when they are above or below zero
 const filterTarget = (target, afterTarget) =>
-    afterTarget
-        ? target <= 0
-            ? target
-            : Infinity
-        : target >= 0
-            ? target
-            : Infinity;
+    afterTarget ? (target <= 0 ? target : Infinity) : target >= 0 ? target : Infinity;
 
 // Finds closest valid day of the week relative to the selection range and selected days of the week
 const maxDaysInWeek = 7;
 const findClosestDOW = (targetDOW, selectedDOWs, afterTarget = false) => {
     return selectedDOWs.map((dayOfWeek) => {
-        let prevDiff = filterTarget(
-            dayOfWeek - maxDaysInWeek - targetDOW,
-            afterTarget
-        );
+        let prevDiff = filterTarget(dayOfWeek - maxDaysInWeek - targetDOW, afterTarget);
         let normDiff = filterTarget(dayOfWeek - targetDOW, afterTarget);
-        let nextDiff = filterTarget(
-            dayOfWeek + maxDaysInWeek - targetDOW,
-            afterTarget
-        );
+        let nextDiff = filterTarget(dayOfWeek + maxDaysInWeek - targetDOW, afterTarget);
         return Math.abs(normDiff) < Math.abs(prevDiff)
             ? Math.abs(normDiff) < Math.abs(nextDiff)
                 ? normDiff
                 : nextDiff
             : Math.abs(prevDiff) < Math.abs(nextDiff)
-                ? prevDiff
-                : nextDiff;
+            ? prevDiff
+            : nextDiff;
     });
 };
 
@@ -94,12 +91,13 @@ const getSmallestDiff = (diffs) => {
 // Check if timing boundaries are correctly formed
 const isTimingProper = (start, end, endInterval, isOuting = false) => {
     if (isOuting) {
-        return isAfter(endInterval, start)
-            && (isAfter(end, endInterval) || isEqual(end, endInterval));
+        return (
+            isAfter(endInterval, start) && (isAfter(end, endInterval) || isEqual(end, endInterval))
+        );
     } else {
         return isAfter(end, start) || isEqual(start, end);
     }
-}
+};
 
 // Transforms startDate and endDate to conform to their nearest valid day
 const roundBoundaryDays = (startDate, endDate, selectedDOWs) => {
@@ -109,17 +107,20 @@ const roundBoundaryDays = (startDate, endDate, selectedDOWs) => {
     const endOffset = endDiffs.find((diff) => diff === 0) ? 0 : Math.max(...endDiffs);
 
     return [addDays(startDate, startOffset), addDays(endDate, endOffset)];
-}
+};
 
 // Determines if there are valid days within the selected date range and selected days of week
-const areValidSlots = (start, end, daysOfWeek) => eachDayOfInterval({start, end})
-    .reduce((acc, day) => acc || daysOfWeek.includes(day.getDay()), false);
+const areValidSlots = (start, end, daysOfWeek) =>
+    eachDayOfInterval({ start, end }).reduce(
+        (acc, day) => acc || daysOfWeek.includes(day.getDay()),
+        false
+    );
 
-const reformatDateString = (inpString) =>  {
+const reformatDateString = (inpString) => {
     if (!inpString) return null;
     const splits = inpString.match(/[0-9]+/g);
     return `${splits[1]}-${splits[2]}-${splits[0]}`;
-}
+};
 
 const formatSelectedDays = (selectedDays) => {
     const result = [];
@@ -129,7 +130,7 @@ const formatSelectedDays = (selectedDays) => {
         }
     });
     return result;
-}
+};
 
 // Component
 /*
@@ -143,7 +144,7 @@ const formatSelectedDays = (selectedDays) => {
 */
 const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }) => {
     const [validated, setValidated] = useState(false);
-    const isOuting = useSelector(state => state.planParameters.planType) === PLAN_TYPE.OUTING;
+    const isOuting = useSelector((state) => state.planParameters.planType) === PLAN_TYPE.OUTING;
     const dispatch = useDispatch();
 
     // callback function to handle form submission
@@ -151,7 +152,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
         e.preventDefault();
         setValidated(true);
 
-        const formVals = (key) => e.target.elements[key] ? e.target.elements[key].value : null;
+        const formVals = (key) => (e.target.elements[key] ? e.target.elements[key].value : null);
         const detailResults = {
             name: formVals('planName'),
             location: formVals('planLocation'),
@@ -159,9 +160,9 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
             description: formVals('planDescription'),
             dateRange: [
                 reformatDateString(formVals('planStartDate')),
-                reformatDateString(formVals('planEndDate'))
+                reformatDateString(formVals('planEndDate')),
             ],
-            selectedDaysOfWeek: formatSelectedDays(JSON.parse(formVals('planDOWs')))
+            selectedDaysOfWeek: formatSelectedDays(JSON.parse(formVals('planDOWs'))),
         };
 
         let timeResults = null;
@@ -169,7 +170,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
             timeResults = {
                 isAllDay: !!formVals('planIsAllDay'),
                 timeRange: [formVals('planTimeStart'), formVals('planTimeEnd')],
-            }
+            };
         }
 
         let formResult = {
@@ -182,86 +183,108 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
         };
 
         if (!formResult.name) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Name is missing. Please enter a name.',
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'Name is missing. Please enter a name.',
+                })
+            );
             return;
         }
 
         if (!formResult.location) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Location is missing. Please enter a location.',
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'Location is missing. Please enter a location.',
+                })
+            );
             return;
         }
 
         if (formResult.budget < 0) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Budget cannot be negative or missing. Please try again.',
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'Budget cannot be negative or missing. Please try again.',
+                })
+            );
             return;
         }
 
         if (!detailResults.dateRange[0]) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Start date is missing. Please provide a date.',
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'Start date is missing. Please provide a date.',
+                })
+            );
             return;
         }
 
         if (!detailResults.dateRange[1]) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'End date is missing. Please provide a date.',
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'End date is missing. Please provide a date.',
+                })
+            );
             return;
         }
-        
+
         const convStart = convInputToDate(detailResults.dateRange[0]);
         const convEnd = convInputToDate(detailResults.dateRange[1]);
 
         if (!isTimingProper(convStart, convEnd)) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Dates inputs are invalid, start date must be before or the same as the end date.',
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message:
+                        'Dates inputs are invalid, start date must be before or the same as the end date.',
+                })
+            );
             return;
         }
 
-        if (addMonths(convStart, isOuting ? MAX_OUTING_MONTH_RANGE : MAX_TRIP_MONTH_RANGE) < convEnd) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: isOuting
-                    ? 'Dates inputs are invalid, Outing plans can have a max of only a 5 month difference between start and end.'
-                    : 'Dates inputs are invalid, Trip plans can have a max of only a one year difference between start and end.',
-            }));
+        if (
+            addMonths(convStart, isOuting ? MAX_OUTING_MONTH_RANGE : MAX_TRIP_MONTH_RANGE) < convEnd
+        ) {
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: isOuting
+                        ? 'Dates inputs are invalid, Outing plans can have a max of only a 5 month difference between start and end.'
+                        : 'Dates inputs are invalid, Trip plans can have a max of only a one year difference between start and end.',
+                })
+            );
             return;
         }
 
         if (!detailResults.selectedDaysOfWeek.length) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'At least one day of the week must be selected.'
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'At least one day of the week must be selected.',
+                })
+            );
             return;
         }
 
         if (!areValidSlots(convStart, convEnd, detailResults.selectedDaysOfWeek)) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Dates and days of the week configuration doesn\'t contain any available slots.',
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message:
+                        "Dates and days of the week configuration doesn't contain any available slots.",
+                })
+            );
             return;
         }
-        
+
         const [roundedStart, roundedEnd] = roundBoundaryDays(
             convStart,
             convEnd,
-            detailResults.selectedDaysOfWeek,
+            detailResults.selectedDaysOfWeek
         );
 
         let startDateTime;
@@ -277,21 +300,32 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
                 const startTime = convInputToTime(timeResults.timeRange[0]);
                 const endTime = convInputToTime(timeResults.timeRange[1], true);
 
-                startDateTime = set(roundedStart, {hours: startTime.hours, minutes: startTime.minutes});
-                startEndTime = set(roundedStart, {hours: endTime.hours, minutes: endTime.minutes});
-                endDate = set(roundedEnd, {hours: endTime.hours, minutes: endTime.minutes});
+                startDateTime = set(roundedStart, {
+                    hours: startTime.hours,
+                    minutes: startTime.minutes,
+                });
+                startEndTime = set(roundedStart, {
+                    hours: endTime.hours,
+                    minutes: endTime.minutes,
+                });
+                endDate = set(roundedEnd, { hours: endTime.hours, minutes: endTime.minutes });
             }
 
             if (!isTimingProper(startDateTime, endDate, startEndTime, true)) {
-                dispatch(setError({
-                    errType: ERR_TYPE.ERR,
-                    message: 'Timing inputs are invalid, start times must be before end times.',
-                }));
+                dispatch(
+                    setError({
+                        errType: ERR_TYPE.ERR,
+                        message: 'Timing inputs are invalid, start times must be before end times.',
+                    })
+                );
                 return;
             }
 
             formResult.isAllDay = false;
-            formResult.dateTimeRange = [[makeOutingDate(startDateTime), makeOutingDate(startEndTime)], makeOutingDate(endDate)];
+            formResult.dateTimeRange = [
+                [makeOutingDate(startDateTime), makeOutingDate(startEndTime)],
+                makeOutingDate(endDate),
+            ];
         } else {
             startDateTime = startOfDay(roundedStart);
             const endDate = endOfDay(roundedEnd);
@@ -307,17 +341,19 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
         } else {
             const startDayOfWeek = startDateTime.getDay();
             let closestIndex;
-            selectedDays.map((dayOfWeek) => {
-                const normalDiff = Math.abs(startDayOfWeek - dayOfWeek);
-                const wrapDiff = Math.abs(dayOfWeek - (startDayOfWeek + maxDaysOfWeek));
-                return normalDiff < wrapDiff ? normalDiff : wrapDiff;
-            }).reduce((acc, difference, index) => {
-                if (difference < acc) {
-                    closestIndex = index;
-                    return difference;
-                }
-                return acc
-            }, Infinity);
+            selectedDays
+                .map((dayOfWeek) => {
+                    const normalDiff = Math.abs(startDayOfWeek - dayOfWeek);
+                    const wrapDiff = Math.abs(dayOfWeek - (startDayOfWeek + maxDaysOfWeek));
+                    return normalDiff < wrapDiff ? normalDiff : wrapDiff;
+                })
+                .reduce((acc, difference, index) => {
+                    if (difference < acc) {
+                        closestIndex = index;
+                        return difference;
+                    }
+                    return acc;
+                }, Infinity);
 
             let iterIndex = closestIndex;
             const endIndex = iterIndex;
@@ -333,31 +369,43 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
                     hasWrapped = true;
                 }
                 iterDOW = selectedDays[iterIndex] + (hasWrapped ? maxDaysOfWeek : 0);
-                formResult.dayOffset.push(
-                    iterDOW - prevDOW
-                );
+                formResult.dayOffset.push(iterDOW - prevDOW);
             } while (iterIndex !== endIndex);
         }
 
         if (!isProperSubmission(formResult, isOuting)) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Required fields are missing. Please ensure all fields are selected.',
-            }));
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'Required fields are missing. Please ensure all fields are selected.',
+                })
+            );
             return;
         }
         onSubmit(formResult, isOuting ? PLAN_TYPE.OUTING : PLAN_TYPE.TRIP);
-    }
+    };
 
-    return <Form className="mx-auto d-flex flex-column gap-3 pt-3 p-2" style={{maxWidth: '900px'}} onSubmit={handleFormSubmission} noValidate validated={validated}>
-        <InputDetailsForm title={title} editDetails={editDetails} showBack={showBack} isOuting={isOuting} />
-        {isOuting && <TimeRangeForm editDetails={editDetails} />}
-        <div className="text-center">
-            <Button className="w-50 mb-3" variant="custom-success" size="md" type="submit">
-                <b>Submit</b>
-            </Button>
-        </div>
-    </Form>
-}
+    return (
+        <Form
+            className="mx-auto d-flex flex-column gap-3 pt-3 p-2"
+            style={{ maxWidth: '900px' }}
+            onSubmit={handleFormSubmission}
+            noValidate
+            validated={validated}>
+            <InputDetailsForm
+                title={title}
+                editDetails={editDetails}
+                showBack={showBack}
+                isOuting={isOuting}
+            />
+            {isOuting && <TimeRangeForm editDetails={editDetails} />}
+            <div className="text-center">
+                <Button className="w-50 mb-3" variant="custom-success" size="md" type="submit">
+                    <b>Submit</b>
+                </Button>
+            </div>
+        </Form>
+    );
+};
 
 export default ParameterForm;

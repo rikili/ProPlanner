@@ -14,20 +14,22 @@ const selectionUpdateFailure = (state) => {
 const decisionUpdateFailure = (state) => {
     const errMsg = 'Setting of decision has failed.';
     buildError(state, ERR_TYPE.WARN, errMsg);
-}
+};
 
 const invalidPlanError = (state) => {
-    const errMsg = 'Information of this plan is invalid, malformed, or missing. Close this notification to be redirected to the landing page, or you will be redirected shortly.';
+    const errMsg =
+        'Information of this plan is invalid, malformed, or missing. Close this notification to be redirected to the landing page, or you will be redirected shortly.';
     buildError(state, ERR_TYPE.ERR, errMsg, '/', true);
-}
+};
 
 const userGetFailure = (state) => {
-    const errMsg = 'Retrieval of user information has failed. Close this notification to be redirected to the landing page, or you will be redirected shortly.';
+    const errMsg =
+        'Retrieval of user information has failed. Close this notification to be redirected to the landing page, or you will be redirected shortly.';
     buildError(state, ERR_TYPE.ERR, errMsg, '/', true);
-}
+};
 
 // State update helper
-const buildError = (state, errType, errMsg, redir=null, disable=false) => {
+const buildError = (state, errType, errMsg, redir = null, disable = false) => {
     state.isShowError = true;
     state.errorType = errType;
     state.errorMessage = errMsg;
@@ -57,13 +59,13 @@ const errorSlice = createSlice({
             }
         */
         setError(state, action) {
-            const {errType, message, redirect, disableControl} = action.payload;
+            const { errType, message, redirect, disableControl } = action.payload;
             if (!errType && !message) {
                 return;
             }
             buildError(state, errType, message, redirect, disableControl);
         },
-        
+
         resetError(state) {
             state.isShowError = false;
             state.disableControl = false;
@@ -75,7 +77,7 @@ const errorSlice = createSlice({
 
         setInvalidPlanError(state) {
             invalidPlanError(state);
-        }
+        },
     },
     // Custom error cases
     extraReducers: (builder) => {

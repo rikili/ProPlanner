@@ -1,36 +1,34 @@
-import React from 'react';
-import {useSelector, useDispatch} from 'react-redux';
-import {deleteUsersAsync, resetUser, selectUser} from '../redux/userSlice';
-import {updatePollAsync} from "../redux/pollSlice";
-import {useNavigate} from 'react-router-dom';
-import {useParams} from 'react-router-dom';
-import {Form, ToggleButton, Col, Row} from 'react-bootstrap';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteUsersAsync, resetUser, selectUser } from '../redux/userSlice';
+import { updatePollAsync } from '../redux/pollSlice';
+import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { Form, ToggleButton, Col, Row } from 'react-bootstrap';
+import { MdModeEditOutline } from 'react-icons/md';
+import { RiCheckFill } from 'react-icons/ri';
+import { RiCloseFill } from 'react-icons/ri';
+import { setError, resetError } from '../redux/errorSlice';
+import { ERR_TYPE } from '../constants';
+import { useState } from 'react';
+import { updateCostAsync } from '../redux/costSlice';
 import Button from './override/Button';
-import {MdModeEditOutline} from 'react-icons/md';
-import {RiCheckFill} from 'react-icons/ri';
-import {RiCloseFill} from 'react-icons/ri';
-import {setError, resetError} from '../redux/errorSlice';
-import {ERR_TYPE} from '../constants';
-import {useState} from 'react';
 import './UserList.scss';
-import {updateCostAsync} from "../redux/costSlice";
-
 
 const UserList = () => {
-    const userList = useSelector(state => state.user.userList);
-    const selectedUser = useSelector(state => state.user.selectedUser);
+    const userList = useSelector((state) => state.user.userList);
+    const selectedUser = useSelector((state) => state.user.selectedUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {tripId} = useParams();
+    const { tripId } = useParams();
     const [isEditing, setIsEditing] = useState(false);
     const [usersToDelete, setUsersToDelete] = useState([]);
-    const pollDocumentId = useSelector((state) => state.poll.pollsId)
+    const pollDocumentId = useSelector((state) => state.poll.pollsId);
 
     if (!userList || userList.length === 0) {
         return <p>No User Yet, Please add a user.</p>;
     }
 
-    const handleUserSelectChange = user => {
+    const handleUserSelectChange = (user) => {
         dispatch(selectUser(user));
     };
 
@@ -57,12 +55,10 @@ const UserList = () => {
         }
     };
 
-    const handleDelete = userToDelete => {
+    const handleDelete = (userToDelete) => {
         if (usersToDelete.includes(userToDelete)) {
             // If the userToDelete is already in the usersToDelete list, remove it
-            const updatedUsersToDelete = usersToDelete.filter(
-                user => user !== userToDelete
-            );
+            const updatedUsersToDelete = usersToDelete.filter((user) => user !== userToDelete);
             setUsersToDelete(updatedUsersToDelete);
         } else {
             // If the userToDelete is not in the usersToDelete list, add it
@@ -77,10 +73,10 @@ const UserList = () => {
 
     const handleConfirm = () => {
         if (usersToDelete.length !== 0) {
-            dispatch(deleteUsersAsync({planId: tripId, usersToDelete}));
-            pollDocumentId && dispatch(updatePollAsync({pollDocumentId, usersToDelete}));
+            dispatch(deleteUsersAsync({ planId: tripId, usersToDelete }));
+            pollDocumentId && dispatch(updatePollAsync({ pollDocumentId, usersToDelete }));
             dispatch(updateCostAsync({ planId: tripId, usersToDelete }));
-			dispatch(resetUser());
+            dispatch(resetUser());
         }
         setUsersToDelete([]);
         setIsEditing(false);
@@ -89,77 +85,73 @@ const UserList = () => {
     return (
         <>
             <Form>
-                <div style={{width: '100%'}}>
+                <div style={{ width: '100%' }}>
                     <Row>
                         <Col>
                             {!isEditing && <Form.Label>Which one is you?</Form.Label>}
                             {isEditing && <Form.Label>Choose Users to delete</Form.Label>}
                         </Col>
                         {!isEditing && (
-                            <Col xs={2} sm={2} md={2} lg={2} style={{width: '12%'}}>
+                            <Col xs={2} sm={2} md={2} lg={2} style={{ width: '12%' }}>
                                 <button className="edit-button" onClick={toggleEdit}>
-                                    <MdModeEditOutline/>
+                                    <MdModeEditOutline />
                                 </button>
                             </Col>
                         )}
                         {isEditing && (
-                            <div style={{width: '12%'}} className="control-layer">
-                                <button
-                                    className="control-button confirm"
-                                    onClick={handleConfirm}
-                                >
-                                    <RiCheckFill/>
+                            <div style={{ width: '12%' }} className="control-layer">
+                                <button className="control-button confirm" onClick={handleConfirm}>
+                                    <RiCheckFill />
                                 </button>
                                 <button className="control-button close" onClick={handleCancel}>
-                                    <RiCloseFill/>
+                                    <RiCloseFill />
                                 </button>
                             </div>
                         )}
                     </Row>
                     {!isEditing &&
-                        userList.map(user => (
+                        userList.map((user) => (
                             <div key={user}>
                                 <ToggleButton
-                                    style={{width: '100%'}}
+                                    style={{ width: '100%' }}
                                     className="mb-2"
                                     variant="outline-secondary"
                                     type="checkbox"
                                     id={user}
                                     checked={selectedUser === user}
                                     onChange={() => handleUserSelectChange(user)}
-                                    value={user}
-                                >
+                                    value={user}>
                                     {user}
                                 </ToggleButton>
                             </div>
                         ))}
                     {isEditing &&
-                        userList.map(user => (
+                        userList.map((user) => (
                             <div key={user}>
                                 <Button
-                                    style={{width: '100%'}}
+                                    style={{ width: '100%' }}
                                     className="mb-2"
                                     variant="outline-danger"
                                     id={user}
                                     active={usersToDelete.includes(user)}
                                     onClick={() => handleDelete(user)}
-                                    value={user}
-                                >
+                                    value={user}>
                                     {user}
                                 </Button>
                             </div>
                         ))}
                 </div>
                 {!isEditing && (
-                    <Button style={{width: '100%'}}
-                            variant="custom-primary"
-                            onClick={handleContinueClick}>
+                    <Button
+                        style={{ width: '100%' }}
+                        variant="custom-primary"
+                        onClick={handleContinueClick}>
                         Continue
                     </Button>
                 )}
             </Form>
         </>
     );
-}
+};
 
 export default UserList;

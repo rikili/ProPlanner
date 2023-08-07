@@ -10,17 +10,17 @@ const CalendarControls = ({
     editing,
     deciding,
     toggleDecision,
-    confirmDecisions
+    confirmDecisions,
 }) => {
     const handleSubmit = () => {
         if (editing) confirmEdit();
         if (deciding) confirmDecisions();
-    }
+    };
 
     const handleCancel = () => {
         if (editing) toggleEdit();
         if (deciding) toggleDecision();
-    }
+    };
 
     return (
         <Container className="trip-controls">
@@ -48,8 +48,14 @@ const CalendarControls = ({
                                     </button>
                                 </div>
                                 <div className="control-layer">
-                                    <p className="control-label">Ready to decide? Select a decision for the plan</p>
-                                    <button onClick={toggleDecision} className="control-button decision"><BiTargetLock /></button>
+                                    <p className="control-label">
+                                        Ready to decide? Select a decision for the plan
+                                    </p>
+                                    <button
+                                        onClick={toggleDecision}
+                                        className="control-button decision">
+                                        <BiTargetLock />
+                                    </button>
                                 </div>
                             </>
                         )}
