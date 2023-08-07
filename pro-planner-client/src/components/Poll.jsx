@@ -93,7 +93,7 @@ function Poll({poll, pollId}) {
                             Vote
                         </Button>{' '}
                         <Button style={{marginTop: '10px'}}
-                                variant="danger"
+                                variant="custom-danger"
                                 size='sm'
                                 onClick={handleConfirmationModal}>
                             Delete Poll
