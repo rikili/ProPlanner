@@ -13,7 +13,7 @@ const VotePage = () => {
 
     useEffect(() => {
         dispatch(getPollAsync({ planId }));
-    }, [dispatch]);
+    }, [dispatch, planId]);
 
     return (
         <>

@@ -15,7 +15,7 @@ const ErrorPage = () => {
             timeoutTrack = null;
             navigate('/');
         }, 5000);
-    }, []);
+    }, [navigate]);
 
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 flex-column">

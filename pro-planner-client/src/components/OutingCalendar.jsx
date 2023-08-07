@@ -330,7 +330,7 @@ function OutingCalendar({ planId, selectedUser, isEditMode, setIsEditMode }) {
         return () => {
             controller.abort();
         };
-    }, [selectWeek, planId, users]);
+    }, [selectWeek, planId, users, dispatch]);
 
     if (updateFailed) {
         dispatch(

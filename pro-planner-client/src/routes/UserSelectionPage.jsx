@@ -23,8 +23,8 @@ const UserSelectionPage = () => {
             setShow(true);
         }
         dispatch(getUserAsync({ planId }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch, planId]);
 
     const handleCloseToast = () => {
         setShow(false);
