@@ -23,9 +23,12 @@ const convInputToDate = (dateString) => {
 }
 
 // convert hh:mm format to numbers
-const convInputToTime = (timeString) => {
+const convInputToTime = (timeString, isEndTime) => {
     const timeSegments = timeString.match(/[0-9]+/g).map(Number);
-    return {hours: timeSegments[0], minutes: timeSegments[1]}
+    if (isEndTime && !timeSegments[0] && !timeSegments[1]) {
+        return {hours: 23, minutes: 59};
+    }
+    return {hours: timeSegments[0], minutes: timeSegments[1]};
 }
 
 // Parameter details format check
@@ -272,7 +275,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
                 endDate = endOfDay(roundedEnd);
             } else {
                 const startTime = convInputToTime(timeResults.timeRange[0]);
-                const endTime = convInputToTime(timeResults.timeRange[1]);
+                const endTime = convInputToTime(timeResults.timeRange[1], true);
 
                 startDateTime = set(roundedStart, {hours: startTime.hours, minutes: startTime.minutes});
                 startEndTime = set(roundedStart, {hours: endTime.hours, minutes: endTime.minutes});
