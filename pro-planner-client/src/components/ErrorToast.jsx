@@ -29,6 +29,9 @@ const ErrorToast = forwardRef((_, ref) => {
     const dispatch = useDispatch();
 
     const closeToast = () => {
+        if (closeToastTimeout) {
+            clearTimeout(closeToastTimeout);
+        }
         setShow(false);
         if (errRedir) navigate(errRedir);
         dispatch(resetError());
@@ -47,15 +50,17 @@ const ErrorToast = forwardRef((_, ref) => {
             if (doSetTimeout) closeToastTimeout = setAutohideTimer();
         }
 
+        if (!showError && show) {
+            setShow(false);
+            closeToast();
+        }
+
         if (errTime) {
             if (doSetTimeout) resetTimeout();
         }
     }, [showError, errTime]);
 
     const handleCloseToast = () => {
-        if (closeToastTimeout) {
-            clearTimeout(closeToastTimeout);
-        }
         closeToast();
     }
 
