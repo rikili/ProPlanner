@@ -18,7 +18,6 @@ import './HomePage.scss';
 import { buildServerRoute } from '../helpers/Utils';
 
 
-
 const HomePage = () => {
 	const [paramStatus, setParamStatus] = useState(null);
 	const planId = useLoaderData();
@@ -29,6 +28,9 @@ const HomePage = () => {
 	const planType = useSelector(state => state.planParameters.planType);
 
 	const isUserSelected = !!selectedUser;
+
+	const tripId = useLocation().pathname.split('/')[1];
+
 
 	useEffect(() => {
 		dispatch(getCostAsync({tripId: planId}))
@@ -54,9 +56,8 @@ const HomePage = () => {
 				: dispatch(clearOutingSelections());
 			//call dispatch and reset user selections
 		}
-	}, [dispatch, planId, planId, isUserSelected, navigate]);
-	
-	
+	}, [dispatch, planId, isUserSelected, navigate]);
+
 	return (
 		<>
 			<div className="home-page">
