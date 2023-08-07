@@ -119,6 +119,10 @@
 		&.trip-selected {
 			color: $selected-day-label;
 		}
+
+		&[class*="trip-decided-"] {
+			color: $decided-day-label;
+		}
 	}
 
 	&:last-child {
@@ -127,15 +131,19 @@
 		}
 
 		&.trip-selected {
-			border-top: 1px dashed $half-line-selected;
+			border-top-color: $half-line-selected;
 		}
 	
 		&.trip-preview {
-			border-top: 1px dashed $half-line-preview;
+			border-top-color: $half-line-preview;
 		}
 
 		&.trip-edit {
-			border-top: 1px dashed $half-line-edit;
+			border-top-color: $half-line-edit;
+		}
+
+		&[class*="trip-decided-"] {
+			border-top-color: $half-line-decided;
 		}
 	}
 }
