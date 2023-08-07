@@ -71,6 +71,7 @@ const InputDetailsForm = ({ title = false, editDetails, showBack = false, isOuti
             editDetails.description && (descriptionInput.current.value = editDetails.description);
             editDetails.budget && (budgetInput.current.value = editDetails.budget);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editDetails, isEditing, isLoaded]);
 
     const updateSelection = (dayLabel) => {

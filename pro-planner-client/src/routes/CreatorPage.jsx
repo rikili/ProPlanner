@@ -18,7 +18,7 @@ const CreatorPage = () => {
         if (!planType) {
             navigate('/');
         }
-    }, []);
+    });
 
     const handleSubmit = (formResult, planType) => {
         axios

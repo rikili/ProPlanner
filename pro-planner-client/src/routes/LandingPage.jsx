@@ -1,7 +1,7 @@
 // url validation reference: https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
 // url extraction reference: https://developer.mozilla.org/en-US/docs/Web/API/URL#Properties
 import axios from 'axios';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Card, Col, Container, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { FiInfo } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -23,13 +23,7 @@ const LandingPage = () => {
     const [inputValue, setInputValue] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const tripButtonIcon = useRef(null);
-    const outingButtonIcon = useRef(null);
-
-    const [showTripTooltip, setShowTripTooltip] = useState(false);
-    const [showOutingTooltip, setShowOutingTooltip] = useState(false);
-    const planUrlRegex = /^https?:\/\/(?:[^\/:]+[:.])?[^\/:]+\/[^/]+$/;
+    const planUrlRegex = /^https?:\/\/(?:[^/:]+[:.])?[^/:]+\/[^/]+$/;
 
     const handleInput = (e) => {
         setInputValue(e.target.value);
@@ -147,10 +141,7 @@ const LandingPage = () => {
                                                     'trip-tooltip'
                                                 )}>
                                                 <span
-                                                    className="float-end"
-                                                    onMouseEnter={() => setShowTripTooltip(true)}
-                                                    onMouseLeave={() => setShowTripTooltip(false)}
-                                                    ref={tripButtonIcon}>
+                                                    className="float-end">
                                                     <FiInfo />
                                                 </span>
                                             </OverlayTrigger>
@@ -170,10 +161,7 @@ const LandingPage = () => {
                                                     'outing-tooltip'
                                                 )}>
                                                 <span
-                                                    className="float-end"
-                                                    onMouseEnter={() => setShowOutingTooltip(true)}
-                                                    onMouseLeave={() => setShowOutingTooltip(false)}
-                                                    ref={outingButtonIcon}>
+                                                    className="float-end">
                                                     <FiInfo />
                                                 </span>
                                             </OverlayTrigger>

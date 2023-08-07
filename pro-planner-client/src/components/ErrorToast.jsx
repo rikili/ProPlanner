@@ -58,6 +58,7 @@ const ErrorToast = forwardRef((_, ref) => {
         if (errTime) {
             if (doSetTimeout) resetTimeout();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showError, errTime]);
 
     const handleCloseToast = () => {
