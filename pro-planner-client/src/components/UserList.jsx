@@ -1,6 +1,6 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {deleteUsersAsync, selectUser} from '../redux/userSlice';
+import {deleteUsersAsync, resetUser, selectUser} from '../redux/userSlice';
 import {updatePollAsync} from "../redux/pollSlice";
 import {useNavigate} from 'react-router-dom';
 import {useParams} from 'react-router-dom';
@@ -78,6 +78,7 @@ const UserList = () => {
         if (usersToDelete.length !== 0) {
             dispatch(deleteUsersAsync({planId: tripId, usersToDelete}));
             dispatch(updatePollAsync({pollDocumentId, usersToDelete}));
+			dispatch(resetUser());
         }
         setUsersToDelete([]);
         setIsEditing(false);
