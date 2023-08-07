@@ -9,7 +9,9 @@ const SummaryList = () => {
 
     return (
         <Card className="details-card summary-list">
-            <Card.Header className="summary-body"><b>Users Selected</b></Card.Header>
+            <Card.Header className="summary-body">
+                <b>Users Selected</b>
+            </Card.Header>
             <Card.Body className="summary-body">
                 <div className="trip-summary-list text-center">
                     {!!isDetailSelected ? (
@@ -18,24 +20,28 @@ const SummaryList = () => {
                                 return (
                                     <div
                                         key={`user-selected-summary-${index}`}
-                                        className="trip-summary-label trip-summary-selected"
-                                    >
+                                        className="trip-summary-label trip-summary-selected">
                                         {user}
                                     </div>
                                 );
                             })}
-                            {userList.toSorted()
+                            {userList
+                                .toSorted()
                                 .filter((user) => !selectedList.includes(user))
                                 .map((user, index) => {
                                     return (
-                                        <div key={`user-summary-${index}`} className="trip-summary-label">
+                                        <div
+                                            key={`user-summary-${index}`}
+                                            className="trip-summary-label">
                                             {user}
                                         </div>
                                     );
                                 })}
                         </>
                     ) : (
-                        <p className="trip-summary-instruct">Click a segment to view selections for that section.</p>
+                        <p className="trip-summary-instruct">
+                            Click a segment to view selections for that section.
+                        </p>
                     )}
                 </div>
             </Card.Body>

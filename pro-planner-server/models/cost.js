@@ -4,27 +4,27 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const expenseSchema = new Schema(
-  {
-    item: Schema.Types.String,
-    amount: Schema.Types.Number
-  },
-  {
-    autoCreate: false
-  }
-  );
-  
-const userExpenseSchema = new Schema(
-  {
-    userName: Schema.Types.String,
-    expenses: {
-      type: Map,
-      of: expenseSchema,
-      default: {},
+    {
+        item: Schema.Types.String,
+        amount: Schema.Types.Number,
     },
-  },
-  {
-    autoCreate: false
-  }
+    {
+        autoCreate: false,
+    }
+);
+
+const userExpenseSchema = new Schema(
+    {
+        userName: Schema.Types.String,
+        expenses: {
+            type: Map,
+            of: expenseSchema,
+            default: {},
+        },
+    },
+    {
+        autoCreate: false,
+    }
 );
 
 const costSchema = new Schema(
@@ -34,15 +34,15 @@ const costSchema = new Schema(
             type: Map,
             of: userExpenseSchema,
             default: {},
-          }
+        },
     },
     {
-      collection: 'Cost',
+        collection: 'Cost',
     }
 );
 
 module.exports = {
-  Expense: mongoose.model('Expense', expenseSchema),
-  UserExpense: mongoose.model('UserExpenses', userExpenseSchema),
-  Cost: mongoose.model('Cost', costSchema),
+    Expense: mongoose.model('Expense', expenseSchema),
+    UserExpense: mongoose.model('UserExpenses', userExpenseSchema),
+    Cost: mongoose.model('Cost', costSchema),
 };

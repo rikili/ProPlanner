@@ -1,6 +1,5 @@
 // code references https://date-fns.org/v2.30.0/docs/eachHourOfInterval
 // updating array references https://bobbyhadz.com/blog/javascript-modify-all-array-elements
-import React from 'react';
 import { eachHourOfInterval, startOfDay, endOfDay, format } from 'date-fns';
 import './OutingHourLabels.scss';
 

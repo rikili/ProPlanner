@@ -1,19 +1,17 @@
-import React, {useState} from 'react';
-import {FaMinus, FaPlus} from "react-icons/fa6";
-import {CiSquarePlus} from "react-icons/ci";
-import {Form, Card, Col, InputGroup, ListGroup, Row, Modal} from "react-bootstrap";
-import {useDispatch} from "react-redux";
-import { addExpenseAsync, removeExpenseAsync} from "../redux/costSlice";
-import { useLocation } from "react-router";
-// import {v4 as uuidv4} from "uuid";
-import {setError} from "../redux/errorSlice";
-import {ERR_TYPE} from "../constants";
+import { useState } from 'react';
+import { FaMinus, FaPlus } from 'react-icons/fa6';
+import { CiSquarePlus } from 'react-icons/ci';
+import { Form, Card, Col, InputGroup, ListGroup, Row, Modal } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { addExpenseAsync, removeExpenseAsync } from '../redux/costSlice';
+import { useLocation } from 'react-router';
+import { setError } from '../redux/errorSlice';
+import { ERR_TYPE } from '../constants';
 import Button from './override/Button';
 
 const MAX_ITEM_LIMIT = 40;
 
-const UserExpense = ({user, userId, currUserId}) => {
-
+const UserExpense = ({ user, userId, currUserId }) => {
     const expenses = Object.values(user.expenses);
     const totalExpense = expenses.reduce((total, expense) => total + expense.amount, 0);
     const [isAddingExpenseDisplay, setIsAddingExpenseDisplay] = useState(false);
@@ -26,12 +24,12 @@ const UserExpense = ({user, userId, currUserId}) => {
     const tripId = useLocation().pathname.split('/')[1];
 
     const handleInputChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         switch (name) {
-            case "item":
+            case 'item':
                 setNewItem(value);
                 break;
-            case "amount":
+            case 'amount':
                 setNewItemAmount(parseInt(value));
                 break;
             default:
@@ -45,46 +43,50 @@ const UserExpense = ({user, userId, currUserId}) => {
             userId: userId,
             newItem: newItem,
             newItemAmount: newItemAmount,
-        }
+        };
 
         const formattedNewItem = newItem.trim();
 
         if (!formResult.newItem) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Item is missing. Please enter an item.'
-            }))
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'Item is missing. Please enter an item.',
+                })
+            );
             return null;
         }
 
         if (formResult.newItemAmount === 0) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: 'Amount is missing. Please enter an amount.'
-            }))
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: 'Amount is missing. Please enter an amount.',
+                })
+            );
             return null;
         }
 
         if (formattedNewItem.length > MAX_ITEM_LIMIT) {
-            dispatch(setError({
-                errType: ERR_TYPE.ERR,
-                message: `Item is invalid. Item must not exceed ${MAX_ITEM_LIMIT} characters.`
-            }))
+            dispatch(
+                setError({
+                    errType: ERR_TYPE.ERR,
+                    message: `Item is invalid. Item must not exceed ${MAX_ITEM_LIMIT} characters.`,
+                })
+            );
             return null;
         }
 
-        // dispatch(addExpense(formResult));
         dispatch(addExpenseAsync(formResult));
         setNewItem('');
         setNewItemAmount(0);
         setIsAddingExpenseDisplay(false);
-    }
-
+    };
 
     const handleConfirmationModal = (expenseID) => {
         setDeleteExpenseId(expenseID);
         setShowDeleteConfirmation(true);
-    }
+    };
 
     const handleDeleteExpense = () => {
         if (deleteExpenseId) {
@@ -92,12 +94,12 @@ const UserExpense = ({user, userId, currUserId}) => {
                 tripId: tripId,
                 userId: userId,
                 expenseId: deleteExpenseId,
-            }
+            };
             dispatch(removeExpenseAsync(target));
         }
         setDeleteExpenseId(null);
         setShowDeleteConfirmation(false);
-    }
+    };
 
     const handleOpenAddExpenseForm = () => {
         if (!isAddingExpenseDisplay) {
@@ -105,9 +107,9 @@ const UserExpense = ({user, userId, currUserId}) => {
         } else {
             setIsAddingExpenseDisplay(false);
         }
-    }
+    };
 
-    const isDisabled = userId !== currUserId
+    const isDisabled = userId !== currUserId;
 
     return (
         <>
@@ -115,68 +117,80 @@ const UserExpense = ({user, userId, currUserId}) => {
                 <Card.Header as="h5">
                     <Row>
                         <Col>{user.userName}</Col>
-                        <Col style={{textAlign: 'right'}}>{`$${totalExpense}`}</Col>
+                        <Col style={{ textAlign: 'right' }}>{`$${totalExpense}`}</Col>
                     </Row>
                 </Card.Header>
                 <Card.Body>
-                    {Object.entries(user.expenses).map(([key, expense]) =>
+                    {Object.entries(user.expenses).map(([key, expense]) => (
                         <Row className="d-flex align-items-center mt-1 flex-nowrap" key={key}>
                             <Col xs={!isDisabled ? 10 : null}>
                                 <ListGroup>
                                     <ListGroup.Item>
                                         <Row>
                                             <Col>{expense.item}</Col>
-                                            <Col style={{textAlign: 'right'}}>{`$${expense.amount}`}</Col>
+                                            <Col
+                                                style={{
+                                                    textAlign: 'right',
+                                                }}>{`$${expense.amount}`}</Col>
                                         </Row>
                                     </ListGroup.Item>
                                 </ListGroup>
                             </Col>
-                            {!isDisabled && <Col style={{textAlign: 'right'}}>
-                                <Button onClick={() => handleConfirmationModal(key)}
+                            {!isDisabled && (
+                                <Col style={{ textAlign: 'right' }}>
+                                    <Button
+                                        onClick={() => handleConfirmationModal(key)}
                                         variant="custom-danger">
-                                    <FaMinus style={{margin: 'auto'}}/>
-                                </Button>
-                            </Col>}
+                                        <FaMinus style={{ margin: 'auto' }} />
+                                    </Button>
+                                </Col>
+                            )}
                         </Row>
-                    )}
+                    ))}
                     {isAddingExpenseDisplay && (
                         <Row className="d-flex align-items-center mt-2 mb-3">
                             <Col className="pe-0" sm={7}>
                                 <InputGroup>
-                                    <Form.Control placeholder="Item"
-                                                  type="text"
-                                                  style={{marginRight: '10px'}}
-                                                  name="item"
-                                                  onChange={handleInputChange}/>
+                                    <Form.Control
+                                        placeholder="Item"
+                                        type="text"
+                                        style={{ marginRight: '10px' }}
+                                        name="item"
+                                        onChange={handleInputChange}
+                                    />
                                 </InputGroup>
                             </Col>
                             <Col className="ps-0 pe-0" sm={3}>
                                 <InputGroup>
-                                    <Form.Control placeholder="Amount"
-                                                  type="number"
-                                                  name="amount"
-                                                  onChange={handleInputChange}/>
+                                    <Form.Control
+                                        placeholder="Amount"
+                                        type="number"
+                                        name="amount"
+                                        onChange={handleInputChange}
+                                    />
                                 </InputGroup>
                             </Col>
-                            <Col style={{textAlign: 'right'}}>
+                            <Col style={{ textAlign: 'right' }}>
                                 <Button onClick={handleAddExpense} variant="custom-primary">
-                                    <FaPlus style={{margin: 'auto'}}/>
+                                    <FaPlus style={{ margin: 'auto' }} />
                                 </Button>
                             </Col>
                         </Row>
                     )}
-                    {!isDisabled && <Row>
-                        <Col className="d-grid align-items-center mt-2">
-                            <Button className="d-flex align-items-center"
+                    {!isDisabled && (
+                        <Row>
+                            <Col className="d-grid align-items-center mt-2">
+                                <Button
+                                    className="d-flex align-items-center"
                                     variant="outline-secondary"
-                                    type='submit'
+                                    type="submit"
                                     onClick={handleOpenAddExpenseForm}
-                                    disabled={isDisabled}
-                            >
-                                <CiSquarePlus style={{margin: 'auto'}} size={25}/>
-                            </Button>
-                        </Col>
-                    </Row>}
+                                    disabled={isDisabled}>
+                                    <CiSquarePlus style={{ margin: 'auto' }} size={25} />
+                                </Button>
+                            </Col>
+                        </Row>
+                    )}
                 </Card.Body>
             </Card>
             <Modal show={showDeleteConfirmation} onHide={handleClose}>
@@ -192,6 +206,6 @@ const UserExpense = ({user, userId, currUserId}) => {
             </Modal>
         </>
     );
-}
+};
 
 export default UserExpense;

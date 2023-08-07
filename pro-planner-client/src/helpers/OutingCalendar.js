@@ -18,32 +18,33 @@ import { getMonthIndex } from './Calendar';
 
 export const SEGMENT_TIME = 30;
 
-export const isLooseEndOfDay = (date) => isEqual(subMinutes(addDays(startOfDay(date), 1), SEGMENT_TIME), date);
+export const isLooseEndOfDay = (date) =>
+    isEqual(subMinutes(addDays(startOfDay(date), 1), SEGMENT_TIME), date);
 
 // get dateTime of the end of a segment, unless it is the last segment of the day
 export const getEndOfSegment = (date) => {
-    return (isLooseEndOfDay(date)) ? endOfDay(date) : addMinutes(date, SEGMENT_TIME); // 23:30 is hard-coded, look for alternatives
-}
-export const getTime = (date) => format(date, "HH:mm");
+    return isLooseEndOfDay(date) ? endOfDay(date) : addMinutes(date, SEGMENT_TIME); // 23:30 is hard-coded, look for alternatives
+};
+export const getTime = (date) => format(date, 'HH:mm');
 const processTime = (timeString) => {
     const results = timeString.match(/[0-9]+/g);
-    return {hours: results[0], minutes: results[1]}
+    return { hours: results[0], minutes: results[1] };
 };
 
 // turn selectInterval (eg. ["00:00", "01:00"]) to a date-fns interval
 export const selectToInterval = (date, [start, end]) => {
     let endDate = buildDate(date, end);
-    endDate = (end === '23:59') ? endDate : subMinutes(endDate, 1);
-    return {start: buildDate(date, start), end: endDate};
-}
+    endDate = end === '23:59' ? endDate : subMinutes(endDate, 1);
+    return { start: buildDate(date, start), end: endDate };
+};
 
 const buildDate = (date, time) => set(new Date(date), processTime(time));
 
 export const isTimeBefore = (firstTime, secTime, checkEqual = false) => {
-        return checkEqual 
-            ? buildDate(new Date(), firstTime) <= buildDate(new Date(), secTime)
-            : buildDate(new Date(), firstTime) < buildDate(new Date(), secTime);
-}
+    return checkEqual
+        ? buildDate(new Date(), firstTime) <= buildDate(new Date(), secTime)
+        : buildDate(new Date(), firstTime) < buildDate(new Date(), secTime);
+};
 
 export const makeOutingDate = (date) => format(date, 'yyyy-MM-dd HH:mm');
 
@@ -87,10 +88,9 @@ const getDayFromTemplate = (date, template, cutoff = null) => {
     buildArr.push(secEnd);
     dayArr.push(buildArr);
     return dayArr;
-}
+};
 
 export function generateSlots(params) {
-
     let startInterval;
     let endInterval;
     let endDate;
@@ -109,7 +109,7 @@ export function generateSlots(params) {
     let firstDay = [];
     let secOverlapDay = [];
 
-    firstDay = [getTime(startInterval),  getTime(new Date(endInterval))];
+    firstDay = [getTime(startInterval), getTime(new Date(endInterval))];
     if (!isSameDay(startInterval, endInterval)) {
         isOverflow = true;
         firstDay = [getTime(startInterval), getTime(endOfDay(startInterval))];
@@ -127,11 +127,11 @@ export function generateSlots(params) {
     let currMonth = iterDate.getMonth();
     let weekdayIndex = 0;
     let isPrevAvailable = false;
-    while(iterDate < endDate) {
+    while (iterDate < endDate) {
         if (isPrevAvailable && isOverflow) {
-            monthTrack[iterDate.getDate()] = (getDayFromTemplate(iterDate, secOverlapDay, endDate));
+            monthTrack[iterDate.getDate()] = getDayFromTemplate(iterDate, secOverlapDay, endDate);
         } else {
-            monthTrack[iterDate.getDate()] = (getDayFromTemplate(iterDate, firstDay, endDate));
+            monthTrack[iterDate.getDate()] = getDayFromTemplate(iterDate, firstDay, endDate);
         }
 
         const dayAdd = params.dayOffset[weekdayIndex];
@@ -150,7 +150,7 @@ export function generateSlots(params) {
 
     // Catch overflow on last day case
     if (isPrevAvailable && isOverflow) {
-        monthTrack[iterDate.getDate()] = (getDayFromTemplate(iterDate, secOverlapDay, endDate));
+        monthTrack[iterDate.getDate()] = getDayFromTemplate(iterDate, secOverlapDay, endDate);
     }
 
     return months;

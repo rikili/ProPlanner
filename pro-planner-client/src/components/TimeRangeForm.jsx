@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card, Form, Row, Col } from 'react-bootstrap';
-import Button from './override/Button';
 import { getTime } from '../helpers/OutingCalendar';
+import Button from './override/Button';
 
 const roundingSteps = [0, 30, 60];
 
@@ -62,7 +62,9 @@ const TimeRangeForm = ({ editDetails }) => {
                 <h6 className="mb-2">
                     <b>Set a Time Range</b>
                 </h6>
-                <p style={{fontSize: '0.8em', color: 'grey'}}>Select a time range or set the plan to be All-Day</p>
+                <p style={{ fontSize: '0.8em', color: 'grey' }}>
+                    Select a time range or set the plan to be All-Day
+                </p>
                 <div>
                     <Row className="mb-2">
                         <Form.Group controlId="planTimeStart" as={Col}>
@@ -91,13 +93,16 @@ const TimeRangeForm = ({ editDetails }) => {
                     <div className="w-100">
                         <p className="text-center mb-2">OR</p>
                         <Form.Group controlId="planIsAllDay" as={Col}>
-                            <Form.Control value={isAllDay || ''} style={{ display: 'none' }} readOnly />
+                            <Form.Control
+                                value={isAllDay || ''}
+                                style={{ display: 'none' }}
+                                readOnly
+                            />
                             <Button
                                 className="w-100"
                                 variant={`${isAllDay ? 'custom-primary' : 'custom-secondary'}`}
                                 active={isAllDay}
-                                onClick={() => toggleIsAllDay()}
-                            >
+                                onClick={() => toggleIsAllDay()}>
                                 All-Day
                             </Button>
                         </Form.Group>

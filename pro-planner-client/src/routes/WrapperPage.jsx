@@ -1,11 +1,13 @@
 import ErrorContainer from '../components/ErrorContainer';
-import { Outlet, useNavigate } from "react-router";
+import { Outlet } from 'react-router';
 
 const WrapperPage = () => {
-	return <>
-		<ErrorContainer />
-		<Outlet />
-	</>;
+    return (
+        <>
+            <ErrorContainer />
+            <Outlet />
+        </>
+    );
 };
 
 export default WrapperPage;

@@ -1,208 +1,206 @@
-@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
 @import '../styles.scss';
 
-
 .calendar-card {
-	& > .card-body {
-		display: flex;
-		flex-flow: column nowrap;
-		justify-content: center;
-		align-items: center;
-		padding: 0 1em 1em 1em;
-	}
+    & > .card-body {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        padding: 0 1em 1em 1em;
+    }
 }
 
 .trip-calendar {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	min-height: 40em;
-	padding: 1em;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 40em;
+    padding: 1em;
 }
 
 .trip-border {
-	position: absolute;
-	height: 100%;
-	border: 1px solid $calendar-borders;
-	border-radius: 1em;
-	background: none;
-	pointer-events: none;
-	padding: 0;
-	margin: 0;
+    position: absolute;
+    height: 100%;
+    border: 1px solid $calendar-borders;
+    border-radius: 1em;
+    background: none;
+    pointer-events: none;
+    padding: 0;
+    margin: 0;
 }
 
 .trip-loading-container {
-	display: flex;
-	flex-flow: column nowrap;
-	align-items: center;
-	height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    height: 100%;
 }
 
 .trip-calendar-container {
-	padding: 0;
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	border-radius: 1em;
-	clip-path: inset(0% 0% round 1em);
-	min-height: 30em;
-	max-height: 30em;
-	flex: 1;
+    padding: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1em;
+    clip-path: inset(0% 0% round 1em);
+    min-height: 30em;
+    max-height: 30em;
+    flex: 1;
 }
 
 .fake-day {
-	background-color: rgb(230, 230, 230);
+    background-color: rgb(230, 230, 230);
 }
 
 .trip-day-container {
-	display: flex;
-	border-bottom: 1px solid $calendar-borders;
-	padding: 0;
-	flex: 1;
-	
+    display: flex;
+    border-bottom: 1px solid $calendar-borders;
+    padding: 0;
+    flex: 1;
 
-	&:nth-child(2) {
-		border-radius: 1em 1em 0 0;
+    &:nth-child(2) {
+        border-radius: 1em 1em 0 0;
 
-		& > .trip-half-container:first-child {
-			border-radius: 1em 0 0 0;
-			& > .half-day:first-child {
-				border-radius: 1em 0 0 0;
-			}
-		}
+        & > .trip-half-container:first-child {
+            border-radius: 1em 0 0 0;
+            & > .half-day:first-child {
+                border-radius: 1em 0 0 0;
+            }
+        }
 
-		& > .trip-half-container:last-child {
-			border-radius: 0 1em 0 0;
-			& > .half-day:first-child {
-				border-radius: 0 1em 0 0;
-			}
-		}
-	}
+        & > .trip-half-container:last-child {
+            border-radius: 0 1em 0 0;
+            & > .half-day:first-child {
+                border-radius: 0 1em 0 0;
+            }
+        }
+    }
 
-	&:last-child {
-		border-bottom: 0;
-		border-radius: 0 0 1em 1em;
+    &:last-child {
+        border-bottom: 0;
+        border-radius: 0 0 1em 1em;
 
-		& > .trip-half-container:first-child {
-			border-radius: 0 0 0 1em;
-			& > .half-day:last-child {
-				border-radius: 0 0 0 1em;
-			}
-		}
+        & > .trip-half-container:first-child {
+            border-radius: 0 0 0 1em;
+            & > .half-day:last-child {
+                border-radius: 0 0 0 1em;
+            }
+        }
 
-		& > .trip-half-container:last-child {
-			border-radius: 0 0 1em 0;
-			& > .half-day:last-child {
-				border-radius: 0 0 1em 0;
-			}
-		}
-	}
+        & > .trip-half-container:last-child {
+            border-radius: 0 0 1em 0;
+            & > .half-day:last-child {
+                border-radius: 0 0 1em 0;
+            }
+        }
+    }
 }
 
 .trip-half-container {
-	border-right: 1px solid $calendar-borders;
-	padding: 0;
-	flex: 1;
+    border-right: 1px solid $calendar-borders;
+    padding: 0;
+    flex: 1;
 
-	&:last-child {
-		border-right: 0;
-	}
+    &:last-child {
+        border-right: 0;
+    }
 }
 
 .half-day {
-	cursor: pointer;
-	font-size: $day-font-size;
-	flex: 1;
-	height: 50%;
+    cursor: pointer;
+    font-size: $day-font-size;
+    flex: 1;
+    height: 50%;
 
-	&:first-child {
-		&.trip-selected {
-			color: $selected-day-label;
-		}
+    &:first-child {
+        &.trip-selected {
+            color: $selected-day-label;
+        }
 
-		&[class*="trip-decided-"] {
-			color: $decided-day-label;
-		}
-	}
+        &[class*='trip-decided-'] {
+            color: $decided-day-label;
+        }
+    }
 
-	&:last-child {
-		&.valid {
-			border-top: 1px dashed $half-line-default;
-		}
+    &:last-child {
+        &.valid {
+            border-top: 1px dashed $half-line-default;
+        }
 
-		&.trip-selected {
-			border-top-color: $half-line-selected;
-		}
-	
-		&.trip-preview {
-			border-top-color: $half-line-preview;
-		}
+        &.trip-selected {
+            border-top-color: $half-line-selected;
+        }
 
-		&.trip-edit {
-			border-top-color: $half-line-edit;
-		}
+        &.trip-preview {
+            border-top-color: $half-line-preview;
+        }
 
-		&[class*="trip-decided-"] {
-			border-top-color: $half-line-decided;
-		}
-	}
+        &.trip-edit {
+            border-top-color: $half-line-edit;
+        }
+
+        &[class*='trip-decided-'] {
+            border-top-color: $half-line-decided;
+        }
+    }
 }
 
 .trip-half-label {
-	margin-left: 0.5em;
+    margin-left: 0.5em;
 }
 
 .trip-selected {
-	color: $selected-day-label;
+    color: $selected-day-label;
 }
 .trip-selected-4 {
-	background-color: $selected-day-step-4;
+    background-color: $selected-day-step-4;
 }
 .trip-selected-3 {
-	background-color: $selected-day-step-3;
+    background-color: $selected-day-step-3;
 }
 .trip-selected-2 {
-	background-color: $selected-day-step-2;
+    background-color: $selected-day-step-2;
 }
 .trip-selected-1 {
-	background-color: $selected-day-step-1;
+    background-color: $selected-day-step-1;
 }
 
 .trip-decided-4 {
-	background-color: $decided-day-4;
+    background-color: $decided-day-4;
 }
 .trip-decided-3 {
-	background-color: $decided-day-3;
+    background-color: $decided-day-3;
 }
 .trip-decided-2 {
-	background-color: $decided-day-2;
+    background-color: $decided-day-2;
 }
 .trip-decided-1 {
-	background-color: $decided-day-1;
+    background-color: $decided-day-1;
 }
 
 .trip-detailed {
-	background-color: $detailed-day;
+    background-color: $detailed-day;
 }
 
 .trip-decided-preview {
-	background-color: $decided-day-preview;
+    background-color: $decided-day-preview;
 }
 
 .trip-edit {
-	background-color: $edit-day;
-	color: $edit-day-label;
+    background-color: $edit-day;
+    color: $edit-day-label;
 }
 
 .trip-preview {
-	&.trip-edit {
-		background-color: $preview-day-dark;
-	}
-	color: $preview-day-label;
-	background-color: $preview-day;
+    &.trip-edit {
+        background-color: $preview-day-dark;
+    }
+    color: $preview-day-label;
+    background-color: $preview-day;
 }
 
 .trip-invalid {
-	color: $invalid-day-label;
-	background-color: $invalid-day;
+    color: $invalid-day-label;
+    background-color: $invalid-day;
 }

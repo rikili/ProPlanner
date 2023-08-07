@@ -1,27 +1,23 @@
 // url validation reference: https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
 // url extraction reference: https://developer.mozilla.org/en-US/docs/Web/API/URL#Properties
-import React, {useState, useRef} from 'react';
-import {
-    Card,
-    Col,
-    Container,
-    Form,
-    OverlayTrigger,
-    Row,
-    Tooltip
-} from 'react-bootstrap';
-import {FiInfo} from 'react-icons/fi';
-import {useNavigate} from 'react-router-dom';
-import {useDispatch} from 'react-redux';
-import {changePlanType} from '../redux/planParamSlice';
-import {ERR_TYPE, PLAN_TYPE} from '../constants';
-import {setError} from "../redux/errorSlice";
-import axios from "axios";
-import {buildServerRoute} from "../helpers/Utils";
+import axios from 'axios';
+import { useState, useRef } from 'react';
+import { Card, Col, Container, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { FiInfo } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { changePlanType } from '../redux/planParamSlice';
+import { ERR_TYPE, PLAN_TYPE } from '../constants';
+import { setError } from '../redux/errorSlice';
+import { buildServerRoute } from '../helpers/Utils';
 import Button from '../components/override/Button';
 import './LandingPage.scss';
 
-const renderTooltip = (text, id) => <Tooltip id={id} style={{position: "fixed"}}>{text}</Tooltip>;
+const renderTooltip = (text, id) => (
+    <Tooltip id={id} style={{ position: 'fixed' }}>
+        {text}
+    </Tooltip>
+);
 
 const LandingPage = () => {
     const [inputValue, setInputValue] = useState('');
@@ -35,7 +31,7 @@ const LandingPage = () => {
     const [showOutingTooltip, setShowOutingTooltip] = useState(false);
     const planUrlRegex = /^https?:\/\/(?:[^\/:]+[:.])?[^\/:]+\/[^/]+$/;
 
-    const handleInput = e => {
+    const handleInput = (e) => {
         setInputValue(e.target.value);
     };
 
@@ -46,15 +42,15 @@ const LandingPage = () => {
         } catch {
             return false;
         }
-    }
+    };
 
     const isValidPlanURL = (url) => {
-        return planUrlRegex.test(url)
-    }
+        return planUrlRegex.test(url);
+    };
 
     const getPlanId = (value) => {
         return new URL(value).pathname.substring(1);
-    }
+    };
 
     const handleJoin = (event) => {
         event.preventDefault();
@@ -63,8 +59,7 @@ const LandingPage = () => {
             dispatch(
                 setError({
                     errType: ERR_TYPE.ERR,
-                    message:
-                        "Please enter a URL or Code.",
+                    message: 'Please enter a URL or Code.',
                 })
             );
             return;
@@ -74,51 +69,54 @@ const LandingPage = () => {
             dispatch(
                 setError({
                     errType: ERR_TYPE.ERR,
-                    message:
-                        `Invalid URL format: example of a valid URL format is 'https://${process.env.REACT_APP_LIVE_DOMAIN}/PLAN_ID'.`,
+                    message: `Invalid URL format: example of a valid URL format is 'https://${process.env.REACT_APP_LIVE_DOMAIN}/PLAN_ID'.`,
                 })
             );
             return;
         }
 
-
         if (isValidURL(inputValue) && isValidPlanURL(inputValue)) {
             let planId = getPlanId(inputValue);
-            axios.get(buildServerRoute('plan', planId))
+            axios
+                .get(buildServerRoute('plan', planId))
                 .then(() => {
                     navigate(`/user/${planId}`);
                 })
                 .catch((err) => {
                     if (err.response.status === 404) {
-                        dispatch(setError({
-                            errType: ERR_TYPE.ERR,
-                            message: 'Plan does not exist, please enter an existing Plan URL.',
-                        }));
+                        dispatch(
+                            setError({
+                                errType: ERR_TYPE.ERR,
+                                message: 'Plan does not exist, please enter an existing Plan URL.',
+                            })
+                        );
                     }
                 });
-
         }
 
         if (!isValidURL(inputValue)) {
-            axios.get(buildServerRoute('plan', inputValue))
+            axios
+                .get(buildServerRoute('plan', inputValue))
                 .then(() => {
                     navigate(`/user/${inputValue}`);
                 })
                 .catch((err) => {
                     if (err.response.status === 404) {
-                        dispatch(setError({
-                            errType: ERR_TYPE.ERR,
-                            message: 'Plan does not exist, please enter an existing Plan Code.',
-                        }));
+                        dispatch(
+                            setError({
+                                errType: ERR_TYPE.ERR,
+                                message: 'Plan does not exist, please enter an existing Plan Code.',
+                            })
+                        );
                     }
                 });
         }
-    }
+    };
 
     const handleCreate = (planType) => {
         dispatch(changePlanType(planType));
         navigate(`create`);
-    }
+    };
 
     return (
         <Container>
@@ -140,16 +138,16 @@ const LandingPage = () => {
                                             variant="custom-primary"
                                             size="lg"
                                             className="mb-2 w-50 m-auto d-flex"
-                                            onClick={() => handleCreate(PLAN_TYPE.TRIP)}
-                                        >
+                                            onClick={() => handleCreate(PLAN_TYPE.TRIP)}>
                                             <div className="m-auto">Trip</div>
                                             <OverlayTrigger
                                                 placement="top"
                                                 overlay={renderTooltip(
                                                     'Scheduling based on scale of half day increments. For planning longer trips/timeframes',
-                                                    'trip-tooltip')}
-                                            >
-                                                <span className="float-end"
+                                                    'trip-tooltip'
+                                                )}>
+                                                <span
+                                                    className="float-end"
                                                     onMouseEnter={() => setShowTripTooltip(true)}
                                                     onMouseLeave={() => setShowTripTooltip(false)}
                                                     ref={tripButtonIcon}>
@@ -163,16 +161,16 @@ const LandingPage = () => {
                                             variant="custom-primary"
                                             size="lg"
                                             className="w-50 m-auto d-flex"
-                                            onClick={() => handleCreate(PLAN_TYPE.OUTING)}
-                                        >
+                                            onClick={() => handleCreate(PLAN_TYPE.OUTING)}>
                                             <div className="m-auto">Outing</div>
                                             <OverlayTrigger
                                                 placement="top"
                                                 overlay={renderTooltip(
                                                     'Scheduling based on scale of half hour increments. For planning a one-day event',
-                                                    'outing-tooltip')}
-                                            >
-                                                <span className="float-end"
+                                                    'outing-tooltip'
+                                                )}>
+                                                <span
+                                                    className="float-end"
                                                     onMouseEnter={() => setShowOutingTooltip(true)}
                                                     onMouseLeave={() => setShowOutingTooltip(false)}
                                                     ref={outingButtonIcon}>
@@ -195,8 +193,7 @@ const LandingPage = () => {
                                                         variant="custom-primary"
                                                         type="submit"
                                                         className="mt-2"
-                                                        onClick={handleJoin}
-                                                    >
+                                                        onClick={handleJoin}>
                                                         Join
                                                     </Button>
                                                 </div>

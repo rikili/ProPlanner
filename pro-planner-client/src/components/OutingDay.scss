@@ -29,7 +29,7 @@
         border-bottom-color: $half-line-edit;
     }
 
-    &[class*="outing-selected-"] {
+    &[class*='outing-selected-'] {
         border-bottom-color: $half-line-selected;
     }
 
@@ -41,7 +41,9 @@
         border-bottom: none;
     }
 
-    &.deciding, &.deciding-selection, &[class*="outing-decided-"] {
+    &.deciding,
+    &.deciding-selection,
+    &[class*='outing-decided-'] {
         border-bottom-color: $half-line-decided;
     }
 }

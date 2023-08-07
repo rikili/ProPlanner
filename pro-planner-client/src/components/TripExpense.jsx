@@ -1,16 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {useSelector, useDispatch} from "react-redux";
-import {Container} from "react-bootstrap";
-import UserExpense from "./UserExpense";
-// import {addUser} from "../redux/costSlice";
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Container } from 'react-bootstrap';
+import UserExpense from './UserExpense';
 
 function TripExpense({ className }) {
-
     const users = useSelector((state) => state.cost.costs);
     const currUser = useSelector((state) => state.user.selectedUser);
     const [currUserId, setCurrUserId] = useState(null);
     const dispatch = useDispatch();
-    
 
     useEffect(() => {
         const findUserId = (userName) => {
@@ -33,28 +30,22 @@ function TripExpense({ className }) {
 
         if (!userExists(currUser)) {
             let userInfo = {
-                id: currUser, 
-                name: currUser
-            }
-            // dispatch(addUser(userInfo));
-            setCurrUserId(userInfo.id)
+                id: currUser,
+                name: currUser,
+            };
+            setCurrUserId(userInfo.id);
         } else {
-            setCurrUserId(findUserId(currUser))
+            setCurrUserId(findUserId(currUser));
         }
-    }, [dispatch, currUser, users])
-
+    }, [dispatch, currUser, users]);
 
     return (
         <>
             <Container className={className}>
-                {users && Object.entries(users).map(([key, user]) =>
-                    <UserExpense
-                        user={user}
-                        currUserId={currUserId}
-                        userId={key}
-                        key={key}
-                    />
-                )}
+                {users &&
+                    Object.entries(users).map(([key, user]) => (
+                        <UserExpense user={user} currUserId={currUserId} userId={key} key={key} />
+                    ))}
             </Container>
         </>
     );

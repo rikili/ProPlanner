@@ -1,5 +1,5 @@
 // reference for columns: https://stackoverflow.com/questions/47601564/equal-width-columns-in-css-grid
-@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
 .group-wrapper {
     display: flex;
@@ -45,7 +45,7 @@
 
     .calendar-card {
         grid-column: 2 / 13;
-	}
+    }
 
     .outing-card {
         grid-column: 2 / 13;
@@ -63,5 +63,4 @@
         width: auto;
         padding-bottom: 1em;
     }
-    
 }

@@ -5,19 +5,12 @@ import { assembleClass } from '../helpers/Utils';
 import './CalendarLabel.scss';
 
 const TripCalendarLabel = ({ date, startRange, endRange, onClick }) => {
-
     const isAtRangeStart = subMonths(date, 1) <= startOfMonth(subMonths(startRange, 1));
     const isAtRangeEnd = addMonths(date, 1) >= startOfMonth(addMonths(endRange, 1));
 
-    const prevMonthClass = assembleClass(
-        'nav-button',
-        isAtRangeStart && 'nav-disabled',
-    );
+    const prevMonthClass = assembleClass('nav-button', isAtRangeStart && 'nav-disabled');
 
-    const nextMonthClass = assembleClass(
-        'nav-button',
-        isAtRangeEnd && 'nav-disabled',
-    );
+    const nextMonthClass = assembleClass('nav-button', isAtRangeEnd && 'nav-disabled');
 
     return (
         <Container>

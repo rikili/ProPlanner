@@ -1,4 +1,5 @@
-@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+@import '../styles.scss';
 
 .user-select-card-container {
     display: flex;
@@ -28,8 +29,6 @@
         flex-direction: column;
     }
 }
-
-@import "../styles.scss";
 
 .icon {
     width: 1.7em;

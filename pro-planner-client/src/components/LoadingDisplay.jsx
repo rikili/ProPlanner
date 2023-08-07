@@ -1,4 +1,4 @@
-import { Spinner } from "react-bootstrap";
+import { Spinner } from 'react-bootstrap';
 
 import './LoadingDisplay.scss';
 
@@ -12,4 +12,3 @@ const LoadingDisplay = ({ label = true, className }) => {
 };
 
 export default LoadingDisplay;
-

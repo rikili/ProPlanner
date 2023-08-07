@@ -1,12 +1,12 @@
 import { Card } from 'react-bootstrap';
-import Button from './override/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import { isFirstHalf } from '../helpers/TripCalendar';
 import { setPlanDecision } from '../redux/planParamSlice';
 import { PLAN_TYPE } from '../constants';
-import './DecisionInfo.scss';
 import { useParams } from 'react-router-dom';
+import Button from './override/Button';
+import './DecisionInfo.scss';
 
 const halfFlair = (date) => {
     return isFirstHalf(date) ? '(Morning)' : '(Evening)';
@@ -23,17 +23,22 @@ const DecisionInfo = () => {
     const rangeEnd = new Date(decisionRange[1]);
 
     const handleClear = () => {
-        dispatch(setPlanDecision({
-            planId: tripId,
-            planType,
-            range: []
-        }));
+        dispatch(
+            setPlanDecision({
+                planId: tripId,
+                planType,
+                range: [],
+            })
+        );
     };
 
     return (
         <Card className="details-card">
             <Card.Header className="decision-body">
-                <span><b>{planType === PLAN_TYPE.OUTING ? 'Outing ' : 'Trip '}</b><b>Decision</b></span>
+                <span>
+                    <b>{planType === PLAN_TYPE.OUTING ? 'Outing ' : 'Trip '}</b>
+                    <b>Decision</b>
+                </span>
             </Card.Header>
             <Card.Body className="decision-body">
                 <div className="decision-content">
@@ -56,7 +61,9 @@ const DecisionInfo = () => {
                             </div>
                         )
                     ) : (
-                        <p className="decision-instruct">This plan currently doesn't have a decision made.</p>
+                        <p className="decision-instruct">
+                            This plan currently doesn't have a decision made.
+                        </p>
                     )}
                 </div>
             </Card.Body>
