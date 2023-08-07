@@ -13,6 +13,7 @@ import {setError, resetError} from '../redux/errorSlice';
 import {ERR_TYPE} from '../constants';
 import {useState} from 'react';
 import './UserList.scss';
+import {updateCostAsync} from "../redux/costSlice";
 
 
 const UserList = () => {
@@ -78,6 +79,7 @@ const UserList = () => {
         if (usersToDelete.length !== 0) {
             dispatch(deleteUsersAsync({planId: tripId, usersToDelete}));
             dispatch(updatePollAsync({pollDocumentId, usersToDelete}));
+            dispatch(updateCostAsync({ planId: tripId, usersToDelete }));
 			dispatch(resetUser());
         }
         setUsersToDelete([]);

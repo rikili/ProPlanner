@@ -1,14 +1,14 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import { LOAD_STATUS } from "../constants";
+import {LOAD_STATUS} from "../constants";
 import axios from "axios";
-import { buildServerRoute } from "../helpers/Utils";
+import {buildServerRoute} from "../helpers/Utils";
 
-export const getCostAsync = createAsyncThunk('cost/get', async({tripId}) => {
+export const getCostAsync = createAsyncThunk('cost/get', async ({tripId}) => {
     const response = await axios.get(buildServerRoute('cost', tripId));
     return response.data;
 });
 
-export const addExpenseAsync = createAsyncThunk('cost/addExpense', async({tripId, userId, newItem, newItemAmount}) => {
+export const addExpenseAsync = createAsyncThunk('cost/addExpense', async ({tripId, userId, newItem, newItemAmount}) => {
     const data = {
         userName: userId,
         itemName: newItem,
@@ -18,7 +18,7 @@ export const addExpenseAsync = createAsyncThunk('cost/addExpense', async({tripId
     return response.data;
 });
 
-export const removeExpenseAsync = createAsyncThunk('cost/removeExpense', async({tripId, userId, expenseId}) => {
+export const removeExpenseAsync = createAsyncThunk('cost/removeExpense', async ({tripId, userId, expenseId}) => {
     const data = {
         userName: userId,
         expenseId: expenseId
@@ -28,12 +28,16 @@ export const removeExpenseAsync = createAsyncThunk('cost/removeExpense', async({
     return response.data;
 });
 
+export const updateCostAsync = createAsyncThunk('cost/removeUser', async ({planId, usersToDelete}) => {
+    const response = await axios.patch(buildServerRoute('cost', 'removeUser', planId),
+        {userToDelete: usersToDelete[0]});
+    return response.data;
+});
+
 const costSlice = createSlice({
     name: 'cost',
-    initialState: {
-    },
-    reducers: {
-    },
+    initialState: {},
+    reducers: {},
     extraReducers: (builder) => {
         builder.addCase(getCostAsync.pending, (state, action) => {
             state.costsStatus = LOAD_STATUS.LOADING;
@@ -49,7 +53,7 @@ const costSlice = createSlice({
             state.costsStatus = LOAD_STATUS.LOADING;
         });
         builder.addCase(addExpenseAsync.fulfilled, (state, action) => {
-            const { costs } = action.payload;
+            const {costs} = action.payload;
             Object.entries(costs).forEach(([userName, expenses]) => {
                 state.costs[userName] = expenses;
             });
@@ -66,6 +70,12 @@ const costSlice = createSlice({
             state.pollStatus = LOAD_STATUS.SUCCESS;
         });
         builder.addCase(removeExpenseAsync.rejected, (state, action) => {
+            state.pollStatus = LOAD_STATUS.FAILED;
+        });
+        builder.addCase(updateCostAsync.fulfilled, (state, action) => {
+            state.pollStatus = LOAD_STATUS.SUCCESS;
+        });
+        builder.addCase(updateCostAsync.rejected, (state, action) => {
             state.pollStatus = LOAD_STATUS.FAILED;
         });
     }
