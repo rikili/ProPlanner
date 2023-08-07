@@ -10,10 +10,13 @@ import { Outlet, useNavigate } from 'react-router';
 import axios from 'axios';
 import { getCostAsync } from "../redux/costSlice";
 import { useLocation } from "react-router";
+import { getCostAsync } from "../redux/costSlice";
+import { useLocation } from "react-router";
 import { clearTripSelections } from '../redux/tripSlice';
 import { clearOutingSelections } from '../redux/outingSlice';
 import './HomePage.scss';
 import { buildServerRoute } from '../helpers/Utils';
+
 
 
 const HomePage = () => {
@@ -26,6 +29,9 @@ const HomePage = () => {
 	const planType = useSelector(state => state.planParameters.planType);
 
 	const isUserSelected = !!selectedUser;
+
+	const tripId = useLocation().pathname.split('/')[1];
+
 
 	useEffect(() => {
 		dispatch(getCostAsync({tripId: planId}))
