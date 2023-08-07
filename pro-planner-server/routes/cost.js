@@ -98,4 +98,18 @@ router.put('/removeExpense/:id', async (req, res) => {
     }
 });
 
+
+router.patch('/removeUser/:id', async (req, res) => {
+    let costDocument;
+    try {
+        costDocument = await Cost.findOne({ _id: req.params.id });
+        const userToDelete = req.body.userToDelete;
+        costDocument.costs.delete(userToDelete);
+        const savedCosts = await costDocument.save();
+        res.status(200).json(savedCosts);
+    } catch (error) {
+        res.status(500).send(`Unexpected error: ${error}`)
+    }
+});
+
 module.exports = router;
