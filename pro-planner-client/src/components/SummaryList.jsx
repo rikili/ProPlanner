@@ -11,7 +11,7 @@ const SummaryList = () => {
         <Card className="details-card summary-list">
             <Card.Header className="summary-body"><b>Users Selected</b></Card.Header>
             <Card.Body className="summary-body">
-                <div className="trip-summary-list">
+                <div className="trip-summary-list text-center">
                     {!!isDetailSelected ? (
                         <>
                             {selectedList.toSorted().map((user, index) => {
