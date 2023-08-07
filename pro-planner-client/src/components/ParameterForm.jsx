@@ -346,7 +346,7 @@ const ParameterForm = ({ title, onSubmit, editDetails = null, showBack = false }
         onSubmit(formResult, isOuting ? PLAN_TYPE.OUTING : PLAN_TYPE.TRIP);
     }
 
-    return <Form className="w-50 mx-auto d-flex flex-column gap-3 pt-3" onSubmit={handleFormSubmission} noValidate validated={validated}>
+    return <Form className="mx-auto d-flex flex-column gap-3 pt-3 p-2" style={{maxWidth: '900px'}} onSubmit={handleFormSubmission} noValidate validated={validated}>
         <InputDetailsForm title={title} editDetails={editDetails} showBack={showBack} isOuting={isOuting} />
         {isOuting && <TimeRangeForm editDetails={editDetails} />}
         <div className="text-center">
