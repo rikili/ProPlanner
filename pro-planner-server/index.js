@@ -27,7 +27,7 @@ app.use('/poll', poll);
 app.use('/cost', cost);
 app.use('/plan', plan);
 
-app.listen(5001, () => {
+app.listen(process.env.PORT || 5001, () => {
     console.log('server up listening on 5001');
 });
 
