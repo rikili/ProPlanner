@@ -30,9 +30,6 @@ const HomePage = () => {
 
 	const isUserSelected = !!selectedUser;
 
-	const tripId = useLocation().pathname.split('/')[1];
-
-
 	useEffect(() => {
 		dispatch(getCostAsync({tripId: planId}))
 		
