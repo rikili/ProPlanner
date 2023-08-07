@@ -78,7 +78,7 @@ const UserList = () => {
     const handleConfirm = () => {
         if (usersToDelete.length !== 0) {
             dispatch(deleteUsersAsync({planId: tripId, usersToDelete}));
-            dispatch(updatePollAsync({pollDocumentId, usersToDelete}));
+            pollDocumentId && dispatch(updatePollAsync({pollDocumentId, usersToDelete}));
             dispatch(updateCostAsync({ planId: tripId, usersToDelete }));
 			dispatch(resetUser());
         }
