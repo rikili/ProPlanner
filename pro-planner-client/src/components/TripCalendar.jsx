@@ -299,13 +299,13 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 		];
 	};
 
-	const updateSelections = () => {
+	const updateSelections = (cursorDateHalf) => {
 		let iterHalfDate = new Date(selectStart);
 		let onFirstHalf = isFirstHalf(iterHalfDate);
 		const newSelections = JSON.parse(JSON.stringify(dateSelections));
 		const editedMonths = [];
 
-		while (selectCursor >= iterHalfDate) {
+		while (cursorDateHalf >= iterHalfDate) {
 			if (isDateValid(iterHalfDate)) {
 				if (
 					!monthsToUpdate.includes(getMonthIndex(iterHalfDate)) &&
@@ -351,13 +351,13 @@ const TripCalendar = ({ planId, isEditMode, setIsEditMode, selectedUser }) => {
 				setDecisionCursor(dateHalf);
 			} else {
 				if (decisionStart <= decisionCursor)
-					setDecisionEdit([new Date(decisionStart), new Date(decisionCursor)]);
+					setDecisionEdit([new Date(decisionStart), new Date(dateHalf)]);
 				setDecisionStart(null);
 				setDecisionCursor(null);
 			}
 		} else {
 			if (isSelectingDate) {
-				updateSelections();
+				updateSelections(dateHalf);
 				resetSelecting();
 			} else {
 				setIsSelectingDate(true);
