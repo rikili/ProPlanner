@@ -37,10 +37,9 @@ const ExpenseSplit = ({ className }) => {
         while (leftIndex < rightIndex) {
             let leftUserOwes = (costPerUser - userSpendings[leftIndex][1]).toFixed(2);
             let rightUserAmount = userSpendings[rightIndex][1];
-
-            if (!leftUserOwes) {
+            if (!Number(leftUserOwes)) {
                 leftIndex++;
-            } else if ( (rightUserAmount - leftUserOwes) > costPerUser) {
+            } else if ( ((rightUserAmount - leftUserOwes) > costPerUser)) {
                 userSpendings[leftIndex][1] += leftUserOwes;
                 userSpendings[rightIndex][1] -= leftUserOwes;
                 results.push(
@@ -61,7 +60,7 @@ const ExpenseSplit = ({ className }) => {
                 results.push(
                     <ListGroup.Item as="h5" key={`split-item-${key}`} style={{textAlign: "center"}}>
                         <div className="cost-row">
-                            <Col > {userSpendings[leftIndex][0]} :</Col>
+                            <Col> {userSpendings[leftIndex][0]} :</Col>
                             <Col>${leftUserPaysRightUser}</Col>
                             <Col lg={2}><FcAdvance className="cost-arrow"/></Col>
                             <Col>{userSpendings[rightIndex][0]}</Col>
@@ -114,7 +113,6 @@ const ExpenseSplit = ({ className }) => {
                                 <Col as="h5"> Availble </Col>
                                 <Col as="h5" className="text-end"> ${ budget - totalSpendings } </Col>
                             </Row>
-                            <>{console.log("spentToAvailableRatio " + spentToAvailableRatio)}</>
                             <ProgressBar 
                                 style={{margin: '9px'}}
                                 striped variant={ calcVariant() }
