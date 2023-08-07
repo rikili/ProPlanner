@@ -198,10 +198,3 @@
 	color: $invalid-day-label;
 	background-color: $invalid-day;
 }
-
-// @include media-breakpoint-between(xs, lg) {
-// 	.calendar-card {
-// 		grid-row-start: 1;
-// 		grid-row-end: 2;
-// 	}
-// }

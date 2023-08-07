@@ -417,13 +417,14 @@ function OutingCalendar({ planId, selectedUser, isEditMode, setIsEditMode }) {
 				setEditAnchor(dateTime);
 				setEditCursor(getEndOfSegment(dateTime));
 			} else {
+				const endOfSelected = getEndOfSegment(dateTime);
 				const updateCopy = JSON.parse(JSON.stringify(currentSelects));
-				if (isAfter(editCursor, editAnchor)) {
+				if (isAfter(endOfSelected, editAnchor)) {
 					const newUpdateMonths = [...monthsToUpdate];
 					updateSelections(
 						updateCopy,
 						editAnchor,
-						editCursor,
+						endOfSelected,
 						slots,
 						isAdding,
 						newUpdateMonths,
@@ -443,8 +444,9 @@ function OutingCalendar({ planId, selectedUser, isEditMode, setIsEditMode }) {
 				setDecisionCursor(getEndOfSegment(dateTime));
 			} else {
 				setIsDecidingPreview(false);
-				if (decisionAnchor < decisionCursor) {
-					setDecisionPreview([decisionAnchor, decisionCursor]);
+				const endOfSelected = getEndOfSegment(dateTime);
+				if (isAfter(endOfSelected, decisionAnchor)) {
+					setDecisionPreview([decisionAnchor, endOfSelected]);
 				}
 				setDecisionAnchor(null);
 				setDecisionCursor(null);
