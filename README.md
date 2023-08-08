@@ -106,11 +106,14 @@ Variable levels of selection can exist and are proportionate to the how many use
 ![Outing](https://lh3.googleusercontent.com/drive-viewer/AITFw-xsGS95yiCxlhUv0M-45ifGElD4hHayff6hT2sFmQyzyF9NP65LkQNyTVVQWjWD3fodiXoDEgn42MJdcMHPAmdW_rzzWg=s1600)
 
 * Trip Schedule
+
 ![Trip](https://lh3.googleusercontent.com/drive-viewer/AITFw-xZ_vVusmLn609wZ2PB4VGp3gGzJ_RziFsCGpnpiflQ76ALneNgxgdD3YARMX-e0odmLD5Q4shH6Lpn-mDJCAYMqA9KSw=s1600)
 
 ### Voting
 To facilitate improved communication and decision making, a lightweight polling system is in place.
+
 ![Polls](https://lh3.googleusercontent.com/drive-viewer/AITFw-z-dCj9_gRz5odQsK7oQ2w3C_6IA9iGCNMxwy6dDhk5ZwLsF4uyxaQtxMMT7bGC3tgd21qPM0pRJHA508ghsAgs-iPNcg=s2560)
+
 Polls can be made, each poll only permitting one vote per user. The progress bar for each option shows the number of votes and percentage of users that voted for that particular option.
 
 ### Cost Splitting
@@ -144,7 +147,9 @@ API for fetching and updating plan parameters
         * `description`: Brief overview for the plan
         * `decision`: The date range choosen for the plan based on user availabilities
         * `budget`: The total funds that can be used for this trip
-<br>
+
+<br/>
+
 * `PUT /plan/:id`
     * Updates the existing planParameters
     * **Parameter**
@@ -160,7 +165,8 @@ API for creating, fetching, and updating outings
     * **Response**
         * `id`: id of the newly created document
         * `planParameters`: contains `name`, `planType`, `dayOffset`, `location`, `dateTimeRange`, `description`, `decision`, `budget` 
-<br>
+
+<br/>
 
 * `PUT /outing/:id`
     * Updates the user availability info
@@ -169,14 +175,18 @@ API for creating, fetching, and updating outings
     * **Response**
         * `_id`: The plan id
         * `month`: Availability user selected for the month
-<br>
+
+<br/>
+
 * `PUT /outing/decision/:id`
     * Updates the decided date for the plan
     *   **Parameter**
         * `id`: The plan id 
     * **Response**
         * `decision`: The decided date range
-<br>
+        * 
+<br/>
+
 * `GET /outing/:id/:userId`
     * Gets the user availability for a specified month
     *   **Parameter**
@@ -186,7 +196,8 @@ API for creating, fetching, and updating outings
         * `month`: The desired month
     * **Response**
         * `month`
-<br>
+
+<br/>
 
 ### **Trip**
 #### Description
@@ -197,7 +208,9 @@ API for creating, fetching and updating trips
     * **Response**
         * `id`: id of the newly created document
         * `planParameters`: contains `name`, `planType`, `dayOffset`, `location`, `dateTimeRange`, `description`, `decision`, `budget` 
-<br>
+
+<br/>
+
 * `PUT /trip/:id`
      * Updates the user availability info
     *   **Parameter**
@@ -205,14 +218,18 @@ API for creating, fetching and updating trips
     * **Response**
         * `_id`: The plan id
         * `month`: Availability user selected for the month
-<br>
+
+<br/>
+
 * `PUT /trip/decision/:id`
     * Updates the decided date for the plan
     *   **Parameter**
         * `id`: The plan id 
     * **Response**
         * `decision`: The decided date range
-<br>
+
+<br/>
+
 * `GET /trip/:id/:userId`
     * Gets the user availability for a specified month
     *   **Parameter**
@@ -234,12 +251,16 @@ API for fetching, updating, and deleting users
     * Adds a user to a specific plan
     * **Response**
         * An array of the users
-<br>
+
+<br/>
+
 * `DELETE /user`
     * Removes user(s) from a specific plan
     * **Response**
         * An array of the deleted user(s)
-<br>
+
+<br/>
+
 * `GET /user`
     * Gets all the users for a specific plan
     *   **Query**
@@ -259,7 +280,9 @@ API for fetching and updating polls
         * `_id`: The poll id
         * `eventId`: The plan id
         * `polls`: An object containing all the polls
-<br>
+
+<br/>
+
 * `PUT /poll/:id/:pollId`
     * Removes a single poll
     *   **Parameters**
@@ -267,7 +290,9 @@ API for fetching and updating polls
         * `pollId`: The id of the poll being removed
     * **Response**
         * `_id`, `eventId`, `polls`
-<br>
+
+<br/>
+
 * `PUT /poll/option/:id/:pollId`
     * Adds an option to a specific poll 
     *   **Parameters**
@@ -275,7 +300,9 @@ API for fetching and updating polls
         * `pollId`: The id of the specific poll
     * **Response**
         * `_id`, `eventId`, `polls`
-<br>
+
+<br/>
+
 * `PATCH /poll/vote/:id/:pollId`
      * Adds the user's vote to the poll 
     *   **Parameters**
@@ -283,14 +310,18 @@ API for fetching and updating polls
         * `pollId`: The id of the specific poll
     * **Response**
         * `_id`, `eventId`, `polls`
-<br>
+
+<br/>
+
 * `PATCH /poll/:id`
      * Remove all vote(s) from deleted user(s) 
     *   **Parameters**
         * `id`: The poll document id 
     * **Response**
         * `_id`, `eventId`, `polls`
-<br>
+  
+<br/>
+
 * `GET /poll/:eventId`
     * Retrieves the poll information
      *   **Parameters**
@@ -308,7 +339,9 @@ API for fetching and updating costs
         * `id`: The plan id 
     * **Response**
         * Object with keys '_id' and 'costs' where '_id' is plan id and 'costs' is a nested object of user spendings
-<br>
+
+<br/>
+
 * `PUT /cost/addExpense/:id/`
     * Adds a user's spending item a specific plan
     *   **Parameter**
@@ -319,7 +352,9 @@ API for fetching and updating costs
         * `itemAmount`: The amount of spending item
     * **Response**
         * Object with keys '_id' and 'costs' where '_id' is plan id and 'costs' is a nested object of user spendings
-<br>
+
+<br/>
+
 * `PUT /cost/removeExpense/:id/`
     * Removes a user's spending item a specific plan
     *   **Parameter**
@@ -328,8 +363,9 @@ API for fetching and updating costs
         * `userName`: Username of the person removing a spending item
         * `expenseId`: The id associated to the stored spending item
     * **Response**
-        * Object with keys '_id' and 'costs' where '_id' is plan id and 'costs' is a nested object of user spendings]
-<br>
+        * Object with keys '_id' and 'costs' where '_id' is plan id and 'costs' is a nested object of user spendings
+
+<br/>
 
 * `PATCH /cost/removeExpense/:id/`
     * Removes a user's spending item a specific plan
