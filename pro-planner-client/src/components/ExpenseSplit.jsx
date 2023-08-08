@@ -102,14 +102,12 @@ const ExpenseSplit = ({ className }) => {
     return (
         <>
             <Card className={className}>
-                <Card.Header as="h4" >
-                Cost Split Calculations
-                </Card.Header>
-                {(costSplits.length > 0) && <Card.Body>
-                    <ListGroup variant="flush">
-                        {costSplits}
-                    </ListGroup>
-                </Card.Body>}
+                <Card.Header as="h4">Cost Split Calculations</Card.Header>
+                {costSplits.length > 0 && (
+                    <Card.Body>
+                        <ListGroup variant="flush">{costSplits}</ListGroup>
+                    </Card.Body>
+                )}
                 <Card.Footer>
                     {budget && budget > 0 && (
                         <Row style={{ marginLeft: '9px', marginRight: '9px' }}>
@@ -127,11 +125,14 @@ const ExpenseSplit = ({ className }) => {
                             ${totalSpendings}{' '}
                         </Col>
                     </Row>
-                    {   
-                        budget && (budget > 0) && <>
-                            <Row style={{marginLeft: "9px", marginRight: "9px"}}> 
+                    {budget && budget > 0 && (
+                        <>
+                            <Row style={{ marginLeft: '9px', marginRight: '9px' }}>
                                 <Col as="h5"> Available </Col>
-                                <Col as="h5" className="text-end"> ${ budget - totalSpendings } </Col>
+                                <Col as="h5" className="text-end">
+                                    {' '}
+                                    ${budget - totalSpendings}{' '}
+                                </Col>
                             </Row>
                             <ProgressBar
                                 style={{ margin: '9px' }}
