@@ -44,7 +44,7 @@ const planParamSlice = createSlice({
                     state.planType = action.payload;
                     break;
                 default:
-                    console.error('Invalid plan type provided to state.'); // TODO: implement an error/alert system to users
+                    console.error('Invalid plan type provided to state.');
             }
         },
 
