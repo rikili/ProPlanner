@@ -61,9 +61,7 @@ const ExpenseSplit = ({ className }) => {
                 );
                 leftIndex++;
             } else {
-                const leftUserPaysRightUser = parseFloat(
-                    (rightUserAmount - costPerUser).toFixed(2)
-                );
+                const leftUserPaysRightUser = parseFloat(rightUserAmount - costPerUser).toFixed(2);
                 userSpendings[leftIndex][1] += leftUserPaysRightUser;
                 userSpendings[rightIndex][1] -= leftUserPaysRightUser;
                 results.push(
