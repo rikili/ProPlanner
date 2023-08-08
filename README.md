@@ -27,6 +27,7 @@ Proplanner is an outing arrangement application that focuses on seamlessly sched
 ### Stretch Requirements
 - ✅ Cost splitting functionality to aggregate overall cost and delegate costs per person 
 - ✅ Voting system to support polls and display results of such polls
+- ✅/❌ Timezone support for calendars (partially done)
 - ❌ Google Maps static map/places API integration
    - Recommendation options (eg. nearby restaurants, bars, etc.)
    - Static display to get an understanding of surrounding location
