@@ -65,6 +65,7 @@ const TripDay = ({
                 isValid={checkValid(firstHalfDate)}
                 isPreviewed={checkPreview(firstHalfDate)}
                 className={className}
+                isFiltered={!!selectedUser}
                 key={`day-first`}
             />
             <TripHalfDay
@@ -81,6 +82,7 @@ const TripDay = ({
                 isValid={checkValid(secHalfDate)}
                 isPreviewed={checkPreview(secHalfDate)}
                 className={className}
+                isFiltered={!!selectedUser}
                 key={`day-second`}
             />
         </div>

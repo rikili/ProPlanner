@@ -19,6 +19,7 @@ const TripHalfDay = ({
     isSelected,
     isValid,
     isPreviewed,
+    isFiltered,
     className,
 }) => {
     const dispatch = useDispatch();
@@ -36,23 +37,25 @@ const TripHalfDay = ({
         if (isDetailedDay) {
             dispatch(setDetailedDay(null));
             dispatch(setDetailedUsers([]));
-        } else {
+        } else if (!isFiltered) {
             dispatch(setDetailedDay(date.toISOString()));
             dispatch(setDetailedUsers(selections));
         }
     };
 
-    let step;
-    if (!editing) {
-        const ratio = selections.length / maxUsers;
-        step = STEP_ARR.reduce((acc, [lower, upper], index) => {
-            if (acc === null) {
-                if (ratio >= lower && ratio <= upper) {
-                    return index + 1;
+    let step = 3;
+    if (!isFiltered) {
+        if (!editing) {
+            const ratio = selections.length / maxUsers;
+            step = STEP_ARR.reduce((acc, [lower, upper], index) => {
+                if (acc === null) {
+                    if (ratio >= lower && ratio <= upper) {
+                        return index + 1;
+                    }
                 }
-            }
-            return acc;
-        }, null);
+                return acc;
+            }, null);
+        }
     }
 
     let classState;
@@ -61,7 +64,7 @@ const TripHalfDay = ({
     } else {
         classState = assembleClass(
             selections.length && `trip-selected trip-selected-${step}`,
-            (isDecided || isDecisionSelect) && `trip-decided-${step}`
+            !isFiltered && (isDecided || isDecisionSelect) && `trip-decided-${step}`
         );
     }
 
