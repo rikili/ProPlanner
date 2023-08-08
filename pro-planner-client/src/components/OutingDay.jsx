@@ -139,23 +139,25 @@ const OutingDay = ({
                 if (isSummaryDate) {
                     dispatch(setDetailedDay(null));
                     dispatch(setDetailedUsers([]));
-                } else {
+                } else if (!selectedUser) {
                     dispatch(setDetailedDay(makeOutingDate(segmentStart)));
                     dispatch(setDetailedUsers([...isSelected]));
                 }
             }
         };
 
-        let step;
-        const ratio = isSelected.length / maxUsers;
-        step = STEP_ARR.reduce((acc, [lower, upper], index) => {
-            if (acc === null) {
-                if (ratio >= lower && ratio <= upper) {
-                    return index + 1;
+        let step = 3;
+        if (!selectedUser) {
+            const ratio = isSelected.length / maxUsers;
+            step = STEP_ARR.reduce((acc, [lower, upper], index) => {
+                if (acc === null) {
+                    if (ratio >= lower && ratio <= upper) {
+                        return index + 1;
+                    }
                 }
-            }
-            return acc;
-        }, null);
+                return acc;
+            }, null);
+        }
         const segmentLogic = () => {
             if (isEditMode) {
                 return assembleClass(
@@ -175,8 +177,10 @@ const OutingDay = ({
                 return assembleClass(
                     'available',
                     isSummaryDate && 'summary',
-                    !isSegmentInDecision && isSelectedSegment && `outing-selected-${step}`,
-                    isDecision && isSegmentInDecision && `outing-decided-${step}`
+                    (selectedUser || !isSegmentInDecision) &&
+                        isSelectedSegment &&
+                        `outing-selected-${step}`,
+                    !selectedUser && isDecision && isSegmentInDecision && `outing-decided-${step}`
                 );
             }
         };
