@@ -28,7 +28,7 @@ app.use('/cost', cost);
 app.use('/plan', plan);
 
 app.listen(process.env.PORT || 5001, () => {
-    console.log('server up listening on 5001');
+    console.log(`server is listening`);
 });
 
 // choosing mongoDB database references https://stackoverflow.com/questions/57337218/how-to-connect-to-specific-database-with-mongoose-and-node
