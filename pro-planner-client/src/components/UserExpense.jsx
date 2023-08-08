@@ -123,7 +123,7 @@ const UserExpense = ({ user, userId, currUserId }) => {
                 <Card.Body>
                     {Object.entries(user.expenses).map(([key, expense]) => (
                         <Row className="d-flex align-items-center mt-1 flex-nowrap" key={key}>
-                            <Col xs={!isDisabled ? 10 : null}>
+                            <Col sm={!isDisabled ? 10 : null}  xs={!isDisabled ? 9 : null} className="pe-0">
                                 <ListGroup>
                                     <ListGroup.Item>
                                         <Row>
@@ -149,7 +149,7 @@ const UserExpense = ({ user, userId, currUserId }) => {
                     ))}
                     {isAddingExpenseDisplay && (
                         <Row className="d-flex align-items-center mt-2 mb-3">
-                            <Col className="pe-0" sm={7}>
+                            <Col className="pe-0" sm={7} xs={6}>
                                 <InputGroup>
                                     <Form.Control
                                         placeholder="Item"
@@ -160,7 +160,7 @@ const UserExpense = ({ user, userId, currUserId }) => {
                                     />
                                 </InputGroup>
                             </Col>
-                            <Col className="ps-0 pe-0" sm={3}>
+                            <Col className="ps-0 pe-0" sm={3} xs={3}>
                                 <InputGroup>
                                     <Form.Control
                                         placeholder="Amount"

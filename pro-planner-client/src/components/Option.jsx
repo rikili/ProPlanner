@@ -15,7 +15,7 @@ function Option({ option, optionId, poll, pollId, currUser, setSelectedOption, u
         <>
             <Container>
                 <Row>
-                    <Col>
+                    <Col xs={7}>
                         <Form.Check
                             disabled={isOptionDisabled()}
                             type={'radio'}
@@ -25,7 +25,7 @@ function Option({ option, optionId, poll, pollId, currUser, setSelectedOption, u
                             onChange={handleRadioChange}
                         />
                     </Col>
-                    <Col className="d-flex justify-content-end">
+                    <Col className="d-flex justify-content-end" xs={1}>
                         {poll.options[optionId].voteCount}
                     </Col>
                     <Col>
