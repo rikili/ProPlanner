@@ -15,16 +15,15 @@ const UserSelectionPage = () => {
     const [show, setShow] = useState(false);
     const planId = useLocation().pathname.split('/')[2];
 
-    useEffect(() => {
-        if (codeReadyToCopy) {
-            console.log('entered here');
-            const URL = `${window.location.origin}/${planId}`;
-            navigator.clipboard.writeText(URL);
-            setShow(true);
-        }
-        dispatch(getUserAsync({ planId }));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, planId]);
+	useEffect(() => {
+		if (codeReadyToCopy) {
+			const URL = `${window.location.origin}/${planId}`;
+			navigator.clipboard.writeText(URL);
+			setShow(true);
+		}
+		dispatch(getUserAsync({ planId }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dispatch]);
 
     const handleCloseToast = () => {
         setShow(false);
